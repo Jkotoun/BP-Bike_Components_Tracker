@@ -1,15 +1,14 @@
 import * as React from 'react';
-import { Text, View } from 'react-native';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './App/screens/LoginScreen';
 import RegisterScreen from './App/screens/RegisterScreen';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AllComponentsListScreen from './App/screens/AllComponentsListScreen';
 import BikesListScreen from './App/screens/BikesListScreen';
-import Rides from './App/screens/Rides';
+import RidesListScreen from './App/screens/RidesListScreen';
 import AuthenticatedContext from './context';
 
 const Tab = createBottomTabNavigator();
@@ -51,7 +50,7 @@ export default function App() {
           })}>
           <Tab.Screen name="Bikes" component={BikesListScreen} />
           <Tab.Screen name="All components" component={AllComponentsListScreen} />
-          <Tab.Screen name="Rides" component={Rides} />
+          <Tab.Screen name="Rides" component={RidesListScreen} />
         </Tab.Navigator> }
      
 
