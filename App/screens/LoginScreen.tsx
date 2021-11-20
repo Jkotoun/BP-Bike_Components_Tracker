@@ -35,11 +35,12 @@ const styles = StyleSheet.create({
   }
 });
 export default function LoginScreen({ navigation }) {
-  const{authenticated,  setAuthenticated} = React.useContext(AuthenticatedContext)
+  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
   const { control, setError, handleSubmit, formState: { errors } } = useForm();
   const onSubmit = data =>{
-    if(data.username == "test" && data.password == "testpwd"){
-      setAuthenticated(true)
+    if(data.username == "test" && data.password == "test"){
+      setIsLoggedIn(true)
+      setUser({"username": "testname"})
     }
     else{
         setError('password', { type: "authentication", message: "Wrong username or password", });

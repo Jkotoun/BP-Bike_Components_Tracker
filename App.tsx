@@ -7,27 +7,27 @@ import LoginScreen from './App/screens/LoginScreen';
 import RegisterScreen from './App/screens/RegisterScreen';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AllComponentsListScreen from './App/screens/AllComponentsListScreen';
-import BikesListScreen from './App/screens/BikesListScreen';
+import BikesListStack from './App/screens/BikeListStack';
 import RidesListScreen from './App/screens/RidesListScreen';
 import AuthenticatedContext from './context';
-
+import {Button} from 'react-native'
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 
 
 export default function App() {
-  const[authenticated,  setAuthenticated] = React.useState(true)
-  const value = {authenticated, setAuthenticated}
+  const[IsLoggedIn,  setIsLoggedIn] = React.useState(false)
+  const[User,  setUser] = React.useState({})
+  const value = {IsLoggedIn, setIsLoggedIn, User, setUser}
   return (
 
       <AuthenticatedContext.Provider value={value}>
     <NavigationContainer>
-    {authenticated && <Tab.Navigator
+    {IsLoggedIn && <Tab.Navigator
           screenOptions={({ route }) => ({
             tabBarIcon: ({ focused, color, size }) => {
               let iconName;
-
               if (route.name === 'Bikes') {
                 iconName = 'bike';
               } else if (route.name === 'All components') {
@@ -41,20 +41,25 @@ export default function App() {
             headerStyle: {
               backgroundColor: '#F44336'
             },
+            headerShown: false,
             headerTitleStyle: {
               color: 'white'
             },
-
+            // headerShown: ()=>{
+            //   route.name === 'Bikes' ? true : false
+            // },
             tabBarActiveTintColor: 'tomato',
             tabBarInactiveTintColor: 'gray',
+          
           })}>
-          <Tab.Screen name="Bikes" component={BikesListScreen} />
+          <Tab.Screen  name="Bikes" component={BikesListStack}/>
           <Tab.Screen name="All components" component={AllComponentsListScreen} />
           <Tab.Screen name="Rides" component={RidesListScreen} />
+          
         </Tab.Navigator> }
      
 
-        {!authenticated && <Stack.Navigator initialRouteName="Login" screenOptions={{
+        {!IsLoggedIn && <Stack.Navigator initialRouteName="Login" screenOptions={{
           headerStyle: {
             backgroundColor: '#F44336'
           },

@@ -5,7 +5,7 @@ import AuthenticatedContext from '../../context';
 import Card from '../components/Card';
 import AddButton from "../components/AddButton"
 export default function BikesListScreen() {
-  const { authenticated, setAuthenticated } = React.useContext(AuthenticatedContext)
+  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
 
   const info = { "Distance": "43 km", "Ride Time": '11h 18m', "Elevation gain": "872 m"}
   const info2 = { "Distance": "73 km",  "Ride Time": "4h 12m", "Elevation gain": '1234 m' }
