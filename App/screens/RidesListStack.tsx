@@ -1,21 +1,18 @@
 
 import * as React from 'react';
-import { Text, View, Button, Alert } from 'react-native';
+import { Text} from 'react-native';
 import AuthenticatedContext from '../../context';
-import Card from '../components/Card';
-import AddButton from "../components/AddButton"
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import BikeDetailScreen from "./BikeDetailScreen"
-import BikeListScreen from "./BikesListScreen"
-import ComponentDetailScreen from "./ComponentDetail"
-export default function BikesListScreen({ navigation }) {
+import RidesListScreen from "./RidesListScreen"
+import RideDetail from "./RideDetail"
+export default function RidesListStack({ navigation }) {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
 
   const Stack = createNativeStackNavigator();
 
   return (
 
-    <Stack.Navigator initialRouteName="BikeListScreen" screenOptions={{
+    <Stack.Navigator initialRouteName="RidesListScreen" screenOptions={{
       headerStyle: {
         backgroundColor: '#F44336'
       },
@@ -26,12 +23,10 @@ export default function BikesListScreen({ navigation }) {
       headerTintColor: '#ffffff'
     }}>
       <Stack.Group>
-        <Stack.Screen name="BikeListScreen" options={{ title: "Bikes" }} component={BikeListScreen} />
+        <Stack.Screen name="RidesListScreen" options={{ title: "Rides" }} component={RidesListScreen} />
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'card' }}>
-
-        <Stack.Screen name="BikeDetail" component={BikeDetailScreen} />
-        <Stack.Screen name="ComponentDetail" component={ComponentDetailScreen} />
+        <Stack.Screen name="RideDetail" component={RideDetail} />
       </Stack.Group>
     </Stack.Navigator>
 

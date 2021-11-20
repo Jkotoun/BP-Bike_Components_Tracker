@@ -27,8 +27,8 @@ export default function BikesListScreen({ navigation }) {
       <ScrollView >
         <View style={{ alignItems: 'center', marginTop: 25, flex: 9, zIndex: 0 }}>
           <Card title="Canyon grand canyon 8" description="MTB hardtail" icon={images.mtb_full} displayInfo={info} onPress={() => { navigation.navigate('BikeDetail') }} ></Card>
-          <Card title="Specialized" description="Road" displayInfo={info2} icon={images.mtb_full} onPress={() => { navigation.navigate('ComponentDetail') }}></Card>
-          <Card title="Qayron carma enduro full" description="MTB full suspension" displayInfo={info3} icon={images.mtb_full} onPress={() => { Alert.alert("Redirect bike") }}></Card>
+          <Card title="Specialized" description="Road" displayInfo={info2} icon={images.mtb_full} onPress={() => { navigation.navigate('BikeDetail') }}></Card>
+          <Card title="Qayron carma enduro full" description="MTB full suspension" displayInfo={info3} icon={images.mtb_full} onPress={() => { navigation.navigate('BikeDetail') }}></Card>
           {/* <Button onPress={() => setAuthenticated(false)} title="Logout"></Button> */}
         </View>
       </ScrollView>

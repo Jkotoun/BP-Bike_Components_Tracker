@@ -6,9 +6,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './App/screens/LoginScreen';
 import RegisterScreen from './App/screens/RegisterScreen';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import AllComponentsListScreen from './App/screens/AllComponentsListScreen';
-import BikesListStack from './App/screens/BikeListStack';
-import RidesListScreen from './App/screens/RidesListScreen';
+import ComponentsListStack from './App/screens/ComponentsListStack';
+import BikesListStack from './App/screens/BikesListStack';
+import RidesListStack from './App/screens/RidesListStack';
 import AuthenticatedContext from './context';
 import {Button} from 'react-native'
 const Tab = createBottomTabNavigator();
@@ -53,8 +53,8 @@ export default function App() {
           
           })}>
           <Tab.Screen  name="Bikes" component={BikesListStack}/>
-          <Tab.Screen name="All components" component={AllComponentsListScreen} />
-          <Tab.Screen name="Rides" component={RidesListScreen} />
+          <Tab.Screen name="All components" component={ComponentsListStack} />
+          <Tab.Screen name="Rides" component={RidesListStack} />
           
         </Tab.Navigator> }
      

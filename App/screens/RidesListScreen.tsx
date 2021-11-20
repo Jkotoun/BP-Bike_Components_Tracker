@@ -4,7 +4,7 @@ import { View,  Alert } from 'react-native';
 import AuthenticatedContext from '../../context';
 import Card from '../components/Card';
 import AddButton from "../components/AddButton"
-export default function BikesListScreen() {
+export default function BikesListScreen({navigation}) {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
 
   const info = { "Distance": "43 km", "Ride Time": '11h 18m', "Elevation gain": "872 m"}
@@ -17,8 +17,8 @@ export default function BikesListScreen() {
   return (
     <View style={{ flex: 1 }}>
       <View style={{ marginTop: 25, alignItems: 'center', flex: 9 }}>
-        <Card title="Traily Jedovnice" description2="Bike: Canyon MTB" icon={images.route} displayInfo={info}  onPress={() => {Alert.alert("Redirect ride")}}></Card>
-        <Card title="Odpolední projížďka" description2="BIke not assigned" displayInfo={info2} icon={images.route}  onPress={() => {Alert.alert("Redirect bike")}}></Card>
+        <Card title="Traily Jedovnice" description2="Bike: Canyon MTB" icon={images.route} displayInfo={info} onPress={() => { navigation.navigate('RideDetail') }}></Card>
+        <Card title="Odpolední projížďka" description2="BIke not assigned" displayInfo={info2} icon={images.route}  onPress={() => {navigation.navigate('RideDetail')}}></Card>
       </View>
       <View style={{ flex: 1, alignItems: 'flex-end', padding: 20 }}>
 

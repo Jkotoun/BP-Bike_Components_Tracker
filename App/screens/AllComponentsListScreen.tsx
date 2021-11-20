@@ -4,7 +4,7 @@ import {  View, Alert } from 'react-native';
 import AuthenticatedContext from '../../context';
 import Card from '../components/Card';
 import AddButton from "../components/AddButton"
-export default function BikesListScreen() {
+export default function BikesListScreen({navigation}) {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
 
   const info = { "Distance": "120 km", "Ride Time": '11h 18m', "Condition": "New" }
@@ -18,8 +18,8 @@ export default function BikesListScreen() {
   return (
     <View style={{ flex: 1 }}>
       <View style={{ marginTop: 25, alignItems: 'center', flex: 9 }}>
-        <Card title="Shimano SLX chain" description="Chain" description2="Installed on: Canyon MTB" icon={images.chain} displayInfo={info}  onPress={() => {Alert.alert("Redirect Component")}}  ></Card>
-        <Card title="Fox 34 float rhythm" description="Fork" description2="Not installed" displayInfo={info2} icon={images.fork}  onPress={() => {Alert.alert("Redirect component")}}></Card>
+        <Card title="Shimano SLX chain" description="Chain" description2="Installed on: Canyon MTB" icon={images.chain} displayInfo={info}  onPress={() => { navigation.navigate('ComponentDetail') }}  ></Card>
+        <Card title="Fox 34 float rhythm" description="Fork" description2="Not installed" displayInfo={info2} icon={images.fork}  onPress={() => { navigation.navigate('ComponentDetail')}}></Card>
       </View>
       <View style={{ flex: 1, alignItems: 'flex-end', padding: 20 }}>
 

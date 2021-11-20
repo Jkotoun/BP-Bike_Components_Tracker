@@ -8,11 +8,11 @@ import AddButton from "../components/AddButton"
 
 
 
-export default function ComponentDetail() {
+export default function RideDetail() {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
 
  
   return (
-   <Text>Component</Text>
+   <Text>Ride</Text>
   );
 } 
