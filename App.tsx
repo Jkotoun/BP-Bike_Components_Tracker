@@ -65,11 +65,11 @@ export default function App() {
           },
           headerShadowVisible: false,
           headerTitle: "",
-          animation: 'slide_from_right',
+          
           headerTintColor: '#ffffff'
         }}>
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="Login" options={{animation:"none"}} component={LoginScreen} />
+          <Stack.Screen name="Register" options={{animation:"slide_from_right" }} component={RegisterScreen} />
         </Stack.Navigator>
       }
 

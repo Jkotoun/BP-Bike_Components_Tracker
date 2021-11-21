@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, TextInput, StatusBar, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { Text, View, TextInput, StatusBar, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useForm, Controller } from 'react-hook-form'
 import { Headline } from 'react-native-paper';
 import AuthenticatedContext from '../../context';
@@ -54,9 +54,13 @@ export default function LoginScreen({ navigation }) {
       alignItems: 'center',
       backgroundColor: '#F44336'
     }}>
+      <ScrollView contentContainerStyle={{
+      alignItems: 'center',
+    }}>
       <StatusBar
         backgroundColor="#F44336"
       />
+     
       <Text style={styles.formHeader}>Bike Components Manager</Text>
       <Controller
       
@@ -108,9 +112,10 @@ export default function LoginScreen({ navigation }) {
       </TouchableOpacity>
 
 
-      <Text onPress={() => navigation.navigate('Register')} style={{ color: "white", marginLeft: 80 }}>Don't have account? <Text style={{ fontWeight: 'bold' }}>Sign Up! </Text></Text>
+      <Text onPress={() => navigation.navigate('Register')} style={{ color: "white", alignSelf:"center" }}>Don't have account? <Text style={{ fontWeight: 'bold' }}>Sign Up! </Text></Text>
       <Text style={{ color: "white", fontWeight: "bold", padding: 15, fontSize: 17 }}>Or</Text>
       <Image source={require('../assets/images/btn_strava_connectwith_light.png')} />
+       </ScrollView >
     </View>
 
   );

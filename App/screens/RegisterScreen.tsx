@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Text, View, TextInput, StatusBar, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {Text, View, TextInput, StatusBar, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import { useForm, Controller } from 'react-hook-form'
 import { Headline } from 'react-native-paper';
 const styles = StyleSheet.create({
@@ -43,6 +43,9 @@ export default function RegisterScreen({ navigation }) {
       flex: 1,
       alignItems: 'center',
       backgroundColor: '#F44336'
+    }}>
+      <ScrollView contentContainerStyle={{
+      alignItems: 'center',
     }}>
       <StatusBar
         backgroundColor="#F44336"
@@ -190,6 +193,7 @@ export default function RegisterScreen({ navigation }) {
       <TouchableOpacity style={styles.submit} onPress={handleSubmit(onSubmit)}>
         <Text style={styles.submit_text}>SIGN UP</Text>
       </TouchableOpacity>
+      </ScrollView>
     </View>
 
   );
