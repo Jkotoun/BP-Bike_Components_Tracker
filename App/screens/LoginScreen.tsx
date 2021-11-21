@@ -54,7 +54,7 @@ export default function LoginScreen({ navigation }) {
       alignItems: 'center',
       backgroundColor: '#F44336'
     }}>
-      <ScrollView contentContainerStyle={{
+      <ScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={{
       alignItems: 'center',
     }}>
       <StatusBar

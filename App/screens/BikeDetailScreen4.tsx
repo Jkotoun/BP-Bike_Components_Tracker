@@ -8,8 +8,11 @@ import AddButton from "../components/AddButton"
 
 
 
-export default function RideDetail() {
+export default function BikeDetailScreen4() {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
 
-  return(<Text>Rides detail screen</Text>)
+ 
+  return (
+   <Text>page 3</Text>
+  );
 } 

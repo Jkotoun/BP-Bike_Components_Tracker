@@ -44,7 +44,7 @@ export default function RegisterScreen({ navigation }) {
       alignItems: 'center',
       backgroundColor: '#F44336'
     }}>
-      <ScrollView contentContainerStyle={{
+      <ScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={{
       alignItems: 'center',
     }}>
       <StatusBar

@@ -52,7 +52,7 @@ export default function App() {
             tabBarInactiveTintColor: 'gray',
           
           })}>
-          <Tab.Screen  name="Bikes" component={BikesListStack}/>
+          <Tab.Screen name="Bikes" component={BikesListStack}/>
           <Tab.Screen name="All components" component={ComponentsListStack} />
           <Tab.Screen name="Rides" component={RidesListStack} />
           

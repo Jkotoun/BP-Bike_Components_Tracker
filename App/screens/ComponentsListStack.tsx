@@ -17,6 +17,7 @@ export default function BikesListScreen({ navigation }) {
       headerStyle: {
         backgroundColor: '#F44336'
       },
+      headerShadowVisible:false,
       headerRight: () => (
         <Text style={{ color: "white" }} onPress={() => { setIsLoggedIn(false); setUser({}) }}>Logout</Text>
       ),
@@ -27,7 +28,7 @@ export default function BikesListScreen({ navigation }) {
         <Stack.Screen name="ComponentsListScreen" options={{ title: "All Components" }} component={ComponentsListScreen} />
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'card' }}>
-        <Stack.Screen name="ComponentDetail" component={ComponentDetailScreen} />
+        <Stack.Screen name="ComponentDetail" options={{title: "Component xxx"}} component={ComponentDetailScreen} />
       </Stack.Group>
     </Stack.Navigator>
 

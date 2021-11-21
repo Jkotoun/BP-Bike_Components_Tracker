@@ -19,6 +19,7 @@ export default function RidesListStack({ navigation }) {
       headerRight: () => (
         <Text style={{ color: "white" }} onPress={() => { setIsLoggedIn(false); setUser({}) }}>Logout</Text>
       ),
+      headerShadowVisible:false,
       animation: 'none',
       headerTintColor: '#ffffff'
     }}>
@@ -26,7 +27,7 @@ export default function RidesListStack({ navigation }) {
         <Stack.Screen name="RidesListScreen" options={{ title: "Rides" }} component={RidesListScreen} />
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'card' }}>
-        <Stack.Screen name="RideDetail" component={RideDetail} />
+        <Stack.Screen name="RideDetail" options={{title: "Ride xxx"}} component={RideDetail} />
       </Stack.Group>
     </Stack.Navigator>
 

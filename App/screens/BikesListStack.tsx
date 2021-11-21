@@ -14,8 +14,9 @@ export default function BikesListStack({ navigation }) {
 
     <Stack.Navigator initialRouteName="BikeListScreen" screenOptions={{
       headerStyle: {
-        backgroundColor: '#F44336'
+        backgroundColor: '#F44336',
       },
+      headerShadowVisible:false,
       headerRight: () => (
         <Text style={{ color: "white" }} onPress={() => { setIsLoggedIn(false); setUser({}) }}>Logout</Text>
       ),
@@ -26,7 +27,7 @@ export default function BikesListStack({ navigation }) {
         <Stack.Screen name="BikesListScreen" options={{ title: "Bikes" }} component={BikesListScreen} />
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'card' }}>
-        <Stack.Screen name="BikeDetail" component={BikeDetailScreen} />
+        <Stack.Screen name="BikeDetail" options={{title: "Bike xxx"}} component={BikeDetailScreen} />
       </Stack.Group>
     </Stack.Navigator>
 
