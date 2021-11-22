@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Text, View, TextInput, StatusBar, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { Text, View, StatusBar, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import {TextInput} from "react-native-paper"
 import { useForm, Controller } from 'react-hook-form'
 import { Headline } from 'react-native-paper';
 import AuthenticatedContext from '../../context';
@@ -10,14 +11,12 @@ const styles = StyleSheet.create({
     color: "black",
     backgroundColor: "#ffffff",
     width: 300,
-    margin: 7,
-    paddingHorizontal: 7,
-    paddingVertical: 10
-  },
+    margin: 7,},
   submit_text: {
     color: "#F44336",
     textAlign: 'center',
-    fontWeight: "bold"
+    fontWeight: "bold",
+    
   },
   submit: {
     backgroundColor: "#ffffff",
@@ -70,13 +69,14 @@ export default function LoginScreen({ navigation }) {
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput  
-            selectionColor={'black'}
+          theme={{colors: {primary: 'black'}}}
+          underlineColor="transparent"
+          mode='flat'
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
-            placeholder='Username or email'
-            placeholderTextColor={'#F44336'}
+            label='Username or email'
           />
         )}
         name="username"
@@ -92,14 +92,16 @@ export default function LoginScreen({ navigation }) {
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
+          theme={{colors: {primary: 'black'}}}
+          underlineColor="transparent"
+          mode='flat'
             selectionColor={'black'}
             secureTextEntry={true}
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
-            placeholder='Password'
-            placeholderTextColor={'#F44336'}
+            label='Password'
           />
         )}
         name="password"

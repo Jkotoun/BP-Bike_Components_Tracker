@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {Text, View, TextInput, StatusBar, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
+import {Text, View, StatusBar, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
+import { TextInput } from 'react-native-paper';
 import { useForm, Controller } from 'react-hook-form'
 import { Headline } from 'react-native-paper';
 const styles = StyleSheet.create({
@@ -10,8 +11,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     width: 300,
     margin: 7,
-    paddingHorizontal: 7,
-    paddingVertical: 10
   },
   submit_text: {
     color: "#F44336",
@@ -28,7 +27,8 @@ const styles = StyleSheet.create({
   formHeader: {
     color: 'white',
     fontWeight: 'bold',
-    paddingVertical: 50,
+
+    paddingBottom:25,
     fontSize: 24,
     textAlign:'left'
   }
@@ -60,13 +60,14 @@ export default function RegisterScreen({ navigation }) {
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            selectionColor={'black'}
+          theme={{colors: {primary: 'black'}}}
+          underlineColor="transparent"
+          mode='flat'
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
-            placeholder='Username'
-            placeholderTextColor={'#F44336'}
+            label='Username'
           />
         )}
         name="Username"
@@ -81,13 +82,14 @@ export default function RegisterScreen({ navigation }) {
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            selectionColor={'black'}
+          theme={{colors: {primary: 'black'}}}
+          underlineColor="transparent"
+          mode='flat'
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
-            placeholder='Email'
-            placeholderTextColor={'#F44336'}
+            label='Email'
           />
         )}
         name="Email"
@@ -103,13 +105,14 @@ export default function RegisterScreen({ navigation }) {
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            selectionColor={'black'}
+          theme={{colors: {primary: 'black'}}}
+          underlineColor="transparent"
+          mode='flat'
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
-            placeholder='Country'
-            placeholderTextColor={'#F44336'}
+            label='Country'
           />
         )}
         name="Country"
@@ -125,13 +128,14 @@ export default function RegisterScreen({ navigation }) {
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            selectionColor={'black'}
+          theme={{colors: {primary: 'black'}}}
+          underlineColor="transparent"
+          mode='flat'
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
-            placeholder='Gender'
-            placeholderTextColor={'#F44336'}
+            label='Gender'
           />
         )}
         name="Gender"
@@ -147,14 +151,14 @@ export default function RegisterScreen({ navigation }) {
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            selectionColor={'black'}
-            secureTextEntry={true}
+          theme={{colors: {primary: 'black'}}}
+          underlineColor="transparent"
+          mode='flat'
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
-            placeholder='Password'
-            placeholderTextColor={'#F44336'}
+            label='Password'
           />
         )}
         name="password"
@@ -171,14 +175,14 @@ export default function RegisterScreen({ navigation }) {
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            selectionColor={'black'}
-            secureTextEntry={true}
+          theme={{colors: {primary: 'black'}}}
+          underlineColor="transparent"
+          mode='flat'
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
-            placeholder='Password again'
-            placeholderTextColor={'#F44336'}
+            label='Password again'
           />
         )}
         name="password_repeat"
