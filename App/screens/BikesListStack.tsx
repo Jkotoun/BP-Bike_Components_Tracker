@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Text} from 'react-native';
 import AuthenticatedContext from '../../context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import BikeDetailScreen from "./BikeDetailScreen"
+import BikeTabs from "./BikeTabs"
 import BikesListScreen from "./BikesListScreen"
 export default function BikesListStack({ navigation }) {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
@@ -27,7 +27,7 @@ export default function BikesListStack({ navigation }) {
         <Stack.Screen name="BikesListScreen" options={{ title: "Bikes" }} component={BikesListScreen} />
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'card' }}>
-        <Stack.Screen name="BikeDetail" options={{title: "Bike xxx"}} component={BikeDetailScreen} />
+        <Stack.Screen name="BikeDetail" options={{title: "Bike xxx"}} component={BikeTabs} />
       </Stack.Group>
     </Stack.Navigator>
 

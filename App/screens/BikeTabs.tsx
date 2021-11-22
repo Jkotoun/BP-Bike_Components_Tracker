@@ -2,9 +2,9 @@
 import * as React from 'react';
 import { Text, View, Button , Alert} from 'react-native';
 import AuthenticatedContext from '../../context';
-import BikeDetailScreen2 from './BikeDetailScreen2';
-import BikeDetailScreen3 from './BikeDetailScreen3';
-import BikeDetailScreen4 from './BikeDetailScreen4';
+import BikeComponentsList from './BikeComponentsList';
+import BikeComponentsHistory from './BikeComponentsHistory';
+import BikeDetails from './BikeDetails';
 import Card from '../components/Card';
 import AddButton from "../components/AddButton"
 import TopTabBar from '../components/TopTabBar';
@@ -12,24 +12,24 @@ import TopTabBar from '../components/TopTabBar';
 
 
 
-export default function BikeDetailScreen() {
+export default function BikeTabs() {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
 
   const tabsObj = [
     {
       "key": "components_list",
       "name": "Components",
-      "component": BikeDetailScreen2
+      "component": BikeComponentsList
     },
     {
       "key": "components_history",
       "name": "History",
-      "component": BikeDetailScreen3
+      "component": BikeComponentsHistory
     },
     {
       "key": "bike_details_tab",
       "name": "Details",
-      "component": BikeDetailScreen4
+      "component": BikeDetails
     }
   ]
  

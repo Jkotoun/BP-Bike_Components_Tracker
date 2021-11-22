@@ -5,8 +5,8 @@ import AuthenticatedContext from '../../context';
 import Card from '../components/Card';
 import AddButton from "../components/AddButton"
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import BikeDetailScreen from "./BikeDetailScreen"
-import ComponentDetailScreen from "./ComponentDetail"
+import BikeDetailScreen from "./BikeTabs"
+import ComponentDetailScreen from "./ComponentTabs"
 export default function BikesListScreen({ navigation }) {
   navigation.navigationOptions = {}
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)

@@ -7,30 +7,28 @@ import Card from '../components/Card';
 import AddButton from "../components/AddButton"
 import TopTabBar from '../components/TopTabBar';
 
+import ComponentDetailWearHistory from './ComponentWearHistory';
+import ComponentDetails from './ComponentDetails';
+import ComponentServicesHistory from './ComponentServicesHistory';
 
-import BikeDetailScreen2 from './BikeDetailScreen2';
-import BikeDetailScreen3 from './BikeDetailScreen3';
-import BikeDetailScreen4 from './BikeDetailScreen4';
-
-
-export default function ComponentDetail() {
+export default function ComponentTabs() {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
 
   const tabsObj = [
     {
       "key": "wear_tab",
       "name": "Wear history",
-      "component": BikeDetailScreen2
+      "component": ComponentDetailWearHistory
     },
     {
       "key": "services_tab",
       "name": "Services",
-      "component": BikeDetailScreen3
+      "component": ComponentServicesHistory
     },
     {
       "key": "details_tab",
       "name": "Details",
-      "component": BikeDetailScreen4
+      "component": ComponentDetails
     }
   ]
  

@@ -23,11 +23,8 @@ export default function TopTabBar(props)
         
         })}>
             {props.Tabs.map(item => {
-                return  (<Tab.Screen name={item.name} component={item.component} />)
+                return  (<Tab.Screen key={item.key} name={item.name} component={item.component} />)
             })}
-         
-          {/* <Tab.Screen name="Services" component={BikeDetailScreen3} />
-          <Tab.Screen name="Details" component={BikeDetailScreen4} /> */}
         </Tab.Navigator>
     )
 }
