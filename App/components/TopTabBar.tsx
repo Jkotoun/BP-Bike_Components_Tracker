@@ -1,6 +1,5 @@
 
 import * as React from 'react';
-import { Text, View, Button , Alert} from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 //TODO define props interface
 const Tab = createMaterialTopTabNavigator();
@@ -23,7 +22,7 @@ export default function TopTabBar(props)
         
         })}>
             {props.Tabs.map(item => {
-                return  (<Tab.Screen key={item.key} name={item.name} component={item.component} />)
+                return  (<Tab.Screen name={item.name} component={item.component} />)
             })}
         </Tab.Navigator>
     )

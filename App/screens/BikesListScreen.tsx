@@ -33,7 +33,7 @@ export default function BikesListScreen({ navigation }) {
         </View>
       </ScrollView>
       <View style={{ position: 'absolute', right: 0, bottom: 0, paddingVertical: 30, paddingHorizontal: 20, zIndex: 99 }}>
-        <AddButton onPress={() => Alert.alert("Add bike TODO")}></AddButton>
+        <AddButton onPress={() => navigation.navigate("AddBikeScreen")}></AddButton>
       </View>
     </View>
 
