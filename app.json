@@ -2,7 +2,7 @@
     "expo": {
       "name": "Bike Components Manager",
       "description": "Bike components manager helps you to track wear of your bike's components",
-      "version": "1.0.1-alpha",
+      "version": "1.0.2-alpha",
       "ios": {
         "supportsTablet": true
       },
@@ -12,7 +12,7 @@
       "android": {
         "package": "com.bike_components_manager",
         "permissions": [],
-        "versionCode":2
+        "versionCode":3
       }
     }
   }
