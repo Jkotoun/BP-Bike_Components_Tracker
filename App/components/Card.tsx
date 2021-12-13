@@ -13,7 +13,7 @@ interface cardProps{
 export default function Card(props: cardProps) {
     let flexSize: number = 1 / Object.keys(props.displayInfo).length
     return (
-        <View style={{ width: '90%', backgroundColor: "#FDFDFD", margin: 10, elevation: 2, borderRadius: 7 }}>
+        <View style={{ width: '96%', backgroundColor: "#FDFDFD", margin:4,  elevation: 2, borderRadius: 3 }}>
             <TouchableOpacity onPress={props.onPress}>
             <View style={{ flexDirection: "row", }}>
                 <View style={{ flex: 0.75, padding: 15 }}>

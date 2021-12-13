@@ -4,7 +4,6 @@ import { Text, View, Button , Alert} from 'react-native';
 import AuthenticatedContext from '../../context';
 
 import Card from '../components/Card';
-import AddButton from "../components/AddButton"
 
 
 

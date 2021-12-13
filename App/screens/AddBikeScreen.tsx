@@ -1,18 +1,19 @@
 import * as React from 'react';
-import { Text, View, StatusBar, StyleSheet, TouchableOpacity, Image, ScrollView, Picker } from 'react-native';
+import { Text, View, StatusBar, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { TextInput } from "react-native-paper"
 import { useForm, Controller } from 'react-hook-form'
 import AuthenticatedContext from '../../context';
+import { Picker } from '@react-native-picker/picker';
+import { useState } from "react";
+import RNPickerSelect from 'react-native-picker-select';
 
-
-//TODO vytahnout do stylu jako form styles
 const styles = StyleSheet.create({
   input: {
     elevation: 5,
     borderRadius: 2,
     color: "black",
     backgroundColor: "#ffffff",
-    width: 300,
+    width: 335,
     margin: 7,
   },
   submit_text: {
@@ -41,6 +42,31 @@ const styles = StyleSheet.create({
 
 
 export default function AddBikeScreen({ navigation }) {
+  const pickerStyle = {
+    inputIOS: {
+            elevation: 5,
+      borderRadius: 2,
+      color: "black",
+      backgroundColor: "#ffffff",
+      width: 335,
+      margin: 7,
+      padding:30,
+    },
+    inputAndroid: {
+      elevation: 5,
+      borderRadius: 2,
+      color: "black",
+      backgroundColor: "#ffffff",
+      width: 335,
+      margin: 7,
+      padding:30,
+      
+    },
+    placeholder:{
+      color:"grey"
+    }
+  };
+  const [selectedLanguage, setSelectedLanguage] = useState();
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
 
   const { control, setError, handleSubmit, formState: { errors } } = useForm();
@@ -53,7 +79,7 @@ export default function AddBikeScreen({ navigation }) {
       flex: 1,
       alignItems: 'center',
     }}>
-      <View style={{ paddingVertical: 25 }}>
+      <View style={{ paddingVertical: 15 }}>
         <ScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={{
           alignItems: 'center',
         }}>
@@ -82,7 +108,30 @@ export default function AddBikeScreen({ navigation }) {
             defaultValue=""
           />
           {errors.bikename?.type == 'required' && <Text style={{ color: "white" }}>Bike name is required</Text>}
-
+          <Controller
+            control={control}
+            rules={{
+              required: false,
+            }}
+            render={({ field: { onChange, value } }) => (
+             
+              <RNPickerSelect
+              onValueChange={onChange}
+              value={value}
+              placeholder={{label:'Bike type'}}
+              
+              items={[
+                { label: 'MTB full suspension', value: 'full' },
+                { label: 'MTB hard tail', value: 'hardtail' },
+                { label: 'Gravel', value: 'gravel' },
+                { label: 'Road', value: 'road' }
+            ]}
+              style={pickerStyle}
+            />
+              )}
+              name="type"
+              defaultValue=""
+            />
           <Controller
 
             control={control}
@@ -107,7 +156,6 @@ export default function AddBikeScreen({ navigation }) {
           {errors.brand?.type == 'required' && <Text style={{ color: "white" }}>Brand is required</Text>}
 
           <Controller
-
             control={control}
             rules={{
               required: true,
@@ -121,20 +169,85 @@ export default function AddBikeScreen({ navigation }) {
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
-                label='Brand'
+                label='Model'
               />
             )}
-            name="brand"
+            name="model"
             defaultValue=""
           />
-          {errors.brand?.type == 'required' && <Text style={{ color: "white" }}>Brand is required</Text>}
+          {errors.model?.type == 'required' && <Text style={{ color: "white" }}>Model is required</Text>}
 
-          {/* <Text style={{ color: "white" }}>{errors.password?.type=='authentication' &&  errors.password.message}</Text> */}
+          <Controller
+            control={control}
+            rules={{
+              required: false,
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                theme={{ colors: { primary: '#F44336' } }}
+                underlineColor="transparent"
+                mode='flat'
+                style={styles.input}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                label='Purchase date'
+              />
+            )}
+            name="buy_date"
+            defaultValue=""
+          />
+
+          <Controller
+            control={control}
+            rules={{
+              required: false,
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                theme={{ colors: { primary: '#F44336' } }}
+                underlineColor="transparent"
+                mode='flat'
+                style={styles.input}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                label='Km to date'
+              />
+            )}
+            name="km_to_date"
+            defaultValue=""
+          />
 
 
-          {/* <TouchableOpacity style={styles.submit} onPress={handleSubmit(onSubmit)}>
-        <Text style={styles.submit_text}>Odeslat</Text>
-      </TouchableOpacity> */}
+          <Controller
+            control={control}
+            rules={{
+              required: false,
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                theme={{ colors: { primary: '#F44336' } }}
+                underlineColor="transparent"
+                mode='flat'
+                style={styles.input}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                label='Ride hours to date'
+              />
+            )}
+            name="hours_to_date"
+            defaultValue=""
+          />
+
+        
+    
+
+
+
+          
+            
 
         </ScrollView >
       </View>

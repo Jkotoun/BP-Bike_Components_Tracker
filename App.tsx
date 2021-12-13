@@ -11,55 +11,85 @@ import BikesListStack from './App/screens/BikesListStack';
 import RidesListStack from './App/screens/RidesListStack';
 import AuthenticatedContext from './context';
 import {Button} from 'react-native'
+
+let bottomNavigatorConfigs = {
+  tabBarOptions: {
+      style: { height: 300 },
+  },
+};
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 
 
 export default function App() {
-  const[IsLoggedIn,  setIsLoggedIn] = React.useState(false)
+  const[IsLoggedIn,  setIsLoggedIn] = React.useState(true)
   const[User,  setUser] = React.useState({})
   const value = {IsLoggedIn, setIsLoggedIn, User, setUser}
   return (
 
       <AuthenticatedContext.Provider value={value}>
     <NavigationContainer>
-    {IsLoggedIn && <Tab.Navigator
+    {IsLoggedIn ?
+    <Tab.Navigator
           screenOptions={({ route }) => ({
-            tabBarIcon: ({ focused, color, size }) => {
-              let iconName;
-              if (route.name === 'Bikes') {
-                iconName = 'bike';
-              } else if (route.name === 'All components') {
-                iconName = 'cog-outline';
-              }
-              else if (route.name === 'Rides') {
-                iconName = 'map-marker';
-              }
-              return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
-            },
+           
+           
             headerStyle: {
               backgroundColor: '#F44336'
+            },
+            tabBarLabelStyle:
+            {
+              fontSize:14,
+              fontWeight: "bold",
+              paddingBottom:5,
+              
+            },
+            tabBarIconStyle:{
+              marginTop:5
             },
             headerShown: false,
             headerTitleStyle: {
               color: 'white'
             },
-            // headerShown: ()=>{
-            //   route.name === 'Bikes' ? true : false
-            // },
+            tabBarStyle:{
+              height:55
+            },
             tabBarActiveTintColor: 'tomato',
             tabBarInactiveTintColor: 'gray',
           
           })}>
-          <Tab.Screen name="Bikes" component={BikesListStack}/>
-          <Tab.Screen name="All components" component={ComponentsListStack} />
-          <Tab.Screen name="Rides" component={RidesListStack} />
+          <Tab.Screen 
+          options={{
+            tabBarLabel: 'Bikes',
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="bike" color={color} size={size} />
+            ),
+          }}
           
-        </Tab.Navigator> }
+          name="Bikes"  component={BikesListStack}/>
+          <Tab.Screen 
+          options={{
+            tabBarLabel: 'Componennt',
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="cog-outline" color={color} size={size} />
+            ),
+          }}
+          name="All components" component={ComponentsListStack} />
+          <Tab.Screen 
+          options={{
+            tabBarLabel: 'Rides',
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="map-marker" color={color} size={size} />
+            ),
+          }}
+          name="Rides" component={RidesListStack} />
+          
+        </Tab.Navigator> 
+        :
      
 
-        {!IsLoggedIn && <Stack.Navigator initialRouteName="Login" screenOptions={{
+        <Stack.Navigator initialRouteName="Login" screenOptions={{
           headerStyle: {
             backgroundColor: '#F44336'
           },
