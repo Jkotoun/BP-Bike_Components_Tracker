@@ -21,16 +21,12 @@ export default function BikesListScreen({navigation}) {
         <Card title="Shimano SLX chain" description="Chain" description2="Installed on: Canyon MTB" icon={images.chain} displayInfo={info}  onPress={() => { navigation.navigate('ComponentDetail') }}  ></Card>
         <Card title="Fox 34 float rhythm" description="Fork" description2="Not installed" displayInfo={info2} icon={images.fork}  onPress={() => { navigation.navigate('ComponentDetail')}}></Card>
       </View>
-      <View style={{ flex: 1, alignItems: 'flex-end', padding: 20 }}>
-
-      <FAB
-    style={{   position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
+     <View style={{ position: 'absolute', right: 0, bottom: 0, paddingVertical: 30, paddingHorizontal: 20, zIndex: 99 }}>
+        <FAB
+    style={{  
     backgroundColor:"#F44336"}}
     icon="plus"
-    onPress={() => console.log("asd")}
+    onPress={() => navigation.navigate("AddComponentScreen")}
   />
       </View>
     </View>

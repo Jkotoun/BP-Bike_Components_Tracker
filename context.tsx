@@ -2,7 +2,7 @@ import React from "react";
 
 // set the defaults
 const AuthenticatedContext = React.createContext({
-  IsLoggedIn: true,
+  IsLoggedIn: false,
   setIsLoggedIn: (IsLoggedIn: boolean) => {},
   User: {},
   setUser: (User: {}) => {}

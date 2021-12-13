@@ -212,14 +212,13 @@ export default function AddBikeScreen({ navigation }) {
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
+                keyboardType='numeric'
                 label='Km to date'
               />
             )}
             name="km_to_date"
             defaultValue=""
           />
-
-
           <Controller
             control={control}
             rules={{
@@ -234,6 +233,7 @@ export default function AddBikeScreen({ navigation }) {
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
+                keyboardType='numeric'
                 label='Ride hours to date'
               />
             )}

@@ -23,7 +23,7 @@ const Stack = createNativeStackNavigator();
 
 
 export default function App() {
-  const[IsLoggedIn,  setIsLoggedIn] = React.useState(true)
+  const[IsLoggedIn,  setIsLoggedIn] = React.useState(false)
   const[User,  setUser] = React.useState({})
   const value = {IsLoggedIn, setIsLoggedIn, User, setUser}
   return (

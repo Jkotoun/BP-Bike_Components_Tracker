@@ -20,19 +20,13 @@ export default function BikesListScreen({ navigation }) {
         <Card title="Traily Jedovnice" description2="Bike: Canyon MTB" icon={images.route} displayInfo={info} onPress={() => { navigation.navigate('RideDetail') }}></Card>
         <Card title="Odpolední projížďka" description2="BIke not assigned" displayInfo={info2} icon={images.route} onPress={() => { navigation.navigate('RideDetail') }}></Card>
       </View>
-      <View style={{ flex: 1, alignItems: 'flex-end', padding: 20 }}>
-
+      <View style={{ position: 'absolute', right: 0, bottom: 0, paddingVertical: 30, paddingHorizontal: 20, zIndex: 99 }}>
         <FAB
-          style={{
-            position: 'absolute',
-            margin: 16,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "#F44336"
-          }}
-          icon="plus"
-          onPress={() => console.log("asd")}
-        />
+    style={{  
+    backgroundColor:"#F44336"}}
+    icon="plus"
+    onPress={() => navigation.navigate("AddRideScreen")}
+  />
       </View>
     </View>
   );
