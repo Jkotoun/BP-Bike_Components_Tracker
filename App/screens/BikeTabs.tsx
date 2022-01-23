@@ -2,11 +2,10 @@
 import * as React from 'react';
 import { Text, View, Button , Alert} from 'react-native';
 import AuthenticatedContext from '../../context';
-import BikeComponentsList from './BikeComponentsList';
-import BikeComponentsHistory from './BikeComponentsHistory';
+import BikeComponentsStack from './BikeComponentsStack';
+import BikeComponentsHistoryStack from './BikeComponentsHistoryStack';
 import BikeDetails from './BikeDetails';
 import Card from '../components/Card';
-import AddButton from "../components/AddButton"
 import TopTabBar from '../components/TopTabBar';
 
 
@@ -19,12 +18,12 @@ export default function BikeTabs() {
     {
       "key": "components_list",
       "name": "Components",
-      "component": BikeComponentsList
+      "component": BikeComponentsStack
     },
     {
       "key": "components_history",
       "name": "History",
-      "component": BikeComponentsHistory
+      "component": BikeComponentsHistoryStack
     },
     {
       "key": "bike_details_tab",

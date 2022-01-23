@@ -70,7 +70,7 @@ export default function App() {
           name="Bikes"  component={BikesListStack}/>
           <Tab.Screen 
           options={{
-            tabBarLabel: 'Componennt',
+            tabBarLabel: 'All components',
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="cog-outline" color={color} size={size} />
             ),
