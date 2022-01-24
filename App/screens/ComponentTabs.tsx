@@ -3,13 +3,11 @@ import * as React from 'react';
 import { Text, View, Button , Alert} from 'react-native';
 import AuthenticatedContext from '../../context';
 
-import Card from '../components/Card';
-import AddButton from "../components/AddButton"
 import TopTabBar from '../components/TopTabBar';
 
-import ComponentDetailWearHistory from './ComponentWearHistory';
+import ComponentWearHistoryStack from './ComponentWearHistoryStack';
 import ComponentDetails from './ComponentDetails';
-import ComponentServicesHistory from './ComponentServicesHistory';
+import ComponentServicesHistoryScreen from './ComponentServicesHistoryScreen';
 
 export default function ComponentTabs() {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
@@ -18,12 +16,12 @@ export default function ComponentTabs() {
     {
       "key": "wear_tab",
       "name": "Wear history",
-      "component": ComponentDetailWearHistory
+      "component": ComponentWearHistoryStack
     },
     {
       "key": "services_tab",
       "name": "Services",
-      "component": ComponentServicesHistory
+      "component": ComponentServicesHistoryScreen
     },
     {
       "key": "details_tab",
