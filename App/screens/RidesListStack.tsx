@@ -8,7 +8,7 @@ import RideDetail from "./RideDetail"
 import {Button} from 'react-native-paper'
 import AddRideScreen from './AddRideScreen';
 import Check from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import Close from 'react-native-vector-icons/MaterialCommunityIcons';
 export default function RidesListStack({ navigation }) {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
 
@@ -16,6 +16,7 @@ export default function RidesListStack({ navigation }) {
 
   return (
 
+    
     <Stack.Navigator initialRouteName="RidesListScreen" screenOptions={{
       headerStyle: {
         backgroundColor: '#F44336'
@@ -25,14 +26,20 @@ export default function RidesListStack({ navigation }) {
       ),
       headerShadowVisible:false,
       animation: 'none',
-      headerTintColor: '#ffffff'
-    }}>
+      headerTintColor: '#ffffff',
+      
+    }} 
+    >
       <Stack.Group>
         <Stack.Screen name="RidesListScreen" options={{ title: "Rides" }} component={RidesListScreen} />
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'card' }}>
         <Stack.Screen name="RideDetail" options={{title: "Ride xxx"}} component={RideDetail} />
-        <Stack.Screen name='AddRideScreen' options={{title:"Add ride", headerRight:()=><Button  theme={{colors: {primary: 'black'}}} onPress={()=>navigation.navigate("RidesListScreen")}><Check name="check" size={24} color="white"/></Button>}} component={AddRideScreen} />
+        <Stack.Screen name='AddRideScreen' options={{title:"Add ride", 
+        headerRight:()=> { return <Button  theme={{colors: {primary: 'black'}}} onPress={()=>navigation.navigate("RidesListScreen")}><Check name="check" size={24} color="white"/></Button>},
+        headerLeft: () => {return <Button theme={{colors: {primary: 'black'}}} style={{marginLeft:-20}} onPress={()=>navigation.goBack(null)}><Close name="close" size={24} color="white"/></Button>}
+
+        }} component={AddRideScreen} />
 
       </Stack.Group>
     </Stack.Navigator>
