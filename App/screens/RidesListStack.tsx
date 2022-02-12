@@ -9,6 +9,7 @@ import {Button} from 'react-native-paper'
 import AddRideScreen from './AddRideScreen';
 import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 import Close from 'react-native-vector-icons/MaterialCommunityIcons';
+
 export default function RidesListStack({ navigation }) {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
 

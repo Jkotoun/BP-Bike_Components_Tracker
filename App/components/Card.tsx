@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Text, View, Image, Alert, TouchableOpacity, ImageSourcePropType } from 'react-native'
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import CardBase from './CardBase';
 interface cardProps {
     onPress: () => void,
     displayInfo?: object,
@@ -21,7 +22,7 @@ interface Option{
 export default function Card(props: cardProps) {
     let flexSize: number = 1 / Object.keys(props.displayInfo).length
     return (
-        <View style={{ width: '96%', backgroundColor: "#FDFDFD", margin: 4, elevation: 2, borderRadius: 3 }}>
+        <CardBase>
             <View style={{ display: 'flex', flexDirection: 'row' }}>
                 <TouchableOpacity onPress={props.onPress} style={{flex:12}}>
                     <View style={{ flexDirection: "row", }}>
@@ -49,7 +50,7 @@ export default function Card(props: cardProps) {
                         }
                     </View>
                 </TouchableOpacity>
-                { props.options && <Menu stylDe={{flex:1, paddingTop:5}}>
+                { props.options && <Menu style={{flex:1, paddingTop:5}}>
                     <MenuTrigger text={<Icon name="dots-vertical" size={23} color="#000000" />} />
                     <MenuOptions>
                         {props.options.map((item) => {return (
@@ -58,7 +59,7 @@ export default function Card(props: cardProps) {
                     </MenuOptions>
                 </Menu>}
             </View>
-        </View>
+        </CardBase>
 
 
     )

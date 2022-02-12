@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Text, View, Image, Alert, TouchableOpacity, ImageSourcePropType } from 'react-native'
-
+import CardBase from './CardBase'
 interface cardProps{
     maintext: string,
     description?: string,
@@ -9,7 +9,7 @@ interface cardProps{
 
 export default function WearHistoryCard(props: cardProps) {
     return (
-        <View style={{ width: '96%', backgroundColor: "#FDFDFD", margin:4, marginTop:10, alignSelf:'center',  elevation: 2, borderRadius: 3 }}>
+        <CardBase>
             <View style={{ flexDirection: "row", padding:5}}>
                 <View style={{ flex: 0.75, padding: 15 }}>
                     <Text style={{ fontSize: 15, fontWeight: "bold" }}>{props.maintext}</Text>
@@ -21,7 +21,7 @@ export default function WearHistoryCard(props: cardProps) {
                     <Image source={props.image} style={{ width: 80, height: 80 }}/> 
                 </View>
             </View>
-        </View>
+        </CardBase>
 
     )
 }

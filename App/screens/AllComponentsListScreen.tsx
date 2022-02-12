@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {  View, Alert } from 'react-native';
 import AuthenticatedContext from '../../context';
-import Card from '../components/Card';
+import Card from '../components/BikeOrComponentCard';
 import { FAB } from 'react-native-paper';
 export default function AllComponentsListScreen({navigation}) {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
