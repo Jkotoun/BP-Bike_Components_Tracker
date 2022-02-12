@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -14,7 +13,7 @@ import AuthenticatedContext from './context';
 import { useNavigationState } from '@react-navigation/native';
 import { MenuProvider } from 'react-native-popup-menu';
 import { StyleSheet } from 'react-native';
-import activeScreenName from './App/services/screenName';
+import activeScreenName from './App/modules/screenName';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -36,9 +35,9 @@ export default function App() {
   return (
     // pass info about logged user to all child screens
     <AuthenticatedContext.Provider value={loggedUserInfo}> 
-      <MenuProvider>  {/*needed for vertical dots menu library*/}
+       {/*needed for vertical dots menu library*/}
+      <MenuProvider> 
         <NavigationContainer>
-          
           {/* Main 3 tabs if logged in */}
           {IsLoggedIn ?
             <Tab.Navigator
@@ -123,7 +122,7 @@ const styles = StyleSheet.create({
   tabBarIcon:
   {
     marginTop: 5
-  },
+  }
 
 
 })

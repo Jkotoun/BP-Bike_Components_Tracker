@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, Image, Alert, TouchableOpacity, ImageSourcePropType } from 'react-native'
+import { Text, View, Image, ImageSourcePropType, StyleSheet } from 'react-native'
 import CardBase from './CardBase'
 interface cardProps{
     maintext: string,
@@ -10,18 +10,47 @@ interface cardProps{
 export default function WearHistoryCard(props: cardProps) {
     return (
         <CardBase>
-            <View style={{ flexDirection: "row", padding:5}}>
-                <View style={{ flex: 0.75, padding: 15 }}>
-                    <Text style={{ fontSize: 15, fontWeight: "bold" }}>{props.maintext}</Text>
-                    <View style={{paddingTop:3}}>
-                        {props.description && <Text style={{ fontSize: 12 }}>{props.description}</Text>}
+            <View style={Styles.mainContainer}>
+                <View style={Styles.textContainer}>
+                    <Text style={Styles.mainText}>{props.maintext}</Text>
+                    <View style={Styles.secondaryTextContainer}>
+                        {props.description && <Text style={Styles.secondaryText}>{props.description}</Text>}
                     </View>
                 </View>
-                <View style={{ flex: 0.25, padding: 10, paddingRight:20 }}>
-                    <Image source={props.image} style={{ width: 80, height: 80 }}/> 
+                <View style={Styles.imageContainer}>
+                    <Image source={props.image} style={Styles.imageStyles}/> 
                 </View>
             </View>
         </CardBase>
 
     )
 }
+
+const Styles = StyleSheet.create({
+    mainContainer:{
+        flexDirection: "row", padding:5
+    },
+    textContainer:{
+        flex: 0.75, 
+        padding: 15
+    },
+    mainText:{
+        fontSize: 15, 
+        fontWeight: "bold" 
+    },
+    secondaryTextContainer:{
+        paddingTop:3
+    },
+    secondaryText:{
+        fontSize: 12 
+    },
+    imageContainer:{
+        flex: 0.25, 
+        padding: 10, 
+        paddingRight:20 
+    },
+    imageStyles:{
+        width: 80, 
+        height: 80
+    }
+})

@@ -1,4 +1,4 @@
-export function activeScreenName(navigationState) : string
+export function activeScreenName(navigationState) :string
 {
     if (navigationState) 
     {
