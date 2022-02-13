@@ -7,65 +7,8 @@ import { Picker } from '@react-native-picker/picker';
 import { useState } from "react";
 import RNPickerSelect from 'react-native-picker-select';
 
-const styles = StyleSheet.create({
-  input: {
-    elevation: 5,
-    borderRadius: 2,
-    color: "black",
-    backgroundColor: "#ffffff",
-    width: 335,
-    margin: 7,
-  },
-  submit_text: {
-    color: "#F44336",
-    textAlign: 'center',
-    fontWeight: "bold",
-
-  },
-  submit: {
-    backgroundColor: "#ffffff",
-    margin: 15,
-    width: 300,
-    padding: 10,
-    textAlign: 'center'
-  },
-  formHeader: {
-    color: 'white',
-    fontWeight: 'bold',
-    paddingVertical: 50,
-    fontSize: 24,
-    textAlign: 'left'
-  }
-});
-
-
-
-
 export default function AddComponentScreen({ navigation }) {
-  const pickerStyle = {
-    inputIOS: {
-            elevation: 5,
-      borderRadius: 2,
-      color: "black",
-      backgroundColor: "#ffffff",
-      width: 335,
-      margin: 7,
-      padding:30,
-    },
-    inputAndroid: {
-      elevation: 5,
-      borderRadius: 2,
-      color: "black",
-      backgroundColor: "#ffffff",
-      width: 335,
-      margin: 7,
-      padding:30,
-      
-    },
-    placeholder:{
-      color:"grey"
-    }
-  };
+
   const [selectedLanguage, setSelectedLanguage] = useState();
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
 
@@ -249,3 +192,58 @@ export default function AddComponentScreen({ navigation }) {
 
   );
 }
+
+const styles = StyleSheet.create({
+  input: {
+    elevation: 5,
+    borderRadius: 2,
+    color: "black",
+    backgroundColor: "#ffffff",
+    width: 335,
+    margin: 7,
+  },
+  submit_text: {
+    color: "#F44336",
+    textAlign: 'center',
+    fontWeight: "bold",
+
+  },
+  submit: {
+    backgroundColor: "#ffffff",
+    margin: 15,
+    width: 300,
+    padding: 10,
+    textAlign: 'center'
+  },
+  formHeader: {
+    color: 'white',
+    fontWeight: 'bold',
+    paddingVertical: 50,
+    fontSize: 24,
+    textAlign: 'left'
+  }
+});
+const pickerStyle = {
+  inputIOS: {
+          elevation: 5,
+    borderRadius: 2,
+    color: "black",
+    backgroundColor: "#ffffff",
+    width: 335,
+    margin: 7,
+    padding:30,
+  },
+  inputAndroid: {
+    elevation: 5,
+    borderRadius: 2,
+    color: "black",
+    backgroundColor: "#ffffff",
+    width: 335,
+    margin: 7,
+    padding:30,
+    
+  },
+  placeholder:{
+    color:"grey"
+  }
+};
