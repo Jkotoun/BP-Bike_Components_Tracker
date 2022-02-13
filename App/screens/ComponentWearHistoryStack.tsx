@@ -1,7 +1,5 @@
 
 import * as React from 'react';
-import { Text} from 'react-native';
-import {Button, Colors} from "react-native-paper"
 import AuthenticatedContext from '../../context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ComponentWearHistoryScreen from'./ComponentWearHistoryScreen'

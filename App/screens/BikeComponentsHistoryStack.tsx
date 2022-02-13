@@ -1,7 +1,7 @@
 
 import * as React from 'react';
-import { Text} from 'react-native';
-import {Button, Colors} from "react-native-paper"
+import { Text } from 'react-native';
+import { Button, Colors } from "react-native-paper"
 import AuthenticatedContext from '../../context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BikeComponentsHistoryScreen from './BikeComponentsHistoryScreen'
@@ -19,11 +19,8 @@ export default function BikeComponentsHistoryStack({ navigation }) {
       headerShown: false
     }}>
       <Stack.Group>
-        <Stack.Screen name="BikeComponentsHistoryScreen"  component={BikeComponentsHistoryScreen} />
+        <Stack.Screen name="BikeComponentsHistoryScreen" component={BikeComponentsHistoryScreen} />
       </Stack.Group>
-      {/* <Stack.Group screenOptions={{ presentation: 'card' }}>
- 
-      </Stack.Group> */}
     </Stack.Navigator>
 
   );

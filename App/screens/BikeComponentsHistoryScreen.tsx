@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { Text, View, Button, Alert } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 import AuthenticatedContext from '../../context';
 
 
@@ -19,16 +19,16 @@ export default function BikeComponentsHistoryScreen() {
   ]
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ display: 'flex', flexDirection: 'column', padding: 25 }}>
+    <View style={styles.mainContainer}>
+      <View style={styles.contentContainer}>
         {
           historyExample.map((item) => {
             return (
-              <View style={{ display: 'flex', flexDirection: 'row', paddingBottom: 15 }}>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{item.distance} km</Text>
+              <View style={styles.historyItemContainer}>
+                <View style={styles.distanceContainer}>
+                  <Text style={styles.distanceText}>{item.distance} km</Text>
                 </View>
-                <View style={{ flex: 3 }}>
+                <View style={styles.descriptionContainer}>
                   <Text>{item.action}:  {item.component}</Text>
                 </View>
               </View>
@@ -39,3 +39,30 @@ export default function BikeComponentsHistoryScreen() {
     </View>
   );
 } 
+
+
+const styles = StyleSheet.create({
+  mainContainer:{
+    flex:1
+  },
+  contentContainer:{
+    display: 'flex', 
+    flexDirection: 'column', 
+    padding: 25
+  },
+  historyItemContainer:{
+    display: 'flex', 
+    flexDirection: 'row', 
+    paddingBottom: 15
+  },
+  distanceContainer:{
+    flex: 1
+  },
+  distanceText:{
+    fontSize: 15, 
+    fontWeight: 'bold'
+  },
+  descriptionContainer:{
+    flex: 3
+  }
+})

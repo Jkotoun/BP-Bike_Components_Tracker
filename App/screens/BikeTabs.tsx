@@ -1,35 +1,24 @@
 
 import * as React from 'react';
-import { Text, View, Button , Alert} from 'react-native';
 import AuthenticatedContext from '../../context';
 import BikeComponentsStack from './BikeComponentsStack';
 import BikeComponentsHistoryScreen from './BikeComponentsHistoryScreen';
 import BikeDetails from './BikeDetails';
-import Card from '../components/Card';
-import TopTabBar from '../components/TopTabBar';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
-
-function getVisibility(route) {
-  const routeName = getFocusedRouteNameFromRoute(route);
+import { useNavigationState } from '@react-navigation/native';
+import activeScreenName from '../modules/screenName';
+function topTabBarVisible(state) {
+  const routeName = activeScreenName(state);
   const tabBarHiddenPages = ["ComponentInstallListStack", "ComponentUninstallFormScreen"]
-  if (tabBarHiddenPages.includes(routeName))
-  {
-    return false
-  }
-  else
-  {
-    return true;
-  }
+  return !tabBarHiddenPages.includes(routeName)
 }
 const Tab = createMaterialTopTabNavigator();
 export default function BikeTabs() {
+  const state = useNavigationState(state => state)
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
- 
   return (
-
     <Tab.Navigator
-    screenOptions={({route}) => ({
+    screenOptions={() => ({
       headerStyle: {
         backgroundColor: '#F44336'
       },
@@ -42,7 +31,7 @@ export default function BikeTabs() {
       tabBarIndicatorContainerStyle:{backgroundColor: "#F44336"},
       tabBarIndicatorStyle: {backgroundColor: 'white'},
       tabBarStyle:{
-        display: getVisibility(route)? "flex":"none"
+      display: topTabBarVisible(state)? "flex":"none"
       },
     
     })}>
@@ -50,7 +39,6 @@ export default function BikeTabs() {
       <Tab.Screen name="Components" component={BikeComponentsStack} />
       <Tab.Screen name="History" component={BikeComponentsHistoryScreen} />
       <Tab.Screen name="Details" component={BikeDetails} />
-      
     </Tab.Navigator>
 
    );

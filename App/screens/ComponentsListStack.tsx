@@ -12,9 +12,8 @@ import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 import Close from 'react-native-vector-icons/MaterialCommunityIcons';
 export default function BikesListScreen({ navigation }) {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
-
   const Stack = createNativeStackNavigator();
-
+  
   return (
 
     <Stack.Navigator initialRouteName="ComponentsListScreen" screenOptions={{
@@ -33,12 +32,11 @@ export default function BikesListScreen({ navigation }) {
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'card' }}>
         <Stack.Screen name="ComponentDetail" options={{title: "Component xxx"}} component={ComponentTabs} />
-        <Stack.Screen name='AddComponentScreen' options={{title:"Add component", 
-        headerRight:()=>{ return <Button  theme={{colors: {primary: 'black'}}} onPress={()=>navigation.navigate("ComponentsListScreen")}><Check name="check" size={24} color="white"/></Button>},
-        headerLeft: () => {return <Button theme={{colors: {primary: 'black'}}} style={{marginLeft:-20}} onPress={()=>navigation.goBack(null)}><Close name="close" size={24} color="white"/></Button>}
-
-        
-        }} component={AddComponentScreen} />
+        <Stack.Screen name='AddComponentScreen' component={AddComponentScreen}  options={{
+          title:"Add component", 
+          headerRight:()=>{ return <Button  theme={{colors: {primary: 'black'}}} onPress={()=>navigation.navigate("ComponentsListScreen")}><Check name="check" size={24} color="white"/></Button>},
+          headerLeft: () => {return <Button theme={{colors: {primary: 'black'}}} style={{marginLeft:-20}} onPress={()=>navigation.goBack(null)}><Close name="close" size={24} color="white"/></Button>}
+        }}/>
       </Stack.Group>
     </Stack.Navigator>
 

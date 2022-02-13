@@ -1,7 +1,7 @@
 
 import * as React from 'react';
-import { Text, Alert} from 'react-native';
-import {Button, Colors} from "react-native-paper"
+import { StyleSheet} from 'react-native';
+import {Button} from "react-native-paper"
 import AuthenticatedContext from '../../context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BikeComponentsList from "./BikeComponentsList"
@@ -29,42 +29,39 @@ export default function BikesListStack({ navigation }) {
          options={{
            title:"Component YYY uninstall", 
            headerShown:true,
-           headerTitleStyle: {
-            color: 'white',
-            fontSize:16
-          }, 
-           headerStyle:{
-             backgroundColor:"#F44336",
-           },
+           headerTitleStyle: styles.uninstallFormHeaderTitle, 
+           headerStyle: styles.uninstallFormHeaderStyles,
            headerRight:()=> { return <Button  theme={{colors: {primary: 'black'}}} onPress={()=>navigation.navigate("BikeComponentsList")}><Check name="check" size={24} color="white"/></Button>},
-           headerLeft: () => {return <Button theme={{colors: {primary: 'black'}}} style={{marginLeft:-20}} onPress={()=>navigation.navigate("BikeComponentsList")}><Close name="close" size={24} color="white"/></Button>}
+           headerLeft: () => {return <Button theme={{colors: {primary: 'black'}}} style={styles.headerBackButton} onPress={()=>navigation.navigate("BikeComponentsList")}><Close name="close" size={24} color="white"/></Button>}
           }}
            component={ComponentUninstallFormScreen} />
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'card' }}>
-
         <Stack.Screen name='AllComponentsListScreen' component={AllComponentsListScreen}/>
         <Stack.Screen name="ComponentDetail" options={{title: "Component xxx"}} component={ComponentTabs} />
-      
-
-     
-
-
-
         <Stack.Screen name='ComponentInstallListStack'
          options={{
            title:"Add component", 
            headerShown: false
-          //  headerRight:()=> { return <Button  theme={{colors: {primary: 'black'}}} onPress={()=>navigation.navigate("Component")}><Check name="check" size={24} color="white"/></Button>},
-          //  headerLeft: () => {return <Button theme={{colors: {primary: 'black'}}} style={{marginLeft:-20}} onPress={()=>navigation.goBack(null)}><Close name="close" size={24} color="white"/></Button>}
-           
-
-    
           }}
-           
            component={ComponentInstallListStack} />
       </Stack.Group>
+
+
     </Stack.Navigator>
 
   );
 }
+
+const styles = StyleSheet.create({
+  uninstallFormHeaderTitle:{
+    color: 'white',
+    fontSize:16
+  },
+  uninstallFormHeaderStyles:{
+    backgroundColor:"#F44336"
+  },
+  headerBackButton:{
+    marginLeft: -20
+  }
+})

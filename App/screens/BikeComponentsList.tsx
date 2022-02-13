@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { Text, View, Button , Alert} from 'react-native';
+import { View, Alert, StyleSheet} from 'react-native';
 import AuthenticatedContext from '../../context';
 import { FAB } from 'react-native-paper';
 import Card from '../components/Card';
@@ -34,18 +34,41 @@ export default function BikeComponentsHistory({navigation}) {
   ]
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ marginTop: 5, alignItems: 'center', flex: 9 }}>
+    <View style={styles.mainContainer}>
+      <View style={styles.componentCardsContainer}>
         <Card options={componentOptions} title="Shimano SLX chain" description="Chain" icon={images.chain} displayInfo={info} onPress={()=> {Alert.alert("TODO show correct component")}}></Card>
       </View>
-     <View style={{ position: 'absolute', right: 0, bottom: 0, paddingVertical: 30, paddingHorizontal: 20, zIndex: 99 }}>
+     <View style={styles.addButtonContainer}>
         <FAB
-    style={{  
-    backgroundColor:"#F44336"}}
+    style={styles.addButton}
     icon="plus"
     onPress={() =>navigation.navigate("ComponentInstallListStack")}
   />
       </View>
     </View>
   );
-} 
+}
+
+const styles = StyleSheet.create({
+  mainContainer:{
+    flex: 1
+  },
+  componentCardsContainer:{
+    marginTop: 5, 
+    alignItems: 'center', 
+    flex: 9 
+  },
+  addButtonContainer:{
+    position: 'absolute', 
+    right: 0, 
+    bottom: 0, 
+    paddingVertical: 30, 
+    paddingHorizontal: 20, 
+    zIndex: 99 
+  },
+  addButton:{
+    backgroundColor:"#F44336"
+  }
+})
+
+

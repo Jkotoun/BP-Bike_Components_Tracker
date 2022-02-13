@@ -7,65 +7,11 @@ import { Picker } from '@react-native-picker/picker';
 import { useState } from "react";
 import RNPickerSelect from 'react-native-picker-select';
 
-const styles = StyleSheet.create({
-  input: {
-    elevation: 5,
-    borderRadius: 2,
-    color: "black",
-    backgroundColor: "#ffffff",
-    width: 335,
-    margin: 7,
-  },
-  submit_text: {
-    color: "#F44336",
-    textAlign: 'center',
-    fontWeight: "bold",
-
-  },
-  submit: {
-    backgroundColor: "#ffffff",
-    margin: 15,
-    width: 300,
-    padding: 10,
-    textAlign: 'center'
-  },
-  formHeader: {
-    color: 'white',
-    fontWeight: 'bold',
-    paddingVertical: 50,
-    fontSize: 24,
-    textAlign: 'left'
-  }
-});
 
 
 
 
 export default function AddBikeScreen({ navigation }) {
-  const pickerStyle = {
-    inputIOS: {
-            elevation: 5,
-      borderRadius: 2,
-      color: "black",
-      backgroundColor: "#ffffff",
-      width: 335,
-      margin: 7,
-      padding:30,
-    },
-    inputAndroid: {
-      elevation: 5,
-      borderRadius: 2,
-      color: "black",
-      backgroundColor: "#ffffff",
-      width: 335,
-      margin: 7,
-      padding:30,
-      
-    },
-    placeholder:{
-      color:"grey"
-    }
-  };
   const [selectedLanguage, setSelectedLanguage] = useState();
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
 
@@ -75,19 +21,11 @@ export default function AddBikeScreen({ navigation }) {
   }
 
   return (
-    <View style={{
-      flex: 1,
-      alignItems: 'center',
-    }}>
-      <View style={{ paddingVertical: 15 }}>
-        <ScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={{
-          alignItems: 'center',
-        }}>
-          <StatusBar
-            backgroundColor="#F44336"
-          />
+    <View style={styles.mainContainer}>
+      <View style={styles.formContainer}>
+        <ScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={{alignItems: 'center'}}>
+          <StatusBar backgroundColor="#F44336"/>
           <Controller
-
             control={control}
             rules={{
               required: true,
@@ -114,24 +52,24 @@ export default function AddBikeScreen({ navigation }) {
               required: false,
             }}
             render={({ field: { onChange, value } }) => (
-             
+
               <RNPickerSelect
-              onValueChange={onChange}
-              value={value}
-              placeholder={{label:'Bike type'}}
-              
-              items={[
-                { label: 'MTB full suspension', value: 'full' },
-                { label: 'MTB hard tail', value: 'hardtail' },
-                { label: 'Gravel', value: 'gravel' },
-                { label: 'Road', value: 'road' }
-            ]}
-              style={pickerStyle}
-            />
-              )}
-              name="type"
-              defaultValue=""
-            />
+                onValueChange={onChange}
+                value={value}
+                placeholder={{ label: 'Bike type' }}
+
+                items={[
+                  { label: 'MTB full suspension', value: 'full' },
+                  { label: 'MTB hard tail', value: 'hardtail' },
+                  { label: 'Gravel', value: 'gravel' },
+                  { label: 'Road', value: 'road' }
+                ]}
+                style={pickerStyles}
+              />
+            )}
+            name="type"
+            defaultValue=""
+          />
           <Controller
 
             control={control}
@@ -241,17 +179,74 @@ export default function AddBikeScreen({ navigation }) {
             defaultValue=""
           />
 
-        
-    
-
-
-
-          
-            
-
         </ScrollView >
       </View>
     </View>
 
   );
+}
+
+
+const styles = StyleSheet.create({
+  mainContainer:{
+    flex: 1,
+    alignItems: 'center',
+  },
+  formContainer:{
+    paddingVertical: 15 
+  },
+  input: {
+    elevation: 5,
+    borderRadius: 2,
+    color: "black",
+    backgroundColor: "#ffffff",
+    width: 335,
+    margin: 7,
+  },
+  submit_text: {
+    color: "#F44336",
+    textAlign: 'center',
+    fontWeight: "bold",
+
+  },
+  submit: {
+    backgroundColor: "#ffffff",
+    margin: 15,
+    width: 300,
+    padding: 10,
+    textAlign: 'center'
+  },
+  formHeader: {
+    color: 'white',
+    fontWeight: 'bold',
+    paddingVertical: 50,
+    fontSize: 24,
+    textAlign: 'left'
+  },
+
+});
+
+const pickerStyles = {
+  inputIOS: {
+    elevation: 5,
+    borderRadius: 2,
+    color: "black",
+    backgroundColor: "#ffffff",
+    width: 335,
+    margin: 7,
+    padding: 30,
+  },
+  inputAndroid: {
+    elevation: 5,
+    borderRadius: 2,
+    color: "black",
+    backgroundColor: "#ffffff",
+    width: 335,
+    margin: 7,
+    padding: 30,
+
+  },
+  placeholder: {
+    color: "grey"
+  }
 }

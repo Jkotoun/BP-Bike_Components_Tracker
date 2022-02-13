@@ -27,10 +27,17 @@ const styles = StyleSheet.create({
   formHeader: {
     color: 'white',
     fontWeight: 'bold',
-
     paddingBottom:25,
     fontSize: 24,
     textAlign:'left'
+  },
+  mainContainer:{
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#F44336'
+  },
+  scrollViewStyles:{
+    alignItems: 'center'
   }
 });
 export default function RegisterScreen({ navigation }) {
@@ -39,164 +46,148 @@ export default function RegisterScreen({ navigation }) {
 
 
   return (
-    <View style={{
-      flex: 1,
-      alignItems: 'center',
-      backgroundColor: '#F44336'
-    }}>
-      <ScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={{
-      alignItems: 'center',
-    }}>
-      <StatusBar
-        backgroundColor="#F44336"
-      />
-      <Headline style={styles.formHeader}>Bike Components Manager</Headline>
-      
-      
-      <Controller
-        control={control}
-        rules={{
-          required: true,
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-          theme={{colors: {primary: 'black'}}}
-          underlineColor="transparent"
-          mode='flat'
-            style={styles.input}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            label='Username'
-          />
-        )}
-        name="Username"
-        defaultValue=""
-      />
-      {errors.username && <Text style={{ color: "white" }}>Username is required.</Text>}
+    <View style={styles.mainContainer}>
+      <ScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={styles.scrollViewStyles}>
+        <StatusBar backgroundColor="#F44336"/>
+        <Headline style={styles.formHeader}>Bike Components Manager</Headline>
+        
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+            theme={{colors: {primary: 'black'}}}
+            underlineColor="transparent"
+            mode='flat'
+              style={styles.input}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              label='Username'
+            />
+          )}
+          name="Username"
+          defaultValue=""
+        />
+        {errors.username && <Text style={{ color: "white" }}>Username is required.</Text>}
 
-      <Controller
-        control={control}
-        rules={{
-          required: true,
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-          theme={{colors: {primary: 'black'}}}
-          underlineColor="transparent"
-          mode='flat'
-            style={styles.input}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            label='Email'
-          />
-        )}
-        name="Email"
-        defaultValue=""
-      />
-      {errors.username && <Text style={{ color: "white" }}>Email is required.</Text>}
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+            theme={{colors: {primary: 'black'}}}
+            underlineColor="transparent"
+            mode='flat'
+              style={styles.input}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              label='Email'
+            />
+          )}
+          name="Email"
+          defaultValue=""
+        />
+        {errors.username && <Text style={{ color: "white" }}>Email is required.</Text>}
 
 
-      <Controller
-        control={control}
-        rules={{
-          required: true,
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-          theme={{colors: {primary: 'black'}}}
-          underlineColor="transparent"
-          mode='flat'
-            style={styles.input}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            label='Country'
-          />
-        )}
-        name="Country"
-        defaultValue=""
-      />
-      {errors.Country && <Text style={{ color: "white" }}>Country is required.</Text>}
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+            theme={{colors: {primary: 'black'}}}
+            underlineColor="transparent"
+            mode='flat'
+              style={styles.input}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              label='Country'
+            />
+          )}
+          name="Country"
+          defaultValue=""
+        />
+        {errors.Country && <Text style={{ color: "white" }}>Country is required.</Text>}
 
 
-      <Controller
-        control={control}
-        rules={{
-          required: true,
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-          theme={{colors: {primary: 'black'}}}
-          underlineColor="transparent"
-          mode='flat'
-            style={styles.input}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            label='Gender'
-          />
-        )}
-        name="Gender"
-        defaultValue=""
-      />
-      {errors.Gender && <Text style={{ color: "white" }}>Gender is required.</Text>}
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+            theme={{colors: {primary: 'black'}}}
+            underlineColor="transparent"
+            mode='flat'
+              style={styles.input}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              label='Gender'
+            />
+          )}
+          name="Gender"
+          defaultValue=""
+        />
+        {errors.Gender && <Text style={{ color: "white" }}>Gender is required.</Text>}
 
+        <Controller
+          control={control}
+          rules={{
+            required: true
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+            theme={{colors: {primary: 'black'}}}
+            underlineColor="transparent"
+            mode='flat'
+              style={styles.input}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              label='Password'
+            />
+          )}
+          name="password"
+          defaultValue=""
+        />
+        {errors.password && <Text style={{ color: "white" }}>Password is required</Text>}
 
-      <Controller
-        control={control}
-        rules={{
-          required: true
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-          theme={{colors: {primary: 'black'}}}
-          underlineColor="transparent"
-          mode='flat'
-            style={styles.input}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            label='Password'
-          />
-        )}
-        name="password"
-        defaultValue=""
-      />
-      {errors.password && <Text style={{ color: "white" }}>Password is required</Text>}
+        <Controller
+          control={control}
+          rules={{
+            required: true
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+            theme={{colors: {primary: 'black'}}}
+            underlineColor="transparent"
+            mode='flat'
+              style={styles.input}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              label='Password again'
+            />
+          )}
+          name="password_repeat"
+          defaultValue=""
+        />
+        {errors.password && <Text style={{ color: "white" }}>Password again is required</Text>}
 
-
-
-      <Controller
-        control={control}
-        rules={{
-          required: true
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-          theme={{colors: {primary: 'black'}}}
-          underlineColor="transparent"
-          mode='flat'
-            style={styles.input}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            label='Password again'
-          />
-        )}
-        name="password_repeat"
-        defaultValue=""
-      />
-      {errors.password && <Text style={{ color: "white" }}>Password again is required</Text>}
-
-
-
-
-
-      <TouchableOpacity style={styles.submit} onPress={handleSubmit(onSubmit)}>
-        <Text style={styles.submit_text}>SIGN UP</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.submit} onPress={handleSubmit(onSubmit)}>
+          <Text style={styles.submit_text}>SIGN UP</Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
 

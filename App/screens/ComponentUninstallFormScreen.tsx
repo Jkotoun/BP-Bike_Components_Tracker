@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Button, Platform, TouchableOpacity, Text } from 'react-native';
+import { View, Platform, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 
@@ -15,24 +15,19 @@ export default function ComponentUninstallFormScreen({ navigation }) {
         if (mode == "date") {
             showMode('time')
         }
-        console.log(currentDate)
     };
-
     const showMode = (currentMode) => {
         setShow(true);
         setMode(currentMode);
     };
-    const [checked, setChecked] = React.useState('first');
+
     return (
         <View>
-            <View style={{ padding: 20 }}>
-                <Text style={{ color: "#6F6F6F" }}>Uninstallation date and time</Text>
+            <View style={styles.contentContainer}>
+                <Text style={styles.formTitle}>Uninstallation date and time</Text>
                 <TouchableOpacity onPress={() => showMode('date')}>
-
-                    <View style={{ borderWidth: 1, borderColor: '#D1D1D1', backgroundColor: '#FFFFFF', padding: 10, marginTop: 10, borderRadius: 3, width: 300 }}>
-
-                        <Text style={{ color: '#F44336' }}>{date.toLocaleString()}</Text>
-
+                    <View style={styles.selectedDateContainer}>
+                        <Text style={styles.selectedDate}>{date.toLocaleString()}</Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -47,9 +42,29 @@ export default function ComponentUninstallFormScreen({ navigation }) {
 
                 />
             )}
-
-
         </View>
 
     );
 };
+
+const styles = StyleSheet.create({
+    contentContainer:{
+        padding: 20
+    },
+    formTitle:{
+        color: "#6F6F6F"
+    },
+    selectedDateContainer:{
+        borderWidth: 1, 
+        borderColor: '#D1D1D1', 
+        backgroundColor: '#FFFFFF', 
+        padding: 10, 
+        marginTop: 10, 
+        borderRadius: 3, 
+        width: 300 
+    },
+    selectedDate:{
+        color: '#F44336'
+    }
+
+})

@@ -23,20 +23,16 @@ export default function ComponentInstallListStack({ navigation }) {
       headerTintColor: '#ffffff'
     }}>
       <Stack.Group>
-        <Stack.Screen name="ComponentInstallListScreen" options={{ title: "Available components",
-        
-     headerLeft: () => {return <Button theme={{colors: {primary: 'black'}}} style={{marginLeft:-20}} onPress={()=>navigation.goBack(null)}><Close name="close" size={24} color="white"/></Button>}
-      }} 
-      
-      
-      
-      component={ComponentInstallListScreen} />
+        <Stack.Screen name="ComponentInstallListScreen" component={ComponentInstallListScreen} options={{ 
+          title: "Available components",
+          headerLeft: () => {return <Button theme={{colors: {primary: 'black'}}} style={{marginLeft:-20}} onPress={()=>navigation.goBack(null)}><Close name="close" size={24} color="white"/></Button>}
+        }} 
+        />
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'card' }}>
         <Stack.Screen name='ComponentInstallFormScreen'
          options={{
            title:"Add component", 
-           
            headerRight:()=> { return <Button  theme={{colors: {primary: 'black'}}} onPress={()=>navigation.goBack(null)}><Check name="check" size={24} color="white"/></Button>},
            headerLeft: () => {return <Button theme={{colors: {primary: 'black'}}} style={{marginLeft:-20}} onPress={()=>navigation.goBack(null)}><Close name="close" size={24} color="white"/></Button>}
           }}

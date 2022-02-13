@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { Text, View, Button , Alert} from 'react-native';
+import { Text, View, StyleSheet} from 'react-native';
 import AuthenticatedContext from '../../context';
 
 
@@ -17,17 +17,17 @@ export default function ComponentDetails() {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ display: 'flex', flexDirection: 'column', padding: 25 }}>
+    <View style={styles.mainContainer}>
+      <View style={styles.contentContainer}>
         {
            Object.entries(historyExample).map((prop, value) => {
             return (
-              <View style={{ display: 'flex', flexDirection: 'row', paddingBottom: 15 }}>
+              <View style={styles.itemContainer}>
                
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{prop[0]}</Text>
+                <View style={styles.propertyNameContainer}>
+                  <Text style={styles.propertyTextContainer}>{prop[0]}</Text>
                 </View>
-                <View style={{ flex: 1 }}>
+                <View style={styles.propertyValueContainer}>
                   <Text>{prop[1]}</Text>
                 </View> 
               </View>
@@ -38,3 +38,31 @@ export default function ComponentDetails() {
     </View>
   );
 } 
+
+const styles = StyleSheet.create({
+  mainContainer:{
+    flex: 1
+  },
+  contentContainer:{
+    display: 'flex', 
+    flexDirection: 'column', 
+    padding: 25
+  },
+  itemContainer:{
+    display: 'flex', 
+    flexDirection: 'row', 
+    paddingBottom: 15
+  },
+  propertyNameContainer:{
+    flex: 1
+  },
+  propertyTextContainer:{
+    fontSize: 15, 
+    fontWeight: 'bold'
+  },
+  propertyValueContainer:{
+    flex: 1
+  }
+
+
+})

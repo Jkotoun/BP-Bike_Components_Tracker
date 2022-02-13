@@ -10,45 +10,23 @@ import AddBikeScreen from './AddBikeScreen';
 import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 import Close from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
-
-
+import activeScreenName from '../modules/screenName';
 import { useNavigationState } from '@react-navigation/native';
 
 
-function getCurrentRoute(nav) {  
-  if (nav) {
-
-    if (nav.routes[nav.index].state) {
-      return getCurrentRoute(nav.routes[nav.index].state)
-    }
-    else {
-      return nav.routes[nav.index].name
-    }
-  }
-}
-
-
-
-  function getVisibility(state) {
+  function stackHeaderVisible(navigationState) {
     
-    const routeName = getCurrentRoute(state);
+    const routeName = activeScreenName(navigationState);
     const headerHiddenPages = ["ComponentInstallListStack", "ComponentInstallFormScreen", "ComponentUninstallFormScreen"]
-    if (headerHiddenPages.includes(routeName)) {
-      return false
-    }
-    else {
-      return true;
-    }
+    return !headerHiddenPages.includes(routeName)
   }
 
 export default function BikesListStack({ navigation }) {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
   const Stack = createNativeStackNavigator();
-  const state = useNavigationState(state => state);
+  const navigationState = useNavigationState(state => state);
 
   return (
-
     <Stack.Navigator initialRouteName="BikeListScreen" screenOptions={({ route }) => ({
       headerStyle: {
         backgroundColor: '#F44336',
@@ -57,25 +35,23 @@ export default function BikesListStack({ navigation }) {
       headerRight: () => (
         <Text style={{ color: "white" }} onPress={() => { setIsLoggedIn(false); setUser({}) }}>Logout</Text>
       ),
-      // headerShown: getVisibility(),
       animation: 'none',
       headerTintColor: '#ffffff',
-      headerShown: getVisibility(state)
+      headerShown: stackHeaderVisible(navigationState)
 
     })}>
+
       <Stack.Group>
         <Stack.Screen name="BikesListScreen" options={{ title: "Bikes" }} component={BikesListScreen} />
       </Stack.Group>
+      
       <Stack.Group screenOptions={{ presentation: 'card' }}>
         <Stack.Screen name="BikeDetail" options={{ title: "Bike xxx" }} component={BikeTabs} />
         <Stack.Screen name='AddBikeScreen'
           options={{
             title: "Add bike",
-
             headerRight: () => { return <Button theme={{ colors: { primary: 'black' } }} onPress={() => navigation.navigate("BikesListScreen")}><Check name="check" size={24} color="white" /></Button> },
             headerLeft: () => { return <Button theme={{ colors: { primary: 'black' } }} style={{ marginLeft: -20 }} onPress={() => navigation.goBack(null)}><Close name="close" size={24} color="white" /></Button> }
-
-
           }}
 
           component={AddBikeScreen} />
