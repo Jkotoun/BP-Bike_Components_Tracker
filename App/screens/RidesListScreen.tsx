@@ -1,11 +1,11 @@
 
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
-import AuthenticatedContext from '../../context';
+
 import Card from '../components/Card';
 import { FAB } from 'react-native-paper';
 export default function BikesListScreen({ navigation }) {
-  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
+ 
 
   const info = { "Distance": "43 km", "Ride Time": '11h 18m', "Elevation gain": "872 m" }
   const info2 = { "Distance": "73 km", "Ride Time": "4h 12m", "Elevation gain": '1234 m' }

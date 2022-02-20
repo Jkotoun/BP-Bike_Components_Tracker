@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { Text} from 'react-native';
 import {Button} from 'react-native-paper'
-import AuthenticatedContext from '../../context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BikeDetailScreen from "./BikeTabs"
 import ComponentsListScreen from "./AllComponentsListScreen"
@@ -10,8 +9,10 @@ import ComponentTabs from "./ComponentTabs"
 import AddComponentScreen from './AddComponentScreen';
 import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 import Close from 'react-native-vector-icons/MaterialCommunityIcons';
+import firebaseApp from '../config/firebase'
+import { getAuth } from 'firebase/auth';
+const auth = getAuth(firebaseApp)
 export default function BikesListScreen({ navigation }) {
-  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
   const Stack = createNativeStackNavigator();
   
   return (
@@ -22,7 +23,7 @@ export default function BikesListScreen({ navigation }) {
       },
       headerShadowVisible:false,
       headerRight: () => (
-        <Text style={{ color: "white" }} onPress={() => { setIsLoggedIn(false); setUser({}) }}>Logout</Text>
+        <Text style={{ color: "white" }} onPress={async () => { await auth.signOut()}}>Logout</Text>
       ),
       animation: 'none',
       headerTintColor: '#ffffff'

@@ -1,14 +1,14 @@
 
 import * as React from 'react';
 import { Text, View, Image, StyleSheet } from 'react-native';
-import AuthenticatedContext from '../../context';
+
 
 
 
 
 
 export default function RideDetail() {
-  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
+
 
   return (
     <View style={styles.mainContainer}>

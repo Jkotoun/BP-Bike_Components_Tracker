@@ -3,46 +3,32 @@ import {Text, View, StatusBar, StyleSheet, TouchableOpacity, ScrollView} from 'r
 import { TextInput } from 'react-native-paper';
 import { useForm, Controller } from 'react-hook-form'
 import { Headline } from 'react-native-paper';
-const styles = StyleSheet.create({
-  input: {
-    elevation: 5,
-    borderRadius: 2,
-    color: "black",
-    backgroundColor: "#ffffff",
-    width: 300,
-    margin: 7,
-  },
-  submit_text: {
-    color: "#F44336",
-    textAlign: 'center',
-    fontWeight: "bold"
-  },
-  submit: {
-    backgroundColor: "#ffffff",
-    margin: 15,
-    width: 300,
-    padding: 10,
-    textAlign: 'center'
-  },
-  formHeader: {
-    color: 'white',
-    fontWeight: 'bold',
-    paddingBottom:25,
-    fontSize: 24,
-    textAlign:'left'
-  },
-  mainContainer:{
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: '#F44336'
-  },
-  scrollViewStyles:{
-    alignItems: 'center'
-  }
-});
+import firebaseApp from '../config/firebase';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
+import { getFirestore, setDoc, doc } from 'firebase/firestore';
+
+
+
+const auth  =getAuth(firebaseApp)
+function saveUserData(userId, userData){
+  setDoc(doc(getFirestore(firebaseApp), "users", userId), {
+    username: userData.username
+  });
+}
+
+
 export default function RegisterScreen({ navigation }) {
   const { control, handleSubmit, formState: { errors } } = useForm();
-  const onSubmit = data => console.log(data);
+  const onSubmit =  async (data) => {
+    try {
+      if (data.email !== '' && data.password !== '' && data.password == data.password_repeat) {
+        createUserWithEmailAndPassword(auth,data.email,data.password).then(userObj => saveUserData(userObj.user.uid, data));
+        signInWithEmailAndPassword(auth,data.email,data.password);
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  };
 
 
   return (
@@ -68,7 +54,7 @@ export default function RegisterScreen({ navigation }) {
               label='Username'
             />
           )}
-          name="Username"
+          name="username"
           defaultValue=""
         />
         {errors.username && <Text style={{ color: "white" }}>Username is required.</Text>}
@@ -90,56 +76,11 @@ export default function RegisterScreen({ navigation }) {
               label='Email'
             />
           )}
-          name="Email"
+          name="email"
           defaultValue=""
         />
         {errors.username && <Text style={{ color: "white" }}>Email is required.</Text>}
 
-
-        <Controller
-          control={control}
-          rules={{
-            required: true,
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-            theme={{colors: {primary: 'black'}}}
-            underlineColor="transparent"
-            mode='flat'
-              style={styles.input}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              label='Country'
-            />
-          )}
-          name="Country"
-          defaultValue=""
-        />
-        {errors.Country && <Text style={{ color: "white" }}>Country is required.</Text>}
-
-
-        <Controller
-          control={control}
-          rules={{
-            required: true,
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-            theme={{colors: {primary: 'black'}}}
-            underlineColor="transparent"
-            mode='flat'
-              style={styles.input}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              label='Gender'
-            />
-          )}
-          name="Gender"
-          defaultValue=""
-        />
-        {errors.Gender && <Text style={{ color: "white" }}>Gender is required.</Text>}
 
         <Controller
           control={control}
@@ -193,3 +134,44 @@ export default function RegisterScreen({ navigation }) {
 
   );
 }
+
+
+
+
+const styles = StyleSheet.create({
+  input: {
+    elevation: 5,
+    borderRadius: 2,
+    color: "black",
+    backgroundColor: "#ffffff",
+    width: 300,
+    margin: 7,
+  },
+  submit_text: {
+    color: "#F44336",
+    textAlign: 'center',
+    fontWeight: "bold"
+  },
+  submit: {
+    backgroundColor: "#ffffff",
+    margin: 15,
+    width: 300,
+    padding: 10,
+    textAlign: 'center'
+  },
+  formHeader: {
+    color: 'white',
+    fontWeight: 'bold',
+    paddingBottom:25,
+    fontSize: 24,
+    textAlign:'left'
+  },
+  mainContainer:{
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#F44336'
+  },
+  scrollViewStyles:{
+    alignItems: 'center'
+  }
+});

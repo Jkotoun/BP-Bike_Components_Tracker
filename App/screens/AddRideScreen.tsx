@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Text, View, StatusBar, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { TextInput } from "react-native-paper"
 import { useForm, Controller } from 'react-hook-form'
-import AuthenticatedContext from '../../context';
+
 import { useState } from "react";
 import RNPickerSelect from 'react-native-picker-select';
 
@@ -10,7 +10,7 @@ import RNPickerSelect from 'react-native-picker-select';
 export default function AddRideScreen({ navigation }) {
 
   const [selectedLanguage, setSelectedLanguage] = useState();
-  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
+
 
   const { control, setError, handleSubmit, formState: { errors } } = useForm();
   const onSubmit = data => {

@@ -1,11 +1,9 @@
 
 import * as React from 'react';
 import { Text, View, Alert, StyleSheet} from 'react-native';
-import AuthenticatedContext from '../../context';
 import { FAB } from 'react-native-paper';
 import ServiceRecordCard from '../components/ServiceRecordCard';
 export default function ComponentServicesHistoryScreen() {
-  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
 
 
   return (

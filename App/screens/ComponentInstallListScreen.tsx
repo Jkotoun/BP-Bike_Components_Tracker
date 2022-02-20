@@ -1,10 +1,8 @@
 
 import * as React from 'react';
 import {  View, StyleSheet } from 'react-native';
-import AuthenticatedContext from '../../context';
 import Card from '../components/Card';
 export default function ComponentInstallListScreen({navigation}) {
-  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
 
   const info2 = { "Distance": "548 km", "Ride Time": '36h 10m', "Condition": "Good" }
 

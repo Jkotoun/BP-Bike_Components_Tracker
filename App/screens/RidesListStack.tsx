@@ -1,7 +1,7 @@
 
 import * as React from 'react';
 import { Text} from 'react-native';
-import AuthenticatedContext from '../../context';
+
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RidesListScreen from "./RidesListScreen"
 import RideDetail from "./RideDetail"
@@ -9,9 +9,11 @@ import {Button} from 'react-native-paper'
 import AddRideScreen from './AddRideScreen';
 import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 import Close from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import firebaseApp from '../config/firebase'
+import { getAuth } from 'firebase/auth';
+const auth = getAuth(firebaseApp)
 export default function RidesListStack({ navigation }) {
-  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
+ 
   const Stack = createNativeStackNavigator();
   
   return (
@@ -20,7 +22,7 @@ export default function RidesListStack({ navigation }) {
         backgroundColor: '#F44336'
       },
       headerRight: () => (
-        <Text style={{ color: "white" }} onPress={() => { setIsLoggedIn(false); setUser({}) }}>Logout</Text>
+        <Text style={{ color: "white" }} onPress={async () => { await auth.signOut(); console.log("log")}}>Logout</Text>
       ),
       headerShadowVisible:false,
       animation: 'none',

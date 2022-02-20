@@ -1,10 +1,10 @@
 
 import * as React from 'react';
 import { Text, View, StyleSheet} from 'react-native';
-import AuthenticatedContext from '../../context';
+
 
 export default function BikeDetails() {
-  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
+
   const historyExample = {
     'Distance': '548 km',
     'Ride Time': "36h 18m",

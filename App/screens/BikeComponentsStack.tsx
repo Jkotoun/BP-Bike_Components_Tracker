@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { StyleSheet} from 'react-native';
 import {Button} from "react-native-paper"
-import AuthenticatedContext from '../../context';
+
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BikeComponentsList from "./BikeComponentsList"
 import AllComponentsListScreen from './AllComponentsListScreen';
@@ -11,8 +11,9 @@ import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 import Close from 'react-native-vector-icons/MaterialCommunityIcons';
 import ComponentTabs from './ComponentTabs';
 import ComponentInstallListStack from './ComponentInstallListStack'
+
 export default function BikesListStack({ navigation }) {
-  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
+
 
   const Stack = createNativeStackNavigator();
 

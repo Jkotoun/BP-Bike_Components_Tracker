@@ -1,7 +1,6 @@
 
 import * as React from 'react';
 import { Text, View, Button , Alert} from 'react-native';
-import AuthenticatedContext from '../../context';
 
 import TopTabBar from '../components/TopTabBar';
 
@@ -10,7 +9,6 @@ import ComponentDetails from './ComponentDetails';
 import ComponentServicesHistoryScreen from './ComponentServicesHistoryScreen';
 
 export default function ComponentTabs() {
-  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
 
   const tabsObj = [
     {

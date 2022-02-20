@@ -1,10 +1,10 @@
 
 import * as React from 'react';
-import AuthenticatedContext from '../../context';
+
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ComponentWearHistoryScreen from'./ComponentWearHistoryScreen'
 export default function ComponentWearHistoryStack({ navigation }) {
-  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
+ 
 
   const Stack = createNativeStackNavigator();
 

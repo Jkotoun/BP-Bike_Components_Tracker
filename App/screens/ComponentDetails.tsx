@@ -1,11 +1,9 @@
 
 import * as React from 'react';
 import { Text, View, StyleSheet} from 'react-native';
-import AuthenticatedContext from '../../context';
 
 
 export default function ComponentDetails() {
-  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
   const historyExample = {
     'Distance': '150 km',
     'Ride Time': "50h 18m",

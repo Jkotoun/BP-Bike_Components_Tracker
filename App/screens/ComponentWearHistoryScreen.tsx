@@ -1,11 +1,11 @@
 
 import * as React from 'react';
 import {View, Alert, StyleSheet } from 'react-native';
-import AuthenticatedContext from '../../context';
+
 import WearRecordCard from '../components/WearRecordCard';
 import { FAB } from 'react-native-paper';
 export default function ComponentWearHistoryScreen() {
-  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
+
 
   const image = require("../assets/images/default.jpg")
   return (

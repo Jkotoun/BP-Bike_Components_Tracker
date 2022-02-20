@@ -2,20 +2,34 @@ import * as React from 'react';
 import { Text, View, StatusBar, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import {TextInput} from "react-native-paper"
 import { useForm, Controller } from 'react-hook-form'
-import AuthenticatedContext from '../../context';
+import { AuthenticatedUserContext} from '../../context' 
+import { getAuth, signInWithEmailAndPassword,   FacebookAuthProvider} from "firebase/auth"
+import firebaseApp from '../config/firebase';
 
+
+
+import { GoogleAuthProvider } from "firebase/auth";
+async function loginWithFacebook() {
+  
+}
+
+
+
+const auth = getAuth(firebaseApp)
 export default function LoginScreen({ navigation }) {
-  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
+  const { User, setUser } = React.useContext(AuthenticatedUserContext)
   const { control, setError, handleSubmit, formState: { errors } } = useForm();
-  const onSubmit = data =>{
-    if(data.username == "test" && data.password == "test")
+  const onSubmit = (data) =>{
+
+
+    try 
     {
-      setIsLoggedIn(true)
-      setUser({"username": "testname"})
-    }
-    else
-    {
-        setError('password', { type: "authentication", message: "Wrong username or password", });
+      if (data.email !== '' && data.password !== '') 
+      {
+        signInWithEmailAndPassword(auth,data.email,data.password);
+      }
+    } catch (error) {
+       setError('password', { type: "authentication", message: "chybaaaa"});
     }
   }
 
@@ -40,13 +54,13 @@ export default function LoginScreen({ navigation }) {
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
-              label='Username or email'
+              label='Email'
             />
           )}
-          name="username"
+          name="email"
           defaultValue=""
         />
-        {errors.username?.type=='required' && <Text style={{ color: "white" }}>Username or email is required.</Text>}
+        {errors.email?.type=='required' && <Text style={{ color: "white" }}>Email is required.</Text>}
         
 
         <Controller
@@ -80,7 +94,9 @@ export default function LoginScreen({ navigation }) {
 
         <Text onPress={() => navigation.navigate('Register')} style={styles.registerFormRedirect}>Don't have account? <Text style={{ fontWeight: 'bold' }}>Sign Up! </Text></Text>
         <Text style={styles.orText}>Or</Text>
+       
         <Image source={require('../assets/images/btn_strava_connectwith_light.png')} />
+   
       </ScrollView >
     </View>
 

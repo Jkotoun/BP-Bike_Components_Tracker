@@ -2,14 +2,12 @@
 import * as React from 'react';
 import { Alert, Text} from 'react-native';
 import {Button, Colors} from "react-native-paper"
-import AuthenticatedContext from '../../context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ComponentInstallListScreen from './ComponentInstallListScreen';
 import ComponentInstallFormScreen from './ComponentInstallFormScreen';
 import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 import Close from 'react-native-vector-icons/MaterialCommunityIcons';
 export default function ComponentInstallListStack({ navigation }) {
-  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
 
   const Stack = createNativeStackNavigator();
 

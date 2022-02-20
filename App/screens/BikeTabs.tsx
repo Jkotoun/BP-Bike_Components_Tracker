@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import AuthenticatedContext from '../../context';
+import { AuthenticatedUserContext} from '../../context' 
 import BikeComponentsStack from './BikeComponentsStack';
 import BikeComponentsHistoryScreen from './BikeComponentsHistoryScreen';
 import BikeDetails from './BikeDetails';
@@ -9,13 +9,14 @@ import { useNavigationState } from '@react-navigation/native';
 import activeScreenName from '../modules/screenName';
 function topTabBarVisible(state) {
   const routeName = activeScreenName(state);
-  const tabBarHiddenPages = ["ComponentInstallListStack", "ComponentUninstallFormScreen"]
+  console.log(routeName)
+  const tabBarHiddenPages = ["ComponentInstallListStack", "ComponentInstallFormScreen", "ComponentUninstallFormScreen"]
   return !tabBarHiddenPages.includes(routeName)
 }
 const Tab = createMaterialTopTabNavigator();
 export default function BikeTabs() {
   const state = useNavigationState(state => state)
-  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedContext)
+
   return (
     <Tab.Navigator
     screenOptions={() => ({
