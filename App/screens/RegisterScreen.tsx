@@ -12,7 +12,9 @@ import { getFirestore, setDoc, doc } from 'firebase/firestore';
 const auth  =getAuth(firebaseApp)
 function saveUserData(userId, userData){
   setDoc(doc(getFirestore(firebaseApp), "users", userId), {
-    username: userData.username
+    username: userData.username,
+    stravaAuth: false,
+    stravaConnected: false
   });
 }
 

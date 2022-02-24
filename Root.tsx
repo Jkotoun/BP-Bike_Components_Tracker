@@ -14,7 +14,7 @@ import { MenuProvider } from 'react-native-popup-menu';
 import { StyleSheet } from 'react-native';
 import activeScreenName from './App/modules/screenName';
 import { AuthenticatedUserContext} from './context' 
-
+import { getFirestore, getDoc, doc } from 'firebase/firestore';
 import firebaseApp from './App/config/firebase';
 import { getAuth } from "firebase/auth"
 const auth  = getAuth(firebaseApp)
@@ -37,19 +37,18 @@ export default function Root() {
     // onAuthStateChanged returns an unsubscriber
     const unsubscribeAuth = auth.onAuthStateChanged(authenticatedUser => {
       try {
-        console.log("user:");
-        console.log(authenticatedUser);
-        setUser(authenticatedUser)
-        console.log("konec");
         if(authenticatedUser)
         {
-          setUser(authenticatedUser)
-          setIsLoggedIn(true)
+          console.log("asd")
+          getDoc(doc(getFirestore(firebaseApp), "users", authenticatedUser.uid)).then(user => {
+            setUser({...authenticatedUser, ...user.data()})
+            setIsLoggedIn(true)
+          });
         }
         else
         {
-          setUser(null)
           setIsLoggedIn(false)
+          setUser(null)
         }
         setIsLoading(false);
         // setIsLoading(false);
