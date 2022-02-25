@@ -13,108 +13,67 @@ import { getFirestore, setDoc, doc } from 'firebase/firestore';
 import * as Crypto from 'expo-crypto';
 
 // Endpoint
-const discovery = {
-  authorizationEndpoint: 'https://www.strava.com/oauth/mobile/authorize',
-  tokenEndpoint: 'https://www.strava.com/oauth/token',
-  revocationEndpoint: 'https://www.strava.com/oauth/deauthorize',
-};
 
-function saveUserData(userId, userData){
+
+function saveUserData(userId, userData) {
   setDoc(doc(getFirestore(firebaseApp), "users", userId), userData);
 }
 const auth = getAuth(firebaseApp)
-const redirectUri = makeRedirectUri({
-  native: "bikecomponentsmanager://stravaAuth"
-})
-async function getTokens(code) {
-  const tokens = await exchangeCodeAsync(
-    {
-      clientId: Constants.manifest.extra.stravaClientId,
-      redirectUri: redirectUri,
-      code: code,
-      extraParams: {
-        // You must use the extraParams variation of clientSecret.
-        // Never store your client secret on the client.
-        client_secret: Constants.manifest.extra.stravaSecret
-      },
-    },
-    { tokenEndpoint: 'https://www.strava.com/oauth/token' }
-  );
-  return tokens
 
-}
+
 
 WebBrowser.maybeCompleteAuthSession();
 
-async function createStravaAuthAccount(authTokens, athlete)
-{
+async function createStravaAuthAccount(authTokens, athlete) {
   const hash = await Crypto.digestStringAsync(
     Crypto.CryptoDigestAlgorithm.SHA256,
-    String(athlete.id+Constants.manifest.stravaAccPwdSec)
+    String(athlete.id + Constants.manifest.stravaAccPwdSec)
   );
   console.log(authTokens)
-  createUserWithEmailAndPassword(auth, athlete.id+"@stravauser.com", hash).then(userObj => saveUserData(userObj.user.uid, {
+  createUserWithEmailAndPassword(auth, athlete.id + "@stravauser.com", hash).then(userObj => saveUserData(userObj.user.uid, {
     username: athlete.username,
     stravaAuth: true,
     stravaInfo: {
       accessToken: authTokens.accessToken,
       refreshToken: authTokens.refreshToken,
-      accessTokenExpiration: authTokens.issuedAt +authTokens.expiresIn 
+      accessTokenExpiration: authTokens.issuedAt + authTokens.expiresIn
     }
 
   }));
 }
 
-async function loginWithStravaAcc(athlete)
-{
+async function loginWithStravaAcc(athlete) {
   const hash = await Crypto.digestStringAsync(
     Crypto.CryptoDigestAlgorithm.SHA256,
-    String(athlete.id+Constants.manifest.stravaAccPwdSec)
+    String(athlete.id + Constants.manifest.stravaAccPwdSec)
   );
-  signInWithEmailAndPassword(auth,athlete.id + "@stravauser.com", hash)
+  signInWithEmailAndPassword(auth, athlete.id + "@stravauser.com", hash)
 }
 
 export default function LoginScreen({ navigation }) {
 
-  const [request, response, promptAsync] = useAuthRequest(
-    {
-      clientId: Constants.manifest.extra.stravaClientId,
-      scopes: ['profile:read_all'],
-
-      redirectUri: redirectUri
-      // makeRedirectUri({
-      // For usage in bare and standalone
-      // the "redirect" must match your "Authorization Callback Domain" in the Strava dev console.
-      //   useProxy: true
-      // }),
-    },
-    discovery
-  );
+  const [request, response, promptAsync] = stravaApi.authReq()
 
   React.useEffect(() => {
     if (response?.type === 'success') {
       const { code } = response.params;
       let authAthlete, authStravaTokens;
-      getTokens(code).then(tokens => {
+      stravaApi.getTokens(code).then(tokens => {
         authStravaTokens = tokens
         return stravaApi.getAthlete(tokens.accessToken)
 
       }).then(athlete => {
         authAthlete = athlete;
         return fetchSignInMethodsForEmail(auth, athlete.id + "@stravauser.com");
-      }).then(authMethods => 
-        {
-          if(authMethods.length == 0)
-          {
-            createStravaAuthAccount(authStravaTokens, authAthlete)
-          }
-          else
-          {
-            loginWithStravaAcc(authAthlete)
-            // console.log("TODO checknout, jestli je to strava authenticated user, jinak chyba")
-          }
+      }).then(authMethods => {
+        if (authMethods.length == 0) {
+          createStravaAuthAccount(authStravaTokens, authAthlete)
         }
-        )
+        else {
+          loginWithStravaAcc(authAthlete)
+        }
+      }
+      )
 
     }
   }, [response]);
