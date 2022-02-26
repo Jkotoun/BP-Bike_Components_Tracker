@@ -6,7 +6,7 @@ import { FAB } from 'react-native-paper';
 import { AuthenticatedUserContext } from '../../context'
 import { getAuth } from 'firebase/auth';
 import firebaseApp from '../config/firebase';
-import {getFirestore, doc, updateDoc } from 'firebase/firestore';
+import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection } from 'firebase/firestore';
 import Constants from 'expo-constants';
 import * as stravaApi from '../modules/stravaApi';
 import { makeRedirectUri, useAuthRequest, exchangeCodeAsync } from 'expo-auth-session';
@@ -31,9 +31,10 @@ const auth = getAuth(firebaseApp)
 export default function BikesListScreen({ navigation }) {
   navigation.navigationOptions = {}
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
-
+  const [isLoaded, setIsLoaded] = React.useState(false);
   //strava auth request
-  const [request, response, promptAsync] =stravaApi.authReq()
+  const [request, response, promptAsync] = stravaApi.authReq()
+
 
   // connect account with strava on authorization success
   React.useEffect(() => {
@@ -57,14 +58,24 @@ export default function BikesListScreen({ navigation }) {
     }
   }, [response]);
 
-
-
-
+  //bikes loading
+  React.useEffect(() => {
+    getDocs(query(collection(getFirestore(firebaseApp), "bikes"))).then(bikesDocRef => {
+      const bikesArray = []
+      bikesDocRef.forEach(bike => {
+        bikesArray.push(bike.data())
+      })
+      setBikes(bikesArray)
+      setIsLoaded(true)
+    })
+  }, [])
+  const [bikes, setBikes] = React.useState([]);
   const info = { "Distance": "548 km", "Ride Time": '36h 18m' }
   const info2 = { "Distance": "1235 km", "Ride Time": '80h 10m' }
   const info3 = { "Distance": "2453 km", "Ride Time": '113h 43m' }
   const images = {
-    mtb_full: require("../assets/images/full_suspension_mtb_icon.png"),
+    mtbfull: require("../assets/images/full_suspension_mtb_icon.png"),
+    mtbht: require("../assets/images/mtbht.png"),
     road: require("../assets/images/road_icon.png")
   };
   const bikeOptions = [
@@ -78,35 +89,49 @@ export default function BikesListScreen({ navigation }) {
     }
 
   ]
-  return (
-    <View style={styles.mainContainer}>
-      <ScrollView >
-        <View style={styles.mainContainer}>
 
-          <Card options={bikeOptions} title="Canyon grand canyon 8" description="MTB hardtail" icon={images.mtb_full} displayInfo={info} onPress={() => { navigation.navigate('BikeDetail') }} ></Card>
-          <Card options={bikeOptions} title="Specialized" description="Road" displayInfo={info2} icon={images.mtb_full} onPress={() => { navigation.navigate('BikeDetail') }}></Card>
-          {IsLoggedIn ? <Text>{User && User.email}</Text> : <Text>Ne</Text>}
-          <Text>          {IsLoggedIn ? ((User.stravaAuth || User.stravaConnected) ? "pohoda" : "propoj si toooo") : "neprihlasen"}</Text>
-          <Card options={bikeOptions} title="Qayron carma enduro full" description="MTB full suspension" displayInfo={info3} icon={images.mtb_full} onPress={() => { navigation.navigate('BikeDetail') }}></Card>
-        </View>
-      </ScrollView>
-      <View style={styles.addButtonContainer}>
-        <FAB
-          style={styles.addButton}
-          icon="plus"
-          onPress={() => navigation.navigate("AddBikeScreen")}
-        />
+
+  if (!isLoaded) {
+    return (
+      <View style={styles.mainContainer}>
+
+        <Text>Loading...</Text>
       </View>
-      {!(User.stravaConnected || User.stravaAuth) &&
-        <TouchableOpacity onPress={() => {
-          promptAsync();
-        }}>
-          <Image source={require('../assets/images/btn_strava_connectwith_light.png')} />
-        </TouchableOpacity>
-      }
-    </View>
+    )
+  }
+  else {
+    return (
+      <View style={styles.mainContainer}>
+        <ScrollView >
+          <View style={styles.bikeCardsContainer}>
+            {bikes.map(bike => {
+              return <Card options={bikeOptions} title={bike.bikeName} description={bike.type.displayName} icon={images[bike.type.value]} displayInfo={{
+                "Distance": bike.rideDistance + " km",
+                "Ride Time": Math.floor(bike.rideTime/3600) + " h " + Math.floor((bike.rideTime%3600)/60) + " m"
+              }} onPress={() => { navigation.navigate('BikeDetail') }} ></Card>
+            })}
 
-  );
+
+          </View>
+        </ScrollView>
+        <View style={styles.addButtonContainer}>
+          <FAB
+            style={styles.addButton}
+            icon="plus"
+            onPress={() => navigation.navigate("AddBikeScreen")}
+          />
+        </View>
+        {!(User.stravaConnected || User.stravaAuth) &&
+          <TouchableOpacity onPress={() => {
+            promptAsync();
+          }}>
+            <Image source={require('../assets/images/btn_strava_connectwith_light.png')} />
+          </TouchableOpacity>
+        }
+      </View>
+    );
+  }
+
 }
 
 const styles = {
