@@ -6,7 +6,7 @@ import { FAB } from 'react-native-paper';
 import { AuthenticatedUserContext } from '../../context'
 import { getAuth } from 'firebase/auth';
 import firebaseApp from '../config/firebase';
-import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection } from 'firebase/firestore';
+import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where } from 'firebase/firestore';
 import Constants from 'expo-constants';
 import * as stravaApi from '../modules/stravaApi';
 import { makeRedirectUri, useAuthRequest, exchangeCodeAsync } from 'expo-auth-session';
@@ -34,7 +34,7 @@ export default function BikesListScreen({ navigation }) {
   const [isLoaded, setIsLoaded] = React.useState(false);
   //strava auth request
   const [request, response, promptAsync] = stravaApi.authReq()
-
+  console.log(User.uid)
 
   // connect account with strava on authorization success
   React.useEffect(() => {
@@ -60,7 +60,9 @@ export default function BikesListScreen({ navigation }) {
 
   //bikes loading
   React.useEffect(() => {
-    getDocs(query(collection(getFirestore(firebaseApp), "bikes"))).then(bikesDocRef => {
+    console.log("ID:")
+    console.log(User.uid)
+    getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("user", "==", doc(getFirestore(firebaseApp), "users", User.uid)))).then(bikesDocRef => {
       const bikesArray = []
       bikesDocRef.forEach(bike => {
         bikesArray.push(bike.data())
@@ -70,9 +72,6 @@ export default function BikesListScreen({ navigation }) {
     })
   }, [])
   const [bikes, setBikes] = React.useState([]);
-  const info = { "Distance": "548 km", "Ride Time": '36h 18m' }
-  const info2 = { "Distance": "1235 km", "Ride Time": '80h 10m' }
-  const info3 = { "Distance": "2453 km", "Ride Time": '113h 43m' }
   const images = {
     mtbfull: require("../assets/images/full_suspension_mtb_icon.png"),
     mtbht: require("../assets/images/mtbht.png"),
@@ -105,7 +104,7 @@ export default function BikesListScreen({ navigation }) {
         <ScrollView >
           <View style={styles.bikeCardsContainer}>
             {bikes.map(bike => {
-              return <Card options={bikeOptions} title={bike.bikeName} description={bike.type.displayName} icon={images[bike.type.value]} displayInfo={{
+              return <Card options={bikeOptions} title={bike.name} description={bike.type.displayName} icon={images[bike.type.value]} displayInfo={{
                 "Distance": bike.rideDistance + " km",
                 "Ride Time": Math.floor(bike.rideTime/3600) + " h " + Math.floor((bike.rideTime%3600)/60) + " m"
               }} onPress={() => { navigation.navigate('BikeDetail') }} ></Card>
