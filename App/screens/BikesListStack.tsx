@@ -45,7 +45,7 @@ export default function BikesListStack({ navigation }) {
       </Stack.Group>
       
       <Stack.Group screenOptions={{ presentation: 'card' }}>
-        <Stack.Screen name="BikeDetail" options={{ title: "Bike xxx" }} component={BikeTabs} />
+        <Stack.Screen name="BikeDetailTabs" options={{ title: "Bike xxx" }} component={BikeTabs} />
         <Stack.Screen name='AddBikeScreen'
           options={{
             title: "Add bike",

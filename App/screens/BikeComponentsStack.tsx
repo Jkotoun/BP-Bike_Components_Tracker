@@ -12,7 +12,7 @@ import Close from 'react-native-vector-icons/MaterialCommunityIcons';
 import ComponentTabs from './ComponentTabs';
 import ComponentInstallListStack from './ComponentInstallListStack'
 
-export default function BikesListStack({ navigation }) {
+export default function BikesListStack({ navigation, route }) {
 
 
   const Stack = createNativeStackNavigator();
@@ -25,7 +25,7 @@ export default function BikesListStack({ navigation }) {
       
     }}>
       <Stack.Group>
-        <Stack.Screen name="BikeComponentsList" component={BikeComponentsList} />
+        <Stack.Screen name="BikeComponentsList" component={BikeComponentsList} initialParams={{bikeId: route.params.bikeId}} />
         <Stack.Screen name='ComponentUninstallFormScreen'
          options={{
            title:"Component YYY uninstall", 

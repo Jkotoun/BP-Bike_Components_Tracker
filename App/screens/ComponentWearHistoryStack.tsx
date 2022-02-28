@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ComponentWearHistoryScreen from'./ComponentWearHistoryScreen'
-export default function ComponentWearHistoryStack({ navigation }) {
+export default function ComponentWearHistoryStack({ navigation, route }) {
  
 
   const Stack = createNativeStackNavigator();
@@ -14,11 +14,9 @@ export default function ComponentWearHistoryStack({ navigation }) {
       animation: 'none',
       headerShown: false
     }}>
-      <Stack.Group>
-        <Stack.Screen name="ComponentWearHistoryScreen" component={ComponentWearHistoryScreen} />
-      </Stack.Group>
-      <Stack.Group screenOptions={{ presentation: 'card' }}>
-      </Stack.Group>
+    <Stack.Screen name="ComponentWearHistoryScreen" component={ComponentWearHistoryScreen} initialParams={{componentId: route.params.componentId}} />
+
+
     </Stack.Navigator>
 
   );

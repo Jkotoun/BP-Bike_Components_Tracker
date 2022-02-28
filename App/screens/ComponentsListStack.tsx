@@ -32,7 +32,7 @@ export default function BikesListScreen({ navigation }) {
         <Stack.Screen name="ComponentsListScreen" options={{ title: "All Components" }} component={ComponentsListScreen} />
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'card' }}>
-        <Stack.Screen name="ComponentDetail" options={{title: "Component xxx"}} component={ComponentTabs} />
+        <Stack.Screen name="ComponentDetailTabs" options={{title: "Component xxx"}} component={ComponentTabs} />
         <Stack.Screen name='AddComponentScreen' component={AddComponentScreen}  options={{
           title:"Add component", 
           headerRight:()=>{ return <Button  theme={{colors: {primary: 'black'}}} onPress={()=>navigation.navigate("ComponentsListScreen")}><Check name="check" size={24} color="white"/></Button>},

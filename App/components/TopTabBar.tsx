@@ -22,7 +22,7 @@ export default function TopTabBar(props)
         
         })}>
             {props.Tabs.map(item => {
-                return  (<Tab.Screen name={item.name} component={item.component} />)
+                return  (<Tab.Screen name={item.name} component={item.component} initialParams={{ componentId: props.componentId }}/>)
             })}
         </Tab.Navigator>
     )

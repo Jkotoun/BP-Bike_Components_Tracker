@@ -34,7 +34,6 @@ export default function BikesListScreen({ navigation }) {
   const [isLoaded, setIsLoaded] = React.useState(false);
   //strava auth request
   const [request, response, promptAsync] = stravaApi.authReq()
-  console.log(User.uid)
 
   // connect account with strava on authorization success
   React.useEffect(() => {
@@ -57,15 +56,14 @@ export default function BikesListScreen({ navigation }) {
       })
     }
   }, [response]);
-
   //bikes loading
   React.useEffect(() => {
-    console.log("ID:")
-    console.log(User.uid)
     getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("user", "==", doc(getFirestore(firebaseApp), "users", User.uid)))).then(bikesDocRef => {
       const bikesArray = []
       bikesDocRef.forEach(bike => {
-        bikesArray.push(bike.data())
+        let bikeData = bike.data()
+        bikeData.bikeId = bike.id
+        bikesArray.push(bikeData)
       })
       setBikes(bikesArray)
       setIsLoaded(true)
@@ -106,8 +104,12 @@ export default function BikesListScreen({ navigation }) {
             {bikes.map(bike => {
               return <Card options={bikeOptions} title={bike.name} description={bike.type.displayName} icon={images[bike.type.value]} displayInfo={{
                 "Distance": bike.rideDistance + " km",
-                "Ride Time": Math.floor(bike.rideTime/3600) + " h " + Math.floor((bike.rideTime%3600)/60) + " m"
-              }} onPress={() => { navigation.navigate('BikeDetail') }} ></Card>
+                "Ride Time": Math.floor(bike.rideTime / 3600) + " h " + Math.floor((bike.rideTime % 3600) / 60) + " m"
+              }} onPress={() => {
+                navigation.navigate('BikeDetailTabs', {
+                  bikeId: bike.bikeId
+                })
+              }} ></Card>
             })}
 
 

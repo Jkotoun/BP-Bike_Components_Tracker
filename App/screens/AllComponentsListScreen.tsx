@@ -1,18 +1,19 @@
 
 import * as React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection } from 'firebase/firestore';
+import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where } from 'firebase/firestore';
 import Card from '../components/Card';
 import { FAB } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
-
-async function loadBikes()
+import { AuthenticatedUserContext } from '../../context'
+async function loadComponents(loggedUser)
 {
   let componentsArray = []
-  let componentsDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "components")))
-  
+  let componentsDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "components"), where("user", "==", doc(getFirestore(firebaseApp), "users", loggedUser.uid))))
   componentsDocRef.forEach(component => {
-    componentsArray.push(component.data())
+    let componentData = component.data()
+    componentData.id = component.id
+    componentsArray.push(componentData)
   })
 
 
@@ -28,10 +29,11 @@ async function loadBikes()
 }
 
 export default function AllComponentsListScreen({ navigation }) {
+  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
   //bikes loading
   React.useEffect(() => {
    
-    loadBikes().then((componentsArray)=>{
+    loadComponents(User).then((componentsArray)=>{
       setComponents(componentsArray)
       setIsLoaded(true)
     })
@@ -39,8 +41,6 @@ export default function AllComponentsListScreen({ navigation }) {
   const [components, setComponents] = React.useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
 
-  const info = { "Distance": "120 km", "Ride Time": '11h 18m', "Condition": "New" }
-  const info2 = { "Distance": "548 km", "Ride Time": '36h 10m', "Condition": "Good" }
 
   const images = {
     chain: require("../assets/images/chain_icon.png"),
@@ -59,7 +59,9 @@ export default function AllComponentsListScreen({ navigation }) {
             return  <Card title={component.name} description={component.type.displayName} description2={"Bike: " + (component.bike? component.bike.name : "Not assigned")} icon={images[component.type.value]} displayInfo={{
               "Distance": component.rideDistance + " km",
               "Ride Time": Math.floor(component.rideTime/3600) + " h " + Math.floor((component.rideTime%3600)/60) + " m"
-            }}  onPress={() => { navigation.navigate('ComponentDetail') }}  ></Card>
+            }}  onPress={() => { navigation.navigate('ComponentDetailTabs', {
+              componentId: component.id
+            }) }}  ></Card>
           })}
           
           {/* <Card title="Fox 34 float rhythm" description="Fork" description2="Not installed" displayInfo={info2} icon={images.fork} onPress={() => { navigation.navigate('ComponentDetail') }}></Card> */}

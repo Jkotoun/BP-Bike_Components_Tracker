@@ -101,6 +101,7 @@ export default function RegisterScreen({ navigation }) {
               label='Password'
             />
           )}
+          
           name="password"
           defaultValue=""
         />

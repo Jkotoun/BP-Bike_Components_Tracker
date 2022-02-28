@@ -8,8 +8,7 @@ import ComponentWearHistoryStack from './ComponentWearHistoryStack';
 import ComponentDetails from './ComponentDetails';
 import ComponentServicesHistoryScreen from './ComponentServicesHistoryScreen';
 
-export default function ComponentTabs() {
-
+export default function ComponentTabs({route}) {
   const tabsObj = [
     {
       "key": "wear_tab",
@@ -29,6 +28,6 @@ export default function ComponentTabs() {
   ]
  
   return (
-    <TopTabBar Tabs={tabsObj}/>
+    <TopTabBar Tabs={tabsObj} componentId={route.params.componentId}/>
   );
 } 

@@ -9,14 +9,14 @@ import { useNavigationState } from '@react-navigation/native';
 import activeScreenName from '../modules/screenName';
 function topTabBarVisible(state) {
   const routeName = activeScreenName(state);
-  console.log(routeName)
   const tabBarHiddenPages = ["ComponentInstallListStack", "ComponentInstallFormScreen", "ComponentUninstallFormScreen"]
   return !tabBarHiddenPages.includes(routeName)
 }
 const Tab = createMaterialTopTabNavigator();
-export default function BikeTabs() {
-  const state = useNavigationState(state => state)
 
+
+export default function BikeTabs({route}) {
+  const state = useNavigationState(state => state)
   return (
     <Tab.Navigator
     screenOptions={() => ({
@@ -37,9 +37,9 @@ export default function BikeTabs() {
     
     })}>
 
-      <Tab.Screen name="Components" component={BikeComponentsStack} />
-      <Tab.Screen name="History" component={BikeComponentsHistoryScreen} />
-      <Tab.Screen name="Details" component={BikeDetails} />
+      <Tab.Screen name="Components" initialParams={{bikeId: route.params.bikeId}}component={BikeComponentsStack} />
+      <Tab.Screen name="History" initialParams={{bikeId: route.params.bikeId}} component={BikeComponentsHistoryScreen} />
+      <Tab.Screen name="Details" initialParams={{bikeId: route.params.bikeId}} component={BikeDetails} />
     </Tab.Navigator>
 
    );

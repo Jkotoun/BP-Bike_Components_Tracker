@@ -23,14 +23,15 @@ export default function BikeComponentsHistoryScreen() {
         {
           historyExample.map((item) => {
             return (
-              <View style={styles.historyItemContainer}>
-                <View style={styles.distanceContainer}>
-                  <Text style={styles.distanceText}>{item.distance} km</Text>
-                </View>
-                <View style={styles.descriptionContainer}>
-                  <Text>{item.action}:  {item.component}</Text>
-                </View>
-              </View>
+              <Text>TODO</Text>
+              // <View style={styles.historyItemContainer}>
+              //   <View style={styles.distanceContainer}>
+              //     <Text style={styles.distanceText}>{item.distance} km</Text>
+              //   </View>
+              //   <View style={styles.descriptionContainer}>
+              //     <Text>{item.action}:  {item.component}</Text>
+              //   </View>
+              // </View>
             )
           })
         }

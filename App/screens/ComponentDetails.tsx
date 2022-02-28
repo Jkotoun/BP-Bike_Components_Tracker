@@ -1,64 +1,88 @@
 
 import * as React from 'react';
-import { Text, View, StyleSheet} from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
+import firebaseApp from '../config/firebase';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
+import { getFirestore, setDoc, doc, getDoc } from 'firebase/firestore';
 
 
-export default function ComponentDetails() {
-  const historyExample = {
-    'Distance': '150 km',
-    'Ride Time': "50h 18m",
-    'Component Name': 'Shimano SLX chain',
-    'Purchase date': "2. 8. 2021",
-    'Component type': '12 speed chain',
-    'Brand': 'Shimano',
-    'Model': 'SLX'
+async function loadComponent(componentId) {
+  let component = await getDoc(doc(getFirestore(firebaseApp), "components", componentId))
+  return component.data()
+}
+
+export default function ComponentDetails({ route }) {
+
+ 
+  React.useEffect(() => {
+
+    loadComponent(route.params.componentId).then((component) => {
+      setComponent(component)
+      setIsLoaded(true)
+    })
+  }, [])
+  const [component, setComponent] = React.useState(Object);
+  const [isLoaded, setIsLoaded] = React.useState(false);
+ 
+
+  if (!isLoaded) {
+    return (<Text>Loading...</Text>)
   }
+  else {
+    const componentInfo = {
+      'Component Name': component.name,
+      'Component type': component.type.displayName,
+      'Brand': component.brand,
+      'Model': component.model,
+      'Distance': component.rideDistance + " km",
+      'Ride Time': Math.floor(component.rideTime/3600) + " h " + Math.floor((component.rideTime%3600)/60) + " m"
+    }
+    return (
+      <View style={styles.mainContainer}>
+        <View style={styles.contentContainer}>
+          {
+            Object.entries(componentInfo).map((prop, value) => {
+              return (
+                <View style={styles.itemContainer}>
 
-  return (
-    <View style={styles.mainContainer}>
-      <View style={styles.contentContainer}>
-        {
-           Object.entries(historyExample).map((prop, value) => {
-            return (
-              <View style={styles.itemContainer}>
-               
-                <View style={styles.propertyNameContainer}>
-                  <Text style={styles.propertyTextContainer}>{prop[0]}</Text>
+                  <View style={styles.propertyNameContainer}>
+                    <Text style={styles.propertyTextContainer}>{prop[0]}</Text>
+                  </View>
+                  <View style={styles.propertyValueContainer}>
+                    <Text>{prop[1]}</Text>
+                  </View>
                 </View>
-                <View style={styles.propertyValueContainer}>
-                  <Text>{prop[1]}</Text>
-                </View> 
-              </View>
-            )
-          })
-        }
+              )
+            })
+          }
+        </View>
       </View>
-    </View>
-  );
-} 
+    );
+  }
+}
 
 const styles = StyleSheet.create({
-  mainContainer:{
+  mainContainer: {
     flex: 1
   },
-  contentContainer:{
-    display: 'flex', 
-    flexDirection: 'column', 
+  contentContainer: {
+    display: 'flex',
+    flexDirection: 'column',
     padding: 25
   },
-  itemContainer:{
-    display: 'flex', 
-    flexDirection: 'row', 
+  itemContainer: {
+    display: 'flex',
+    flexDirection: 'row',
     paddingBottom: 15
   },
-  propertyNameContainer:{
+  propertyNameContainer: {
     flex: 1
   },
-  propertyTextContainer:{
-    fontSize: 15, 
+  propertyTextContainer: {
+    fontSize: 15,
     fontWeight: 'bold'
   },
-  propertyValueContainer:{
+  propertyValueContainer: {
     flex: 1
   }
 

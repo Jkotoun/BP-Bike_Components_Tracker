@@ -1,15 +1,15 @@
 
 import * as React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection } from 'firebase/firestore';
+import { getFirestore, doc, getDocs, getDoc, query, collection, where } from 'firebase/firestore';
 import Card from '../components/Card';
 import { FAB } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
-
-async function loadRides()
+import { AuthenticatedUserContext } from '../../context'
+async function loadRides(loggedUser)
 {
   let ridesArray = []
-  let ridesDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "rides")))
+  let ridesDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "rides"),  where("user", "==", doc(getFirestore(firebaseApp), "users", loggedUser.uid))))
   
   ridesDocRef.forEach(ride => {
     let rideData = ride.data()
@@ -29,10 +29,7 @@ async function loadRides()
 
 
 export default function BikesListScreen({ navigation }) {
- 
-
-  const info = { "Distance": "43 km", "Ride Time": '11h 18m', "Elevation gain": "872 m" }
-  const info2 = { "Distance": "73 km", "Ride Time": "4h 12m", "Elevation gain": '1234 m' }
+  const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
 
   const images = {
     route: require("../assets/images/route_icon.png"),
@@ -40,7 +37,7 @@ export default function BikesListScreen({ navigation }) {
 
     React.useEffect(() => {
    
-      loadRides().then((ridesArray)=>{
+      loadRides(User).then((ridesArray)=>{
         setRides(ridesArray)
         setIsLoaded(true)
       })
