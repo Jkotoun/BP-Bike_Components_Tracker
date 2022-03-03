@@ -20,7 +20,11 @@ interface Option{
 
 export default function Card(props: cardProps) {
     //calc flex for count of stats passed in props to view in card
-    let flexSize: number = 1 / Object.keys(props.displayInfo).length
+    let flexSize: number
+    if (props.displayInfo)
+    {
+         flexSize= 1 / Object.keys(props.displayInfo).length
+    }
     return (
         <CardBase>
             <View style={Styles.mainContainer}>
@@ -37,9 +41,12 @@ export default function Card(props: cardProps) {
                             <Image source={props.icon} style={Styles.imageStyle} />
                         </View>
                     </View>
+                    {props.displayInfo && 
                     <View style={Styles.statsContainer}>
                         {
+                            
                             Object.entries(props.displayInfo).map((prop, value) => {
+                                
                                 return (
                                     // different styles for >2 items (less padding, centering)
                                     <View key={prop[0]} style={{ flex: flexSize, paddingLeft: flexSize > 0.4 ? 15 : 0, alignItems: flexSize > 0.4 ? "flex-start" : "center" }}>
@@ -49,7 +56,7 @@ export default function Card(props: cardProps) {
                                 )
                             })
                         }
-                    </View>
+                    </View>}
                 </TouchableOpacity>
                 { props.options && <Menu style={Styles.menu}>
                     <MenuTrigger text={<Icon name="dots-vertical" size={23} color="#000000" />} />

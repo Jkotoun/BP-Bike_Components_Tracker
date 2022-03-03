@@ -7,7 +7,7 @@ import ComponentInstallListScreen from './ComponentInstallListScreen';
 import ComponentInstallFormScreen from './ComponentInstallFormScreen';
 import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 import Close from 'react-native-vector-icons/MaterialCommunityIcons';
-export default function ComponentInstallListStack({ navigation }) {
+export default function ComponentInstallListStack({ navigation, route }) {
 
   const Stack = createNativeStackNavigator();
 
@@ -21,17 +21,20 @@ export default function ComponentInstallListStack({ navigation }) {
       headerTintColor: '#ffffff'
     }}>
       <Stack.Group>
-        <Stack.Screen name="ComponentInstallListScreen" component={ComponentInstallListScreen} options={{ 
+        <Stack.Screen name="ComponentInstallListScreen" component={ComponentInstallListScreen} 
+        options={{ 
           title: "Available components",
           headerLeft: () => {return <Button theme={{colors: {primary: 'black'}}} style={{marginLeft:-20}} onPress={()=>navigation.goBack(null)}><Close name="close" size={24} color="white"/></Button>}
         }} 
         />
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'card' }}>
+        
         <Stack.Screen name='ComponentInstallFormScreen'
+        initialParams={{bikeId: route.params.bikeId}}
          options={{
            title:"Add component", 
-           headerRight:()=> { return <Button  theme={{colors: {primary: 'black'}}} onPress={()=>navigation.goBack(null)}><Check name="check" size={24} color="white"/></Button>},
+          //  headerRight:()=> { return <Button  theme={{colors: {primary: 'black'}}} onPress={()=>navigation.goBack(null)}><Check name="check" size={24} color="white"/></Button>},
            headerLeft: () => {return <Button theme={{colors: {primary: 'black'}}} style={{marginLeft:-20}} onPress={()=>navigation.goBack(null)}><Close name="close" size={24} color="white"/></Button>}
           }}
            component={ComponentInstallFormScreen} />

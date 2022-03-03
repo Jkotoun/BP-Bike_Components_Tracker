@@ -7,18 +7,23 @@ import TopTabBar from '../components/TopTabBar';
 import ComponentWearHistoryStack from './ComponentWearHistoryStack';
 import ComponentDetails from './ComponentDetails';
 import ComponentServicesHistoryScreen from './ComponentServicesHistoryScreen';
-
+import ComponentBikesInstallationHistory from './ComponentBikesInstallationHistory'
 export default function ComponentTabs({route}) {
   const tabsObj = [
     {
       "key": "wear_tab",
-      "name": "Wear history",
+      "name": "Wear",
       "component": ComponentWearHistoryStack
     },
     {
       "key": "services_tab",
       "name": "Services",
       "component": ComponentServicesHistoryScreen
+    },
+    {
+      "key": "installation_history_tab",
+      "name": "Swaps",
+      "component": ComponentBikesInstallationHistory
     },
     {
       "key": "details_tab",

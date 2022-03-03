@@ -27,6 +27,7 @@ export default function BikesListStack({ navigation, route }) {
       <Stack.Group>
         <Stack.Screen name="BikeComponentsList" component={BikeComponentsList} initialParams={{bikeId: route.params.bikeId}} />
         <Stack.Screen name='ComponentUninstallFormScreen'
+        initialParams={{bikeId: route.params.bikeId}}
          options={{
            title:"Component YYY uninstall", 
            headerShown:true,
@@ -38,9 +39,9 @@ export default function BikesListStack({ navigation, route }) {
            component={ComponentUninstallFormScreen} />
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'card' }}>
-        <Stack.Screen name='AllComponentsListScreen' component={AllComponentsListScreen}/>
         <Stack.Screen name="ComponentDetail" options={{title: "Component xxx"}} component={ComponentTabs} />
         <Stack.Screen name='ComponentInstallListStack'
+        initialParams={{bikeId: route.params.bikeId}}
          options={{
            title:"Add component", 
            headerShown: false

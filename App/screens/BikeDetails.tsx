@@ -22,7 +22,6 @@ export default function BikeDetails({ route }) {
   }, [])
   const [bike, setBike] = React.useState(Object);
   const [isLoaded, setIsLoaded] = React.useState(false);
-  console.log(route.params.bikeId)
 
 
   

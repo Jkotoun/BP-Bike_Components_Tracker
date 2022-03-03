@@ -5,6 +5,10 @@ import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where
 import { FAB } from 'react-native-paper';
 import Card from '../components/Card';
 import firebaseApp from '../config/firebase';
+
+import { useIsFocused } from "@react-navigation/native";
+
+
 async function loadComponents(bikeId) {
   let componentsArray = []
   let componentsDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "components"), where("bike", "==", doc(getFirestore(firebaseApp), "bikes", bikeId))))
@@ -27,14 +31,15 @@ async function loadComponents(bikeId) {
 
 
 export default function BikeComponentsList({ navigation, route }) {
-  console.log(route)
+
+  const isFocused = useIsFocused();
   React.useEffect(() => {
- 
+    setIsLoaded(false)
     loadComponents(route.params.bikeId).then((componentsArray) => {
       setComponents(componentsArray)
       setIsLoaded(true)
     })
-  }, [])
+  }, [isFocused])
   const [components, setComponents] = React.useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
 
@@ -44,21 +49,6 @@ export default function BikeComponentsList({ navigation, route }) {
   };
 
 
-  const componentOptions = [
-    {
-      text: "Uninstall",
-      onPress: () => navigation.navigate("ComponentUninstallFormScreen")
-    },
-    {
-      text: "Edit",
-      onPress: () => Alert.alert("Edit")
-    },
-    {
-      text: "Delete",
-      onPress: () => Alert.alert("Delete")
-    }
-
-  ]
   if (!isLoaded) {
     return (<Text>Loading...</Text>)
   }
@@ -69,10 +59,28 @@ export default function BikeComponentsList({ navigation, route }) {
         <View style={styles.componentCardsContainer}>
           {components.map(component => {
 
-          return <Card options={componentOptions} title={component.name}  description={component.type.displayName} icon={images[component.type.value]} displayInfo={{
-            "Distance": component.rideDistance + " km",
-            "Ride Time": Math.floor(component.rideTime/3600) + " h " + Math.floor((component.rideTime%3600)/60) + " m"
-          }}  onPress={() => { Alert.alert("TODO show correct component") }}></Card>
+            let componentOptions = [
+              {
+                text: "Uninstall",
+                onPress: () => navigation.navigate("ComponentUninstallFormScreen", {
+                  componentId: component.id,
+                  bikeId: route.params.bikeId
+                })
+              },
+              {
+                text: "Edit",
+                onPress: () => Alert.alert("Edit")
+              },
+              {
+                text: "Delete",
+                onPress: () => Alert.alert("Delete")
+              }
+
+            ]
+            return <Card options={componentOptions} title={component.name} description={component.type.displayName} icon={images[component.type.value]} displayInfo={{
+              "Distance": component.rideDistance + " km",
+              "Ride Time": Math.floor(component.rideTime / 3600) + " h " + Math.floor((component.rideTime % 3600) / 60) + " m"
+            }} onPress={() => { Alert.alert("TODO show correct component") }}></Card>
           })}
         </View>
         <View style={styles.addButtonContainer}>
