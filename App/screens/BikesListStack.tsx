@@ -21,10 +21,9 @@ import firebaseApp from '../config/firebase';
   }
 const auth = getAuth(firebaseApp)
 
-export default function BikesListStack({ navigation }) {
+export default function BikesListStack({ navigation , route}) {
   const Stack = createNativeStackNavigator();
   const navigationState = useNavigationState(state => state);
-
   return (
     <Stack.Navigator initialRouteName="BikeListScreen" screenOptions={({ route }) => ({
       headerStyle: {
@@ -50,7 +49,7 @@ export default function BikesListStack({ navigation }) {
           options={{
             title: "Add bike",
             headerRight: () => { return <Button theme={{ colors: { primary: 'black' } }} onPress={() => navigation.navigate("BikesListScreen")}><Check name="check" size={24} color="white" /></Button> },
-            headerLeft: () => { return <Button theme={{ colors: { primary: 'black' } }} style={{ marginLeft: -20 }} onPress={() => navigation.goBack(null)}><Close name="close" size={24} color="white" /></Button> }
+            headerLeft: () => { return <Button theme={{ colors: { primary: 'black' } }} style={{ marginLeft: -20 }}><Close name="close" size={24} color="white" /></Button> }
           }}
 
           component={AddBikeScreen} />

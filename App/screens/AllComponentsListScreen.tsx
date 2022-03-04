@@ -6,6 +6,7 @@ import Card from '../components/Card';
 import { FAB } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
+import { useIsFocused } from "@react-navigation/native";
 async function loadComponents(loggedUser)
 {
   let componentsArray = []
@@ -28,16 +29,18 @@ async function loadComponents(loggedUser)
   return componentsWithBikeObj
 }
 
-export default function AllComponentsListScreen({ navigation }) {
+export default function AllComponentsListScreen({ navigation, route }) {
+  
+  const isFocused = useIsFocused();
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
   //bikes loading
   React.useEffect(() => {
-   
+    if (!isLoaded || (route.params && route.params.forceReload)) {
     loadComponents(User).then((componentsArray)=>{
       setComponents(componentsArray)
       setIsLoaded(true)
-    })
-  }, [])
+    })}
+  }, [isFocused])
   const [components, setComponents] = React.useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
 

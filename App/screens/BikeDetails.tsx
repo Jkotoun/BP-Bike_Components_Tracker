@@ -33,7 +33,7 @@ export default function BikeDetails({ route }) {
     'Distance': bike.rideDistance + " km ",
     'Ride Time': Math.floor(bike.rideTime/3600) + " h " + Math.floor((bike.rideTime%3600)/60) + " m",
     'Bike Name': bike.name,
-    'Type': bike.type.displayName,
+    'Type': bike.type.label,
     'Brand': bike.brand,
     'Model': bike.model
   }

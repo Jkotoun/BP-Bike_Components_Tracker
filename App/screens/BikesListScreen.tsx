@@ -10,7 +10,7 @@ import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where
 import Constants from 'expo-constants';
 import * as stravaApi from '../modules/stravaApi';
 import { makeRedirectUri, useAuthRequest, exchangeCodeAsync } from 'expo-auth-session';
-
+import { useIsFocused } from "@react-navigation/native";
 
 //TODO mozna presunout do firestore func modelu
 //add strava account info to firestore doc in users collection
@@ -27,13 +27,16 @@ async function connectAccWithStrava(tokens, user) {
 }
 
 
-const auth = getAuth(firebaseApp)
-export default function BikesListScreen({ navigation }) {
+export default function BikesListScreen({ navigation, route }) {
   navigation.navigationOptions = {}
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
   const [isLoaded, setIsLoaded] = React.useState(false);
   //strava auth request
   const [request, response, promptAsync] = stravaApi.authReq()
+
+  const isFocused = useIsFocused();
+
+
 
   // connect account with strava on authorization success
   React.useEffect(() => {
@@ -57,18 +60,20 @@ export default function BikesListScreen({ navigation }) {
     }
   }, [response]);
   //bikes loading
-  React.useEffect(() => {
-    getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("user", "==", doc(getFirestore(firebaseApp), "users", User.uid)))).then(bikesDocRef => {
-      const bikesArray = []
-      bikesDocRef.forEach(bike => {
-        let bikeData = bike.data()
-        bikeData.bikeId = bike.id
-        bikesArray.push(bikeData)
+  React.useEffect(() => {   
+    if (!isLoaded || (route.params && route.params.forceReload)) {
+      getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("user", "==", doc(getFirestore(firebaseApp), "users", User.uid)))).then(bikesDocRef => {
+        const bikesArray = []
+        bikesDocRef.forEach(bike => {
+          let bikeData = bike.data()
+          bikeData.bikeId = bike.id
+          bikesArray.push(bikeData)
+        })
+        setBikes(bikesArray)
+        setIsLoaded(true)
       })
-      setBikes(bikesArray)
-      setIsLoaded(true)
-    })
-  }, [])
+    }
+  }, [isFocused])
   const [bikes, setBikes] = React.useState([]);
   const images = {
     mtbfull: require("../assets/images/full_suspension_mtb_icon.png"),
@@ -87,7 +92,6 @@ export default function BikesListScreen({ navigation }) {
 
   ]
 
-
   if (!isLoaded) {
     return (
       <View style={styles.mainContainer}>
@@ -102,7 +106,7 @@ export default function BikesListScreen({ navigation }) {
         <ScrollView >
           <View style={styles.bikeCardsContainer}>
             {bikes.map(bike => {
-              return <Card options={bikeOptions} title={bike.name} description={bike.type.displayName} icon={images[bike.type.value]} displayInfo={{
+              return <Card options={bikeOptions} title={bike.name} description={bike.type.label} icon={images[bike.type.value]} displayInfo={{
                 "Distance": bike.rideDistance + " km",
                 "Ride Time": Math.floor(bike.rideTime / 3600) + " h " + Math.floor((bike.rideTime % 3600) / 60) + " m"
               }} onPress={() => {

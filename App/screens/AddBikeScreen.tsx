@@ -1,37 +1,66 @@
 import * as React from 'react';
-import { Text, View, StatusBar, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { Text, View, StatusBar, StyleSheet, TouchableOpacity, Image, ScrollView, Button, Platform } from 'react-native';
 import { TextInput } from "react-native-paper"
 import { useForm, Controller } from 'react-hook-form'
-
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import { useState } from "react";
 import RNPickerSelect from 'react-native-picker-select';
-
-
-
-
+import { getFirestore, addDoc, collection, doc, updateDoc, query, where, getDocs, orderBy, deleteField, increment } from 'firebase/firestore';
+import firebaseApp from '../config/firebase';
+import { getAuth } from 'firebase/auth';
 
 export default function AddBikeScreen({ navigation }) {
-  const [selectedLanguage, setSelectedLanguage] = useState();
+  const [purchaseDate, setPurchaseDate] = useState(new Date());
+  const [show, setShow] = useState(false);
 
+  const datePickerHandler = (selectedDate) => {
+    const currentDate = selectedDate || purchaseDate;
+    setShow(Platform.OS === 'ios');
+    setPurchaseDate(currentDate);
 
-  const { control, setError, handleSubmit, formState: { errors } } = useForm();
+  };
+  const auth  = getAuth(firebaseApp)
+
+ 
+
+  const { control,register, handleSubmit, formState: { errors, isValid } } = useForm({mode: 'all'});
+
   const onSubmit = data => {
-    navigation.back()
+    data.type = bikeTypes.find(biketype => biketype.value == data.type)
+    data.purchaseDate = purchaseDate
+    data.rideTime = Number(data.rideTime)*60*60
+    data.rideDistance = Number(data.rideDistance)
+    data.user = doc(getFirestore(firebaseApp), "users", auth.currentUser.uid)
+    addDoc(collection(getFirestore(firebaseApp), "bikes"), data).then(() => {
+      navigation.navigate("BikesListScreen", {forceReload: true})
+    })
   }
+
+  const bikeTypes = [
+    { label: 'MTB full suspension', value: 'mtbfull' },
+    { label: 'MTB hardtail', value: 'mtbht' },
+    { label: 'Gravel', value: 'gravel' },
+    { label: 'Road', value: 'road' }
+  ]
 
   return (
     <View style={styles.mainContainer}>
       <View style={styles.formContainer}>
-        <ScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={{alignItems: 'center'}}>
-          <StatusBar backgroundColor="#F44336"/>
+        <ScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={{ alignItems: 'center' }}>
+          <StatusBar backgroundColor="#F44336" />
+
           <Controller
             control={control}
             rules={{
-              required: true,
+              required: {
+                value: true,
+                message: "Bike name is required"
+              }
             }}
+            
             render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
+              <TextInput 
                 theme={{ colors: { primary: '#F44336' } }}
                 underlineColor="transparent"
                 mode='flat'
@@ -39,42 +68,44 @@ export default function AddBikeScreen({ navigation }) {
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
+                error={!!errors.name}
                 label='Bike name'
               />
             )}
-            name="bikename"
+            name="name"
             defaultValue=""
           />
-          {errors.bikename?.type == 'required' && <Text style={{ color: "white" }}>Bike name is required</Text>}
+          {errors.name && <Text style={styles.errorMessage}>{errors.name.message}</Text>}
           <Controller
             control={control}
             rules={{
-              required: false,
+              required: {
+                value: true,
+                message: "Bike type is required"
+              }
             }}
             render={({ field: { onChange, value } }) => (
 
-              <RNPickerSelect
+              <RNPickerSelect 
                 onValueChange={onChange}
                 value={value}
-                placeholder={{ label: 'Bike type' }}
 
-                items={[
-                  { label: 'MTB full suspension', value: 'full' },
-                  { label: 'MTB hard tail', value: 'hardtail' },
-                  { label: 'Gravel', value: 'gravel' },
-                  { label: 'Road', value: 'road' }
-                ]}
+                items={bikeTypes}
                 style={pickerStyles}
               />
             )}
             name="type"
             defaultValue=""
           />
+           {errors.type && <Text style={styles.errorMessage}>{errors.type.message}</Text>}
           <Controller
 
             control={control}
             rules={{
-              required: true,
+              required: {
+                value: true,
+                message: "Brand is required"
+              }
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
@@ -91,15 +122,18 @@ export default function AddBikeScreen({ navigation }) {
             name="brand"
             defaultValue=""
           />
-          {errors.brand?.type == 'required' && <Text style={{ color: "white" }}>Brand is required</Text>}
+          {errors.brand && <Text style={styles.errorMessage}>{errors.brand.message}</Text>}
 
           <Controller
             control={control}
             rules={{
-              required: true,
+              required: {
+                value: true,
+                message: "Brand is required"
+              }
             }}
             render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
+              <TextInput 
                 theme={{ colors: { primary: '#F44336' } }}
                 underlineColor="transparent"
                 mode='flat'
@@ -113,34 +147,54 @@ export default function AddBikeScreen({ navigation }) {
             name="model"
             defaultValue=""
           />
-          {errors.model?.type == 'required' && <Text style={{ color: "white" }}>Model is required</Text>}
+          {errors.model && <Text style={styles.errorMessage}>{errors.model.message}</Text>}
 
-          <Controller
-            control={control}
-            rules={{
-              required: false,
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
+
+
+          {show && (
+
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={purchaseDate}
+              mode="date"
+              is24Hour={true}
+              display="default"
+              onChange={(event, value) => {
+                datePickerHandler(value)
+              }}
+            />
+            )}
+            
+
+
+              <TouchableOpacity onPress={() => setShow(true)}>
               <TextInput
                 theme={{ colors: { primary: '#F44336' } }}
                 underlineColor="transparent"
                 mode='flat'
                 style={styles.input}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                label='Purchase date'
-              />
-            )}
-            name="buy_date"
-            defaultValue=""
-          />
+                editable={false}
+                pointerEvents="none"
+                value={purchaseDate.toDateString()}
+                label='Purchase Date'
+                // onTouchStart={() =>setShow(true)}
+                />
+                </TouchableOpacity>
+
 
           <Controller
             control={control}
             rules={{
-              required: false,
+              required:{
+                value: true,
+                message: "Km to date is required"
+              }, 
+              pattern:{
+                value: /^[0-9]*$/,
+                message:"Ride distance must be positive number"
+              }
             }}
+        
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
                 theme={{ colors: { primary: '#F44336' } }}
@@ -154,19 +208,32 @@ export default function AddBikeScreen({ navigation }) {
                 label='Km to date'
               />
             )}
-            name="km_to_date"
-            defaultValue=""
+            name="rideDistance"
           />
+          {errors.rideDistance && <Text style={styles.errorMessage}>{errors.rideDistance.message}</Text>}
+
+
+
           <Controller
             control={control}
             rules={{
-              required: false,
+              required:{
+                value: true,
+                message: "Ride hours to date is required"
+              }, 
+              pattern:{
+                value: /^[0-9]*$/,
+                message:"Ride hours must be positive number"
+              }
+
             }}
+
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
                 theme={{ colors: { primary: '#F44336' } }}
                 underlineColor="transparent"
                 mode='flat'
+
                 style={styles.input}
                 onBlur={onBlur}
                 onChangeText={onChange}
@@ -175,10 +242,12 @@ export default function AddBikeScreen({ navigation }) {
                 label='Ride hours to date'
               />
             )}
-            name="hours_to_date"
-            defaultValue=""
+            name="rideTime"
           />
-
+          {errors.rideTime && <Text style={styles.errorMessage}>{errors.rideTime.message}</Text>}
+          <View style={{padding:20, width:"100%"}}>
+          <Button color={"#F44336"} title="Submit" disabled={!isValid}  onPress={handleSubmit(onSubmit)} />
+          </View>
         </ScrollView >
       </View>
     </View>
@@ -188,12 +257,12 @@ export default function AddBikeScreen({ navigation }) {
 
 
 const styles = StyleSheet.create({
-  mainContainer:{
+  mainContainer: {
     flex: 1,
     alignItems: 'center',
   },
-  formContainer:{
-    paddingVertical: 15 
+  formContainer: {
+    paddingVertical: 15
   },
   input: {
     elevation: 5,
@@ -223,7 +292,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     textAlign: 'left'
   },
-
+  errorMessage:{
+    alignSelf: 'flex-start', 
+    paddingLeft:10, 
+    color:'red'
+  }
 });
 
 const pickerStyles = {
@@ -248,5 +321,6 @@ const pickerStyles = {
   },
   placeholder: {
     color: "grey"
-  }
+  },
+
 }
