@@ -10,13 +10,6 @@ async function loadRide(rideId) {
     rideObj.bike = (await getDoc(rideObj.bike)).data()
 
   }
-
-
-  
-
-  var d = new Date(0); 
-  d.setUTCSeconds(rideObj.time.seconds);
-  rideObj.time = d
   return rideObj
 }
 
@@ -44,7 +37,7 @@ export default function RideDetail({ route }) {
 
 
           <Text style={styles.titleText}>Bike: {ride.bike ? ride.bike.name : "not assigned"}</Text>
-          <Text style={styles.dateText}>{ride.time.toISOString().split('T')[0] + " " + ride.time.getHours() + ":" + ride.time.getMinutes()}</Text>
+          <Text style={styles.dateText}>{ride.date.toDate().toISOString().split('T')[0] + " " + ride.time.getHours() + ":" + ride.time.getMinutes()}</Text>
         </View>
         {/* <View style={styles.rideMapContainer}>
         <Image source={require("./../assets/images/ridemap.png")} style={styles.rideMap} />

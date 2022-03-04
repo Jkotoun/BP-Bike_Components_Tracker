@@ -3,7 +3,6 @@ import { Text, View, StatusBar, StyleSheet, TouchableOpacity, Image, ScrollView,
 import { TextInput } from "react-native-paper"
 import { useForm, Controller } from 'react-hook-form'
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Picker } from '@react-native-picker/picker';
 import { useState } from "react";
 import RNPickerSelect from 'react-native-picker-select';
 import { getFirestore, addDoc, collection, doc, updateDoc, query, where, getDocs, orderBy, deleteField, increment } from 'firebase/firestore';
@@ -177,9 +176,8 @@ export default function AddBikeScreen({ navigation }) {
                 pointerEvents="none"
                 value={purchaseDate.toDateString()}
                 label='Purchase Date'
-                // onTouchStart={() =>setShow(true)}
                 />
-                </TouchableOpacity>
+              </TouchableOpacity>
 
 
           <Controller

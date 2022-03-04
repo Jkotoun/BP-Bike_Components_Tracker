@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, ScrollView } from 'react-native';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where } from 'firebase/firestore';
 import Card from '../components/Card';
 import { FAB } from 'react-native-paper';
@@ -43,20 +43,17 @@ export default function AllComponentsListScreen({ navigation, route }) {
   }, [isFocused])
   const [components, setComponents] = React.useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
-
-
   const images = {
     chain: require("../assets/images/chain_icon.png"),
     fork: require("../assets/images/bicycle_fork_icon.png")
   };
-
   if (!isLoaded) {
     return (<Text>Loading...</Text>)
   }
   else {
     return (
-
       <View style={Styles.mainContainer}>
+           <ScrollView >
         <View style={Styles.cardsContainer}>
           {components.map(component => {
             return  <Card title={component.name} description={component.type.displayName} description2={"Bike: " + (component.bike? component.bike.name : "Not assigned")} icon={images[component.type.value]} displayInfo={{
@@ -66,9 +63,9 @@ export default function AllComponentsListScreen({ navigation, route }) {
               componentId: component.id
             }) }}  ></Card>
           })}
-          
-          {/* <Card title="Fox 34 float rhythm" description="Fork" description2="Not installed" displayInfo={info2} icon={images.fork} onPress={() => { navigation.navigate('ComponentDetail') }}></Card> */}
+                  
         </View>
+        </ScrollView>
         <View style={Styles.addButtonContainer}>
           <FAB
             style={{
