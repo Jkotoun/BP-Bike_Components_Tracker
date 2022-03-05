@@ -25,7 +25,10 @@ export default function RideDetail({ route }) {
   const [ride, setRide] = React.useState(Object);
   const [isLoaded, setIsLoaded] = React.useState(false);
   if (!isLoaded) {
-    return (<Text>Loading...</Text>)
+    return (    <View style={styles.loadContainer}>
+
+      <Text style={{fontSize:35, fontWeight:'bold', color: "#F44336" }}>Loading...</Text>
+    </View>)
   }
   else {
 
@@ -37,7 +40,7 @@ export default function RideDetail({ route }) {
 
 
           <Text style={styles.titleText}>Bike: {ride.bike ? ride.bike.name : "not assigned"}</Text>
-          <Text style={styles.dateText}>{ride.date.toDate().toISOString().split('T')[0] + " " + ride.time.getHours() + ":" + ride.time.getMinutes()}</Text>
+          <Text style={styles.dateText}>{ride.date.toDate().toISOString().split('T')[0] + " " + ride.date.toDate().getHours() + ":" + ride.date.toDate().getMinutes()}</Text>
         </View>
         {/* <View style={styles.rideMapContainer}>
         <Image source={require("./../assets/images/ridemap.png")} style={styles.rideMap} />
@@ -50,14 +53,16 @@ export default function RideDetail({ route }) {
               <Text style={styles.statName}>Distance</Text>
             </View>
             <View style={styles.statContainter}>
-              <Text style={styles.statValue}>{ride.elevationGain} m</Text>
-              <Text style={styles.statName}>Elevation gain</Text>
-            </View>
-            <View style={styles.statContainter}>
               <Text style={styles.statValue}>{Math.floor(ride.rideTime / 3600) + " h " + Math.floor((ride.rideTime % 3600) / 60) + " m"}</Text>
               <Text style={styles.statName}>Ride time</Text>
             </View>
+            {ride.stravaActivity && 
+            <View style={styles.statContainter}>
+              <Text style={styles.statValue}>{ride.elevationGain} m</Text>
+              <Text style={styles.statName}>Elevation gain</Text>
+            </View>}
           </View>
+          {ride.stravaActivity && 
           <View style={styles.statsRow}>
             <View style={styles.statContainter}>
               <Text style={styles.statValue}>{ride.maxSpeed} km/h</Text>
@@ -72,6 +77,7 @@ export default function RideDetail({ route }) {
               <Text style={styles.statName}>Elapsed time</Text>
             </View>
           </View>
+          }
           {/* <Text style={styles.stravaLink}>View in strava</Text> */}
         </View>
       </View>
@@ -142,5 +148,10 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     fontSize: 14,
     paddingRight: 10
+  },
+  loadContainer:{
+    flex: 1,
+    alignItems: 'center',
+    justifyContent:'center'
   }
 })

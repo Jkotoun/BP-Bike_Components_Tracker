@@ -42,7 +42,12 @@ export default function ComponentInstallListScreen({ navigation }) {
   };
 
   if (!isLoaded) {
-    return (<Text>Loading...</Text>)
+    return (
+      <View style={styles.loadContainer}>
+
+      <Text style={{fontSize:35, fontWeight:'bold', color: "#F44336" }}>Loading...</Text>
+    </View>
+    )
   }
   else {
     return (
@@ -72,6 +77,11 @@ const styles = StyleSheet.create({
     marginTop: 5,
     alignItems: 'center',
     flex: 9
+  },
+  loadContainer:{
+    flex: 1,
+    alignItems: 'center',
+    justifyContent:'center'
   }
 })
 

@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, StatusBar } from 'react-native';
 
 
 export default function BikeComponentsHistoryScreen() {
@@ -19,6 +19,9 @@ export default function BikeComponentsHistoryScreen() {
 
   return (
     <View style={styles.mainContainer}>
+      <StatusBar
+      backgroundColor="#F44336"
+    />
       <View style={styles.contentContainer}>
         {
           historyExample.map((item) => {

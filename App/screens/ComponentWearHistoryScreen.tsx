@@ -38,7 +38,10 @@ export default function ComponentWearHistoryScreen({ route }) {
 
 
   if (!isLoaded) {
-    return (<Text>Loading...</Text>)
+    return (    
+    <View style={styles.loadContainer}>
+      <Text style={{fontSize:35, fontWeight:'bold', color: "#F44336" }}>Loading...</Text>
+    </View>)
   }
   else {
 
@@ -79,5 +82,10 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: "#F44336"
+  },
+  loadContainer:{
+    flex: 1,
+    alignItems: 'center',
+    justifyContent:'center'
   }
 })

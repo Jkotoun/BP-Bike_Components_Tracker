@@ -49,7 +49,7 @@ export default function Card(props: cardProps) {
                                 
                                 return (
                                     // different styles for >2 items (less padding, centering)
-                                    <View key={prop[0]} style={{ flex: flexSize, paddingLeft: flexSize > 0.4 ? 15 : 0, alignItems: flexSize > 0.4 ? "flex-start" : "center" }}>
+                                    <View key={prop[0]} style={{ flex: flexSize, paddingLeft: 15, alignItems: flexSize > 0.4 ? "flex-start" : "flex-start" }}>
                                         <Text style={Styles.statValue}>{prop[1]}</Text>
                                         <Text style={Styles.statDescription}>{prop[0]}</Text>
                                     </View>

@@ -26,7 +26,12 @@ export default function ComponentDetails({ route }) {
  
 
   if (!isLoaded) {
-    return (<Text>Loading...</Text>)
+    return (
+      <View style={styles.loadContainer}>
+
+      <Text style={{fontSize:35, fontWeight:'bold', color: "#F44336" }}>Loading...</Text>
+    </View>
+    )
   }
   else {
     const componentInfo = {
@@ -84,6 +89,11 @@ const styles = StyleSheet.create({
   },
   propertyValueContainer: {
     flex: 1
+  },
+  loadContainer:{
+    flex: 1,
+    alignItems: 'center',
+    justifyContent:'center'
   }
 
 

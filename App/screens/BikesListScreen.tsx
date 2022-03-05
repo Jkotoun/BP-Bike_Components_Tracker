@@ -1,16 +1,17 @@
 
 import * as React from 'react';
-import { View, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, Image, StatusBar } from 'react-native';
 import Card from '../components/Card';
 import { FAB } from 'react-native-paper';
 import { AuthenticatedUserContext } from '../../context'
 import { getAuth } from 'firebase/auth';
 import firebaseApp from '../config/firebase';
-import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where } from 'firebase/firestore';
+import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc } from 'firebase/firestore';
 import Constants from 'expo-constants';
 import * as stravaApi from '../modules/stravaApi';
 import { makeRedirectUri, useAuthRequest, exchangeCodeAsync } from 'expo-auth-session';
 import { useIsFocused } from "@react-navigation/native";
+import {deleteBike} from "../modules/firestoreActions";
 
 //TODO mozna presunout do firestore func modelu
 //add strava account info to firestore doc in users collection
@@ -60,7 +61,7 @@ export default function BikesListScreen({ navigation, route }) {
     }
   }, [response]);
   //bikes loading
-  React.useEffect(() => {   
+  React.useEffect(() => {
     if (!isLoaded || (route.params && route.params.forceReload)) {
       getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("user", "==", doc(getFirestore(firebaseApp), "users", User.uid)))).then(bikesDocRef => {
         const bikesArray = []
@@ -73,39 +74,45 @@ export default function BikesListScreen({ navigation, route }) {
         setIsLoaded(true)
       })
     }
-  }, [isFocused])
+  }, [isFocused, isLoaded])
   const [bikes, setBikes] = React.useState([]);
   const images = {
     mtbfull: require("../assets/images/full_suspension_mtb_icon.png"),
     mtbht: require("../assets/images/mtbht.png"),
     road: require("../assets/images/road_icon.png")
   };
-  const bikeOptions = [
-    {
-      text: "Edit",
-      onPress: () => Alert.alert("edit")
-    },
-    {
-      text: "Delete",
-      onPress: () => Alert.alert("delete")
-    }
 
-  ]
 
   if (!isLoaded) {
     return (
-      <View style={styles.mainContainer}>
+      <View style={styles.loadContainer}>
 
-        <Text>Loading...</Text>
-      </View>
+      <Text style={{fontSize:35, fontWeight:'bold', color: "#F44336" }}>Loading...</Text>
+    </View>
     )
   }
   else {
     return (
       <View style={styles.mainContainer}>
         <ScrollView >
+        <StatusBar
+              backgroundColor="#F44336"
+            />
           <View style={styles.bikeCardsContainer}>
             {bikes.map(bike => {
+
+              const bikeOptions = [
+                {
+                  text: "Delete",
+                  onPress: () =>{ 
+                    deleteBike(bike.bikeId).then(() => 
+                    setIsLoaded(false)
+                    )
+                  }
+                }
+
+              ]
+
               return <Card options={bikeOptions} title={bike.name} description={bike.type.label} icon={images[bike.type.value]} displayInfo={{
                 "Distance": bike.rideDistance + " km",
                 "Ride Time": Math.floor(bike.rideTime / 3600) + " h " + Math.floor((bike.rideTime % 3600) / 60) + " m"
@@ -159,5 +166,10 @@ const styles = {
   },
   addButton: {
     backgroundColor: "#F44336"
+  },
+  loadContainer:{
+    flex: 1,
+    alignItems: 'center',
+    justifyContent:'center'
   }
 }

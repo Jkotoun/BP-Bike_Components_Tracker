@@ -61,6 +61,10 @@ export default function AddRideScreen({ navigation }) {
     data.user = doc(getFirestore(firebaseApp), "users", auth.currentUser.uid)
     data.bike = doc(getFirestore(firebaseApp), "bikes", data.bike)
     data.date = rideDate
+    if(rideDate > new Date())
+    {
+      throw new Error("Date of ride cant be in future")
+    }
     data.rideTime = rideTime.getHours()*60*60 + rideTime.getMinutes()*60
     addDoc(collection(getFirestore(firebaseApp), "rides"), data).then(() => {
       navigation.navigate("RidesListScreen", { forceReload: true })
@@ -69,9 +73,9 @@ export default function AddRideScreen({ navigation }) {
 
   if (!isLoaded) {
     return (
-      <View style={styles.mainContainer}>
+      <View style={styles.loadContainer}>
 
-        <Text>Loading...</Text>
+        <Text style={{fontSize:35, fontWeight:'bold', color: "#F44336" }}>Loading...</Text>
       </View>
     )
   }
@@ -270,6 +274,11 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     paddingLeft: 10,
     color: 'red'
+  },
+  loadContainer:{
+    flex: 1,
+    alignItems: 'center',
+    justifyContent:'center'
   }
 });
 const pickerStyle = {

@@ -50,7 +50,11 @@ export default function BikeComponentsList({ navigation, route }) {
 
 
   if (!isLoaded) {
-    return (<Text>Loading...</Text>)
+    return (
+    <View style={styles.loadContainer}>
+
+      <Text style={{ fontSize: 35, fontWeight: 'bold', color: "#F44336" }}>Loading...</Text>
+    </View>)
   }
   else {
 
@@ -66,16 +70,7 @@ export default function BikeComponentsList({ navigation, route }) {
                   componentId: component.id,
                   bikeId: route.params.bikeId
                 })
-              },
-              {
-                text: "Edit",
-                onPress: () => Alert.alert("Edit")
-              },
-              {
-                text: "Delete",
-                onPress: () => Alert.alert("Delete")
               }
-
             ]
             return <Card options={componentOptions} title={component.name} description={component.type.displayName} icon={images[component.type.value]} displayInfo={{
               "Distance": component.rideDistance + " km",
@@ -114,6 +109,11 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: "#F44336"
+  },
+  loadContainer:{
+    flex: 1,
+    alignItems: 'center',
+    justifyContent:'center'
   }
 })
 
