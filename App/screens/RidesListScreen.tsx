@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { View, StyleSheet, Text, ScrollView, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, ActivityIndicator, StatusBar } from 'react-native';
 import { getFirestore, doc, getDocs, getDoc, query, collection, where, deleteDoc } from 'firebase/firestore';
 import Card from '../components/Card';
 import { FAB } from 'react-native-paper';
@@ -59,6 +59,7 @@ export default function BikesListScreen({ navigation, route }) {
 
     return (
       <View style={styles.mainContainer}>
+        <StatusBar backgroundColor="#F44336" />
         <ScrollView>
           <View style={styles.rideCardsContainer}>
             {rides.map(ride => {

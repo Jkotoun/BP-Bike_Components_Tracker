@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { Text, View, Image, StyleSheet, ActivityIndicator } from 'react-native';
+import { Text, View, Image, StyleSheet, ActivityIndicator, StatusBar } from 'react-native';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection } from 'firebase/firestore';
 import firebaseApp from '../config/firebase';
 import { useIsFocused } from "@react-navigation/native";
@@ -40,6 +40,7 @@ export default function RideDetail({ route }) {
     // console.log(route.params)
     return (
       <View style={styles.mainContainer}>
+        <StatusBar backgroundColor="#F44336" />
         <View style={styles.titleContainer}>
 
 

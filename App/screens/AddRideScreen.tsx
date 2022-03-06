@@ -37,7 +37,6 @@ export default function AddRideScreen({ navigation }) {
   const [bikes, setBikes] = React.useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
   React.useEffect(() => {
-    if (!isLoaded) {
       let bikesArray = []
       getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("user", "==", doc(getFirestore(firebaseApp), "users", User.uid)))).then(bikesDocRef => {
         bikesDocRef.forEach(bike => {
@@ -51,7 +50,6 @@ export default function AddRideScreen({ navigation }) {
       }).then(() => {
         setIsLoaded(true)
       })
-    }
   }, [isFocused]);
   const [selectedLanguage, setSelectedLanguage] = useState();
   const { control, setError, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'all' });
