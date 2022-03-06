@@ -1,11 +1,11 @@
 
 import * as React from 'react';
-import { Text, View, StyleSheet, Alert } from 'react-native';
+import { Text, View, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import firebaseApp from '../config/firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 import { getFirestore, getDoc, getDocs, query, collection, where, doc, deleteDoc, updateDoc, deleteField, increment } from 'firebase/firestore';
 import ComponentSwapCard from '../components/ComponentSwapCard';
-
+import { useIsFocused } from "@react-navigation/native";
 //TODO refactor, odeccist z komponent km pri smazani recordu
 
 async function removeKmAndHoursBetweenDates(startDate, endDate, bikeRef, componentRef) {
@@ -30,11 +30,11 @@ async function loadComponentSwaps(componentId) {
     let component = await getDocs(query(collection(getFirestore(firebaseApp), "bikesComponents"), where("component", "==", doc(getFirestore(firebaseApp), "components", componentId))))
     let componentsArray = []
     component.forEach(comp => {
-        
+
         let compData = comp.data()
         compData.id = comp.id
         compData.ref = comp.ref
-        compData.installTime = compData.installTime 
+        compData.installTime = compData.installTime
 
 
         componentsArray.push(compData)
@@ -42,36 +42,37 @@ async function loadComponentSwaps(componentId) {
     })
 
     const promises = componentsArray.map(async comp => {
-        
+
         comp.bikeDoc = (await getDoc(comp.bike))
         comp.componentDoc = (await getDoc(comp.component))
         return comp
     })
     let componentsWithBikeObj = await Promise.all(promises)
-    componentsWithBikeObj.sort((a, b) => { return b.installTime - a.installTime })      
+    componentsWithBikeObj.sort((a, b) => { return b.installTime - a.installTime })
     return componentsWithBikeObj
 }
 
 export default function ComponentBikesInstallationHistory({ route }) {
 
+    const isFocused = useIsFocused();
 
     const [componentSwapRecords, setComponentSwapRecords] = React.useState(Array);
     const [isLoaded, setIsLoaded] = React.useState(true);
     React.useEffect(() => {
-
         loadComponentSwaps(route.params.componentId).then((componentSwapRecords) => {
             setComponentSwapRecords(componentSwapRecords)
             setIsLoaded(true)
         })
-    }, [isLoaded])
+    }, [isLoaded, isFocused])
 
 
     if (!isLoaded) {
         return (
             <View style={styles.loadContainer}>
 
-            <Text style={{fontSize:35, fontWeight:'bold', color: "#F44336" }}>Loading...</Text>
-          </View>
+                <ActivityIndicator size="large" color="#F44336" />
+
+            </View>
         )
     }
     else {
@@ -81,25 +82,23 @@ export default function ComponentBikesInstallationHistory({ route }) {
                     const swapRecordOptions = [
                         {
                             text: "Delete",
-                            onPress: () => 
-                            {
-                                if(!componentSwapRecord.uninstallTime)
-                                {
+                            onPress: () => {
+                                if (!componentSwapRecord.uninstallTime) {
                                     updateDoc(componentSwapRecord.component, {
                                         bike: deleteField()
                                     })
                                 }
                                 let deleteRecord = deleteDoc(componentSwapRecord.ref)
-                                let removeKmAndHours = removeKmAndHoursBetweenDates(componentSwapRecord.installTime, componentSwapRecord.uninstallTime? componentSwapRecord.uninstallTime : new Date(),
-                                 componentSwapRecord.bikeDoc.ref, componentSwapRecord.componentDoc.ref)
+                                let removeKmAndHours = removeKmAndHoursBetweenDates(componentSwapRecord.installTime, componentSwapRecord.uninstallTime ? componentSwapRecord.uninstallTime : new Date(),
+                                    componentSwapRecord.bikeDoc.ref, componentSwapRecord.componentDoc.ref)
                                 Promise.all([deleteRecord, removeKmAndHours]).then(() => {
                                     setIsLoaded(false)
                                 })
 
-                            
+
                             }
                         }
-                    
+
                     ]
 
                     return <ComponentSwapCard options={swapRecordOptions} maintext={componentSwapRecord.bikeDoc.data().name}
@@ -135,11 +134,11 @@ const styles = StyleSheet.create({
     propertyValueContainer: {
         flex: 1
     },
-    loadContainer:{
+    loadContainer: {
         flex: 1,
         alignItems: 'center',
-        justifyContent:'center'
-      }
+        justifyContent: 'center'
+    }
 
 
 })

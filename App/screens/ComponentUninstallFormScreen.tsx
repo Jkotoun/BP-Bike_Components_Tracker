@@ -56,8 +56,6 @@ async function uninstallComponent(bikeId, componentId, uninstallTime: Date) {
 
 
 export default function ComponentUninstallFormScreen({ navigation, route }) {
-    console.log("UNIN:")
-    console.log(route.params)
     const [date, setDate] = useState(new Date());
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);

@@ -1,13 +1,13 @@
 
 import * as React from 'react';
-import { View, StyleSheet, Text, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, ActivityIndicator } from 'react-native';
 import { getFirestore, doc, getDocs, getDoc, query, collection, where, deleteDoc } from 'firebase/firestore';
 import Card from '../components/Card';
 import { FAB } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import { useIsFocused } from "@react-navigation/native";
-import {deleteRide} from "../modules/firestoreActions";
+import { deleteRide } from "../modules/firestoreActions";
 async function loadRides(loggedUser) {
   let ridesArray = []
   let ridesDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "rides"), where("user", "==", doc(getFirestore(firebaseApp), "users", loggedUser.uid))))
@@ -38,19 +38,21 @@ export default function BikesListScreen({ navigation, route }) {
   const [isLoaded, setIsLoaded] = React.useState(false);
 
   React.useEffect(() => {
-    if (!isLoaded || (route.params && route.params.forceReload)) {
 
       loadRides(User).then((ridesArray) => {
         setRides(ridesArray)
         setIsLoaded(true)
       })
-    }
+    
   }, [isFocused, isLoaded])
   const [rides, setRides] = React.useState([]);
   if (!isLoaded) {
-    return (    <View style={styles.loadContainer}>
+    return (<View style={styles.loadContainer}>
 
-      <Text style={{fontSize:35, fontWeight:'bold', color: "#F44336" }}>Loading...</Text>
+      <ActivityIndicator size="large" color="#F44336" />
+      <View style={styles.addButtonContainer}>
+        <FAB style={styles.addButton} icon="plus" onPress={() => navigation.navigate("AddRideScreen")} />
+      </View>
     </View>)
   }
   else {
@@ -61,7 +63,7 @@ export default function BikesListScreen({ navigation, route }) {
           <View style={styles.rideCardsContainer}>
             {rides.map(ride => {
 
-              
+
               let infoObj = {
                 "Distance": ride.distance + " km",
                 "Total time": Math.floor(ride.rideTime / 3600) + " h " + Math.floor((ride.rideTime % 3600) / 60) + " m"
@@ -69,8 +71,8 @@ export default function BikesListScreen({ navigation, route }) {
 
               infoObj["Activity date"] = ride.date.toDate().toISOString().split('T')[0]
               if (ride.stravaActivity) {
-                
-                return <Card  title={ride.name} description2={"Bike: " + (ride.bike ? ride.bike.name : "not assigned")} icon={images.route} displayInfo={infoObj} onPress={() => {
+
+                return <Card title={ride.name} description2={"Bike: " + (ride.bike ? ride.bike.name : "not assigned")} icon={images.route} displayInfo={infoObj} onPress={() => {
                   navigation.navigate('RideDetail', {
                     rideId: ride.id
                   })
@@ -87,7 +89,7 @@ export default function BikesListScreen({ navigation, route }) {
                       )
                     }
                   }
-  
+
                 ]
                 return <Card options={rideOptions} title={ride.name} description2={"Bike: " + (ride.bike ? ride.bike.name : "not assigned")} icon={images.route} displayInfo={infoObj} onPress={() => {
                   navigation.navigate('RideDetail', {
@@ -126,9 +128,9 @@ const styles = StyleSheet.create({
   addButton: {
     backgroundColor: "#F44336"
   },
-  loadContainer:{
+  loadContainer: {
     flex: 1,
     alignItems: 'center',
-    justifyContent:'center'
+    justifyContent: 'center'
   }
 })

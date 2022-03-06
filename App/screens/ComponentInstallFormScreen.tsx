@@ -18,42 +18,45 @@ async function installComponent(componentId, bikeId, installTime: Date) {
   })
 
   if (correctInstallDate) {
-    if (installTime <= new Date()) {
-      
-      let bikeRef =  doc(getFirestore(firebaseApp), "bikes", bikeId)
+    let bikeDoc = (await getDoc(doc(getFirestore(firebaseApp), "bikes", bikeId)))
+    if (installTime > new Date()) {
+      throw new Error("Installation time can not be set in future")
+    }
+    else if (installTime < bikeDoc.data().purchaseDate.toDate()) {
+      throw new Error("Installation time can not be earlier than bike purchase date")
+    }
+    else {
+
       let componentRef = doc(getFirestore(firebaseApp), "components", componentId)
-      let addSwapRecord = addDoc(collection(getFirestore(firebaseApp), "bikesComponents"), {
-        bike: bikeRef,
+      await  addDoc(collection(getFirestore(firebaseApp), "bikesComponents"), {
+        bike: bikeDoc.ref,
         component: componentRef,
         installTime: installTime
       })
-      let addBikeRef = updateDoc(doc(getFirestore(firebaseApp), "components", componentId), {
+      await updateDoc(doc(getFirestore(firebaseApp), "components", componentId), {
         bike: doc(getFirestore(firebaseApp), "bikes", bikeId)
       })
- 
-      
-      
-      let rides = await getDocs(query(collection(getFirestore(firebaseApp), "rides"), 
-      where("bike", "==", bikeRef),
-      where("time", ">=", installTime)))
-      
+
+
+
+      let rides = await getDocs(query(collection(getFirestore(firebaseApp), "rides"),
+        where("bike", "==", bikeDoc.ref),
+        where("time", ">=", installTime)))
+
       let ridesArray = []
       rides.forEach(ride => ridesArray.push(ride.data()))
 
       let kmTotal = ridesArray.reduce((ride1, ride2) => ride1 + (ride2["distance"] || 0), 0)
       let rideTimeTotal = ridesArray.reduce((ride1, ride2) => ride1 + (ride2["rideTime"] || 0), 0)
-      let incrementDistance =  updateDoc(componentRef, {
+      await updateDoc(componentRef, {
         rideDistance: increment(kmTotal),
         rideTime: increment(rideTimeTotal)
       })
-      
-      Promise.all([addSwapRecord, addBikeRef, incrementDistance])
+
+      // return Promise.all([addSwapRecord, addBikeRef, incrementDistance])
 
     }
-    else {
-      
-      throw new Error("Installation time can not be set in future")
-    }
+
   }
   else {
     throw new Error("You can not set installation time, which is earlier than existing component installation record")
@@ -64,6 +67,8 @@ async function installComponent(componentId, bikeId, installTime: Date) {
 
 
 export default function ComponentInstallFormScreen({ navigation, route }) {
+  
+  
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
@@ -130,15 +135,20 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
           let installTime: Date;
 
           if (checked == "default") {
-            getDoc(doc(getFirestore(firebaseApp), "bikes", route.params.bikeId)).then(bikeRef => {
+            getDoc(doc(getFirestore(firebaseApp), "bikes", route.params.bikeId))
+            .then(bikeRef => {
               installComponent(route.params.componentId, route.params.bikeId, bikeRef.data().purchaseDate.toDate()).then(() => {
-                navigation.navigate("BikeComponentsList")
-            })
+                navigation.navigate("BikeComponentsList", {
+                  forceReload: true
+                })
+              })
             })
           }
           else {
             installComponent(route.params.componentId, route.params.bikeId, date).then(() => {
-              navigation.navigate("BikeComponentsList")
+              navigation.navigate("BikeComponentsList", {
+                forceReload: true
+              })
             })
           }
 

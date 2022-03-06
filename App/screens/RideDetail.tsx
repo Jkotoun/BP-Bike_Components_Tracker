@@ -1,8 +1,10 @@
 
 import * as React from 'react';
-import { Text, View, Image, StyleSheet } from 'react-native';
+import { Text, View, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection } from 'firebase/firestore';
 import firebaseApp from '../config/firebase';
+import { useIsFocused } from "@react-navigation/native";
+
 async function loadRide(rideId) {
   let rideDocRef = await getDoc(doc(getFirestore(firebaseApp), "rides", rideId))
   let rideObj = rideDocRef.data()
@@ -15,19 +17,21 @@ async function loadRide(rideId) {
 
 
 export default function RideDetail({ route }) {
+  const isFocused = useIsFocused();
+  
   React.useEffect(() => {
-
     loadRide(route.params.rideId).then((ride) => {
       setRide(ride)
       setIsLoaded(true)
     })
-  }, [])
+  }, [isFocused])
   const [ride, setRide] = React.useState(Object);
   const [isLoaded, setIsLoaded] = React.useState(false);
   if (!isLoaded) {
-    return (    <View style={styles.loadContainer}>
+    return (<View style={styles.loadContainer}>
 
-      <Text style={{fontSize:35, fontWeight:'bold', color: "#F44336" }}>Loading...</Text>
+      <ActivityIndicator size="large" color="#F44336" />
+
     </View>)
   }
   else {
@@ -56,27 +60,27 @@ export default function RideDetail({ route }) {
               <Text style={styles.statValue}>{Math.floor(ride.rideTime / 3600) + " h " + Math.floor((ride.rideTime % 3600) / 60) + " m"}</Text>
               <Text style={styles.statName}>Ride time</Text>
             </View>
-            {ride.stravaActivity && 
-            <View style={styles.statContainter}>
-              <Text style={styles.statValue}>{ride.elevationGain} m</Text>
-              <Text style={styles.statName}>Elevation gain</Text>
-            </View>}
+            {ride.stravaActivity &&
+              <View style={styles.statContainter}>
+                <Text style={styles.statValue}>{ride.elevationGain} m</Text>
+                <Text style={styles.statName}>Elevation gain</Text>
+              </View>}
           </View>
-          {ride.stravaActivity && 
-          <View style={styles.statsRow}>
-            <View style={styles.statContainter}>
-              <Text style={styles.statValue}>{ride.maxSpeed} km/h</Text>
-              <Text style={styles.statName}>Max speed</Text>
+          {ride.stravaActivity &&
+            <View style={styles.statsRow}>
+              <View style={styles.statContainter}>
+                <Text style={styles.statValue}>{ride.maxSpeed} km/h</Text>
+                <Text style={styles.statName}>Max speed</Text>
+              </View>
+              <View style={styles.statContainter}>
+                <Text style={styles.statValue}>{ride.avgSpeed} km/h</Text>
+                <Text style={styles.statName}>Average speed</Text>
+              </View>
+              <View style={styles.statContainter}>
+                <Text style={styles.statValue}>{Math.floor(ride.elapsedTime / 3600) + " h " + Math.floor((ride.elapsedTime % 3600) / 60) + " m"}</Text>
+                <Text style={styles.statName}>Elapsed time</Text>
+              </View>
             </View>
-            <View style={styles.statContainter}>
-              <Text style={styles.statValue}>{ride.avgSpeed} km/h</Text>
-              <Text style={styles.statName}>Average speed</Text>
-            </View>
-            <View style={styles.statContainter}>
-              <Text style={styles.statValue}>{Math.floor(ride.elapsedTime / 3600) + " h " + Math.floor((ride.elapsedTime % 3600) / 60) + " m"}</Text>
-              <Text style={styles.statName}>Elapsed time</Text>
-            </View>
-          </View>
           }
           {/* <Text style={styles.stravaLink}>View in strava</Text> */}
         </View>
@@ -149,9 +153,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     paddingRight: 10
   },
-  loadContainer:{
+  loadContainer: {
     flex: 1,
     alignItems: 'center',
-    justifyContent:'center'
+    justifyContent: 'center'
   }
 })

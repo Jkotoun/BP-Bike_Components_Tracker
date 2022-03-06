@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { View, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, Image, StatusBar } from 'react-native';
+import { View, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, Image, StatusBar, ActivityIndicator } from 'react-native';
 import Card from '../components/Card';
 import { FAB } from 'react-native-paper';
 import { AuthenticatedUserContext } from '../../context'
@@ -62,7 +62,6 @@ export default function BikesListScreen({ navigation, route }) {
   }, [response]);
   //bikes loading
   React.useEffect(() => {
-    if (!isLoaded || (route.params && route.params.forceReload)) {
       getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("user", "==", doc(getFirestore(firebaseApp), "users", User.uid)))).then(bikesDocRef => {
         const bikesArray = []
         bikesDocRef.forEach(bike => {
@@ -73,7 +72,6 @@ export default function BikesListScreen({ navigation, route }) {
         setBikes(bikesArray)
         setIsLoaded(true)
       })
-    }
   }, [isFocused, isLoaded])
   const [bikes, setBikes] = React.useState([]);
   const images = {
@@ -82,12 +80,18 @@ export default function BikesListScreen({ navigation, route }) {
     road: require("../assets/images/road_icon.png")
   };
 
-
   if (!isLoaded) {
     return (
       <View style={styles.loadContainer}>
 
-      <Text style={{fontSize:35, fontWeight:'bold', color: "#F44336" }}>Loading...</Text>
+      <ActivityIndicator size="large" color="#F44336"/>
+      <View style={styles.addButtonContainer}>
+          <FAB
+            style={styles.addButton}
+            icon="plus"
+            onPress={() => navigation.navigate("AddBikeScreen")}
+          />
+        </View>
     </View>
     )
   }

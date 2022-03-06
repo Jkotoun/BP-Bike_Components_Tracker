@@ -1,9 +1,10 @@
 
 import * as React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import Card from '../components/Card';
 import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
+import { useIsFocused } from "@react-navigation/native";
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where } from 'firebase/firestore';
 async function loadComponents(loggedUser) {
   let componentsArray = []
@@ -22,7 +23,7 @@ async function loadComponents(loggedUser) {
 
 
 export default function ComponentInstallListScreen({ navigation }) {
-
+  const isFocused = useIsFocused();
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
   //bikes loading
   React.useEffect(() => {
@@ -31,7 +32,7 @@ export default function ComponentInstallListScreen({ navigation }) {
       setComponents(componentsArray)
       setIsLoaded(true)
     })
-  }, [])
+  }, [isFocused])
   const [components, setComponents] = React.useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
 
@@ -45,8 +46,9 @@ export default function ComponentInstallListScreen({ navigation }) {
     return (
       <View style={styles.loadContainer}>
 
-      <Text style={{fontSize:35, fontWeight:'bold', color: "#F44336" }}>Loading...</Text>
-    </View>
+        <ActivityIndicator size="large" color="#F44336" />
+
+      </View>
     )
   }
   else {
@@ -55,7 +57,7 @@ export default function ComponentInstallListScreen({ navigation }) {
       <View style={styles.mainContainer}>
         <View style={styles.componentCards}>
           {components.map(component => {
-            return <Card title={component.name} description={component.type.displayName}  icon={images[component.type.value]} displayInfo={{
+            return <Card title={component.name} description={component.type.displayName} icon={images[component.type.value]} displayInfo={{
               "Distance": component.rideDistance + " km",
               "Ride Time": Math.floor(component.rideTime / 3600) + " h " + Math.floor((component.rideTime % 3600) / 60) + " m"
             }} onPress={() => {
@@ -78,10 +80,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 9
   },
-  loadContainer:{
+  loadContainer: {
     flex: 1,
     alignItems: 'center',
-    justifyContent:'center'
+    justifyContent: 'center'
   }
 })
 

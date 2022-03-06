@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, ActivityIndicator } from 'react-native';
 import firebaseApp from '../config/firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 import { getFirestore, setDoc, doc, getDoc } from 'firebase/firestore';
@@ -13,7 +13,7 @@ async function loadComponent(componentId) {
 
 export default function ComponentDetails({ route }) {
 
- 
+
   React.useEffect(() => {
 
     loadComponent(route.params.componentId).then((component) => {
@@ -23,14 +23,15 @@ export default function ComponentDetails({ route }) {
   }, [])
   const [component, setComponent] = React.useState(Object);
   const [isLoaded, setIsLoaded] = React.useState(false);
- 
+
 
   if (!isLoaded) {
     return (
       <View style={styles.loadContainer}>
 
-      <Text style={{fontSize:35, fontWeight:'bold', color: "#F44336" }}>Loading...</Text>
-    </View>
+        <ActivityIndicator size="large" color="#F44336" />
+
+      </View>
     )
   }
   else {
@@ -40,7 +41,7 @@ export default function ComponentDetails({ route }) {
       'Brand': component.brand,
       'Model': component.model,
       'Distance': component.rideDistance + " km",
-      'Ride Time': Math.floor(component.rideTime/3600) + " h " + Math.floor((component.rideTime%3600)/60) + " m"
+      'Ride Time': Math.floor(component.rideTime / 3600) + " h " + Math.floor((component.rideTime % 3600) / 60) + " m"
     }
     return (
       <View style={styles.mainContainer}>
@@ -90,10 +91,10 @@ const styles = StyleSheet.create({
   propertyValueContainer: {
     flex: 1
   },
-  loadContainer:{
+  loadContainer: {
     flex: 1,
     alignItems: 'center',
-    justifyContent:'center'
+    justifyContent: 'center'
   }
 
 

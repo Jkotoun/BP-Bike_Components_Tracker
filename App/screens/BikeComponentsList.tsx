@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { View, Alert, StyleSheet, Text } from 'react-native';
+import { View, Alert, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where } from 'firebase/firestore';
 import { FAB } from 'react-native-paper';
 import Card from '../components/Card';
@@ -17,28 +17,26 @@ async function loadComponents(bikeId) {
     componentData.id = component.id
     componentsArray.push(componentData)
   })
-
-
-  const promises = componentsArray.map(async comp => {
-    if (comp.bike) {
-      comp.bike = (await getDoc(comp.bike)).data()
-    }
-    return comp
-  })
-  const componentsWithBikeObj = await Promise.all(promises)
-  return componentsWithBikeObj
+  return componentsArray
 }
 
 
 export default function BikeComponentsList({ navigation, route }) {
 
   const isFocused = useIsFocused();
+
   React.useEffect(() => {
-    setIsLoaded(false)
-    loadComponents(route.params.bikeId).then((componentsArray) => {
-      setComponents(componentsArray)
-      setIsLoaded(true)
-    })
+
+      console.log("loading")
+      setIsLoaded(false)
+      loadComponents(route.params.bikeId).then((componentsArray) => {
+        console.log("komponenty")
+        console.log(componentsArray.length)
+        setComponents(componentsArray)
+        setIsLoaded(true)
+      })
+      route.params.forceReload = false
+
   }, [isFocused])
   const [components, setComponents] = React.useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
@@ -51,10 +49,17 @@ export default function BikeComponentsList({ navigation, route }) {
 
   if (!isLoaded) {
     return (
-    <View style={styles.loadContainer}>
+      <View style={styles.loadContainer}>
 
-      <Text style={{ fontSize: 35, fontWeight: 'bold', color: "#F44336" }}>Loading...</Text>
-    </View>)
+        <ActivityIndicator size="large" color="#F44336" />
+        <View style={styles.addButtonContainer}>
+          <FAB
+            style={styles.addButton}
+            icon="plus"
+            onPress={() => navigation.navigate("ComponentInstallListStack")}
+          />
+        </View>
+      </View>)
   }
   else {
 
@@ -110,10 +115,10 @@ const styles = StyleSheet.create({
   addButton: {
     backgroundColor: "#F44336"
   },
-  loadContainer:{
+  loadContainer: {
     flex: 1,
     alignItems: 'center',
-    justifyContent:'center'
+    justifyContent: 'center'
   }
 })
 

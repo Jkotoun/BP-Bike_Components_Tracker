@@ -1,13 +1,13 @@
 
 import * as React from 'react';
-import { View, StyleSheet, Text, ScrollView, StatusBar } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, StatusBar, ActivityIndicator } from 'react-native';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc } from 'firebase/firestore';
 import Card from '../components/Card';
 import { FAB } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import { useIsFocused } from "@react-navigation/native";
-import {deleteComponent} from "../modules/firestoreActions";
+import { deleteComponent } from "../modules/firestoreActions";
 async function loadComponents(loggedUser) {
   let componentsArray = []
   let componentsDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "components"), where("user", "==", doc(getFirestore(firebaseApp), "users", loggedUser.uid))))
@@ -35,12 +35,10 @@ export default function AllComponentsListScreen({ navigation, route }) {
   const [isLoaded, setIsLoaded] = React.useState(false);
   //bikes loading
   React.useEffect(() => {
-    if (!isLoaded || (route.params && route.params.forceReload)) {
       loadComponents(User).then((componentsArray) => {
         setComponents(componentsArray)
         setIsLoaded(true)
       })
-    }
   }, [isFocused, isLoaded])
   const [components, setComponents] = React.useState([]);
   const images = {
@@ -48,18 +46,28 @@ export default function AllComponentsListScreen({ navigation, route }) {
     fork: require("../assets/images/bicycle_fork_icon.png")
   };
   if (!isLoaded) {
-    return (    <View style={Styles.loadContainer}>
-
-      <Text style={{fontSize:35, fontWeight:'bold', color: "#F44336" }}>Loading...</Text>
-    </View>)
+    return (
+      <View style={Styles.loadContainer}>
+        <ActivityIndicator size="large" color="#F44336" />
+        <View style={Styles.addButtonContainer}>
+          <FAB
+            style={{
+              backgroundColor: "#F44336"
+            }}
+            icon="plus"
+            onPress={() => navigation.navigate("AddComponentScreen")}
+          />
+        </View>
+      </View>
+    )
   }
   else {
     return (
       <View style={Styles.mainContainer}>
         <ScrollView >
-        <StatusBar
-              backgroundColor="#F44336"
-            />
+          <StatusBar
+            backgroundColor="#F44336"
+          />
           <View style={Styles.cardsContainer}>
             {components.map(component => {
 
@@ -118,9 +126,9 @@ const Styles = StyleSheet.create({
     paddingHorizontal: 20,
     zIndex: 99
   },
-  loadContainer:{
+  loadContainer: {
     flex: 1,
     alignItems: 'center',
-    justifyContent:'center'
+    justifyContent: 'center'
   }
 })
