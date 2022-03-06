@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Platform, Text, View, StatusBar, StyleSheet, ScrollView, Button, TouchableOpacity } from 'react-native';
+import { Platform, Text, View, StatusBar, StyleSheet, ScrollView, Button, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { TextInput } from "react-native-paper"
 import { useForm, Controller } from 'react-hook-form'
 import { getFirestore, addDoc, collection, doc, query, where, getDocs, orderBy, deleteField, increment } from 'firebase/firestore';
@@ -9,8 +9,9 @@ import { AuthenticatedUserContext } from '../../context'
 import { useState } from "react";
 import RNPickerSelect from 'react-native-picker-select';
 import DateTimePicker from '@react-native-community/datetimepicker';
-
+import { useIsFocused } from "@react-navigation/native";
 export default function AddRideScreen({ navigation }) {
+  const isFocused = useIsFocused();
   const [rideDate, setRideDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -51,7 +52,7 @@ export default function AddRideScreen({ navigation }) {
         setIsLoaded(true)
       })
     }
-  }, []);
+  }, [isFocused]);
   const [selectedLanguage, setSelectedLanguage] = useState();
   const { control, setError, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'all' });
 
@@ -74,8 +75,7 @@ export default function AddRideScreen({ navigation }) {
   if (!isLoaded) {
     return (
       <View style={styles.loadContainer}>
-
-        <Text style={{fontSize:35, fontWeight:'bold', color: "#F44336" }}>Loading...</Text>
+          <ActivityIndicator size="large" color="#F44336"/>
       </View>
     )
   }
