@@ -35,7 +35,6 @@ export default function AllComponentsListScreen({ navigation, route }) {
   //bikes loading
   React.useEffect(() => {
       loadComponents(User).then((componentsArray) => {
-        console.log(componentsArray.length)
         setComponents(componentsArray)
         setIsLoaded(true)
       })

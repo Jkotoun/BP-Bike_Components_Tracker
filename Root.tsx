@@ -39,7 +39,6 @@ export default function Root() {
       try {
         if(authenticatedUser)
         {
-          console.log("asd")
           getDoc(doc(getFirestore(firebaseApp), "users", authenticatedUser.uid)).then(user => {
             setUser({...authenticatedUser, ...user.data()})
             setIsLoggedIn(true)
@@ -53,7 +52,7 @@ export default function Root() {
         setIsLoading(false);
         // setIsLoading(false);
       } catch (error) {
-        console.log("chyba?");
+        console.log("err");
       }
     });
 

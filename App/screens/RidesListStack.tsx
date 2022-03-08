@@ -22,7 +22,7 @@ export default function RidesListStack({ navigation }) {
         backgroundColor: '#F44336'
       },
       headerRight: () => (
-        <Text style={{ color: "white" }} onPress={async () => { await auth.signOut(); console.log("log")}}>Logout</Text>
+        <Text style={{ color: "white" }} onPress={async () => { await auth.signOut()}}>Logout</Text>
       ),
       headerShadowVisible:false,
       animation: 'none',

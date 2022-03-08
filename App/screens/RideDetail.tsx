@@ -37,7 +37,6 @@ export default function RideDetail({ route }) {
   else {
 
 
-    // console.log(route.params)
     return (
       <View style={styles.mainContainer}>
         <StatusBar backgroundColor="#F44336" />

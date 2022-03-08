@@ -158,11 +158,6 @@ export async function UpdateComponentsStats(startDate:Date, endDate:Date, bikeRe
 
     let kmTotal = ridesArray.reduce((ride1, ride2) => ride1 + (ride2["distance"] || 0), 0)
     let rideTimeTotal = ridesArray.reduce((ride1, ride2) => ride1 + (ride2["rideTime"] || 0), 0)
-    console.log("zec")
-    console.log(startDate.toLocaleString())
-    console.log(endDate.toLocaleString())
-    console.log("km: " + kmTotal)
-    console.log("konec")
 
     return updateDoc(componentRef, {
         rideDistance: increment(multiplyConstant * kmTotal),
