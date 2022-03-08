@@ -30,6 +30,7 @@ export default function AddBikeScreen({ navigation }) {
     data.purchaseDate = purchaseDate
     data.rideTime = Number(data.rideTime)*60*60
     data.rideDistance = Number(data.rideDistance)
+    data.state = "active"
     data.user = doc(getFirestore(firebaseApp), "users", auth.currentUser.uid)
     addDoc(collection(getFirestore(firebaseApp), "bikes"), data).then(() => {
       navigation.navigate("BikesListScreen", {forceReload: true})

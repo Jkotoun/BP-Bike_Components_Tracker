@@ -8,6 +8,7 @@ import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import { useIsFocused } from "@react-navigation/native";
 import { deleteRide } from "../modules/firestoreActions";
+
 async function loadRides(loggedUser) {
   let ridesArray = []
   let ridesDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "rides"), where("user", "==", doc(getFirestore(firebaseApp), "users", loggedUser.uid))))
@@ -38,7 +39,6 @@ export default function BikesListScreen({ navigation, route }) {
   const [isLoaded, setIsLoaded] = React.useState(false);
 
   React.useEffect(() => {
-
       loadRides(User).then((ridesArray) => {
         setRides(ridesArray)
         setIsLoaded(true)
@@ -62,6 +62,8 @@ export default function BikesListScreen({ navigation, route }) {
         <StatusBar backgroundColor="#F44336" />
         <ScrollView>
           <View style={styles.rideCardsContainer}>
+          {rides.length == 0 && <Text style={{padding:20, fontSize:17, fontWeight:'700'}}>Sync rides from strava or add ride using '+' button</Text>}
+
             {rides.map(ride => {
 
 

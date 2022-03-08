@@ -7,17 +7,16 @@ import { FAB } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import { useIsFocused } from "@react-navigation/native";
-import { deleteComponent } from "../modules/firestoreActions";
+import { deleteComponent, retireComponent } from "../modules/firestoreActions";
+
 async function loadComponents(loggedUser) {
-  let componentsArray = []
-  let componentsDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "components"), where("user", "==", doc(getFirestore(firebaseApp), "users", loggedUser.uid))))
+  let componentsArray = []  
+  let componentsDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "components"), where("user", "==", doc(getFirestore(firebaseApp), "users", loggedUser.uid)), where("state", "==", "active")))
   componentsDocRef.forEach(component => {
     let componentData = component.data()
     componentData.id = component.id
     componentsArray.push(componentData)
   })
-
-
   const promises = componentsArray.map(async comp => {
     if (comp.bike) {
       comp.bike = (await getDoc(comp.bike)).data()
@@ -36,6 +35,7 @@ export default function AllComponentsListScreen({ navigation, route }) {
   //bikes loading
   React.useEffect(() => {
       loadComponents(User).then((componentsArray) => {
+        console.log(componentsArray.length)
         setComponents(componentsArray)
         setIsLoaded(true)
       })
@@ -69,6 +69,8 @@ export default function AllComponentsListScreen({ navigation, route }) {
             backgroundColor="#F44336"
           />
           <View style={Styles.cardsContainer}>
+          {/* {components.length == 0 && <Text style={{padding:20, fontSize:17, fontWeight:'700'}}>Add components using '+' button</Text>} */}
+
             {components.map(component => {
 
               const componentOptions = [
@@ -76,6 +78,14 @@ export default function AllComponentsListScreen({ navigation, route }) {
                   text: "Delete",
                   onPress: () => {
                     deleteComponent(component.id).then(() =>
+                      setIsLoaded(false)
+                    )
+                  }
+                },
+                {
+                  text: "Retire",
+                  onPress: () => {
+                    retireComponent(component.id).then(() =>
                       setIsLoaded(false)
                     )
                   }

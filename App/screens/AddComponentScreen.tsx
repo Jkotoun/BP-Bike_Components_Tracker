@@ -22,12 +22,11 @@ export default function AddComponentScreen({ navigation }) {
   const auth = getAuth(firebaseApp)
   const { control, setError, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'all' });
   const onSubmit = data => {
-
-    console.log(data)
     data.type = componentTypes.find(biketype => biketype.value == data.type)
     data.rideTime = Number(data.rideTime) * 60 * 60
     data.rideDistance = Number(data.rideDistance)
     data.user = doc(getFirestore(firebaseApp), "users", auth.currentUser.uid)
+    data.state = "active"
     addDoc(collection(getFirestore(firebaseApp), "components"), data).then(() => {
       navigation.navigate("ComponentsListScreen", { forceReload: true })
     })

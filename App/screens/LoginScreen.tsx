@@ -20,16 +20,11 @@ function saveUserData(userId, userData) {
 }
 const auth = getAuth(firebaseApp)
 
-
-
-WebBrowser.maybeCompleteAuthSession();
-
 async function createStravaAuthAccount(authTokens, athlete) {
   const hash = await Crypto.digestStringAsync(
     Crypto.CryptoDigestAlgorithm.SHA256,
     String(athlete.id + Constants.manifest.stravaAccPwdSec)
   );
-  console.log(authTokens)
   createUserWithEmailAndPassword(auth, athlete.id + "@stravauser.com", hash).then(userObj => saveUserData(userObj.user.uid, {
     username: athlete.username,
     stravaAuth: true,

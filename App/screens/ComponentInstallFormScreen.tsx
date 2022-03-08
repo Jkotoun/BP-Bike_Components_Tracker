@@ -4,67 +4,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { RadioButton } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
 import { getFirestore, addDoc, collection, doc, updateDoc, query, where, getDocs, getDoc, FieldValue, increment } from 'firebase/firestore';
-
-
-async function installComponent(componentId, bikeId, installTime: Date) {
-
-  let componentSwaps = await getDocs(
-    query(collection(getFirestore(firebaseApp), "bikesComponents"),
-      where("bike", "==", doc(getFirestore(firebaseApp), "bikes", bikeId)),
-      where("component", "==", doc(getFirestore(firebaseApp), "components", componentId))))
-
-  let correctInstallDate = componentSwaps.docs.every((value) => {
-    return value.data().uninstallTime.seconds < Math.round(installTime.getTime() / 1000)
-  })
-
-  if (correctInstallDate) {
-    let bikeDoc = (await getDoc(doc(getFirestore(firebaseApp), "bikes", bikeId)))
-    if (installTime > new Date()) {
-      throw new Error("Installation time can not be set in future")
-    }
-    else if (installTime < bikeDoc.data().purchaseDate.toDate()) {
-      throw new Error("Installation time can not be earlier than bike purchase date")
-    }
-    else {
-
-      let componentRef = doc(getFirestore(firebaseApp), "components", componentId)
-      await  addDoc(collection(getFirestore(firebaseApp), "bikesComponents"), {
-        bike: bikeDoc.ref,
-        component: componentRef,
-        installTime: installTime
-      })
-      await updateDoc(doc(getFirestore(firebaseApp), "components", componentId), {
-        bike: doc(getFirestore(firebaseApp), "bikes", bikeId)
-      })
-
-
-
-      let rides = await getDocs(query(collection(getFirestore(firebaseApp), "rides"),
-        where("bike", "==", bikeDoc.ref),
-        where("time", ">=", installTime)))
-
-      let ridesArray = []
-      rides.forEach(ride => ridesArray.push(ride.data()))
-
-      let kmTotal = ridesArray.reduce((ride1, ride2) => ride1 + (ride2["distance"] || 0), 0)
-      let rideTimeTotal = ridesArray.reduce((ride1, ride2) => ride1 + (ride2["rideTime"] || 0), 0)
-      await updateDoc(componentRef, {
-        rideDistance: increment(kmTotal),
-        rideTime: increment(rideTimeTotal)
-      })
-
-      // return Promise.all([addSwapRecord, addBikeRef, incrementDistance])
-
-    }
-
-  }
-  else {
-    throw new Error("You can not set installation time, which is earlier than existing component installation record")
-  }
-}
-
-
-
+import {installComponent} from '../modules/firestoreActions'
 
 export default function ComponentInstallFormScreen({ navigation, route }) {
   
@@ -88,11 +28,6 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
     setMode(currentMode);
   };
 
-  //TODO pridat moznost rovnou specifikovat odinstalaci, secist kilometry z jizd mezi vybranymi daty, check na prekryvani datumu, znemoznit datumy v budoucnu
-  //installtime1 se snazim ulozit
-  //   installtime1 < installtime2 && uninstalltime1 > installtime2 - chyba1
-  //installtime1 > installtime2 && installtime1 < uninstalltime2 - chyba 2
-  //installtime1 a uninstalltime 1 v budoucnu - chyba 3
   return (
     <View>
       <View style={styles.formTitleContainer}>

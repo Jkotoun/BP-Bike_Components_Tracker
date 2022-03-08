@@ -11,7 +11,7 @@ import Constants from 'expo-constants';
 import * as stravaApi from '../modules/stravaApi';
 import { makeRedirectUri, useAuthRequest, exchangeCodeAsync } from 'expo-auth-session';
 import { useIsFocused } from "@react-navigation/native";
-import {deleteBike} from "../modules/firestoreActions";
+import {retireBike} from "../modules/firestoreActions";
 
 //TODO mozna presunout do firestore func modelu
 //add strava account info to firestore doc in users collection
@@ -62,7 +62,7 @@ export default function BikesListScreen({ navigation, route }) {
   }, [response]);
   //bikes loading
   React.useEffect(() => {
-      getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("user", "==", doc(getFirestore(firebaseApp), "users", User.uid)))).then(bikesDocRef => {
+      getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("user", "==", doc(getFirestore(firebaseApp), "users", User.uid)), where("state", "==", "active"))).then(bikesDocRef => {
         const bikesArray = []
         bikesDocRef.forEach(bike => {
           let bikeData = bike.data()
@@ -103,13 +103,16 @@ export default function BikesListScreen({ navigation, route }) {
               backgroundColor="#F44336"
             />
           <View style={styles.bikeCardsContainer}>
+          
+          {bikes.length == 0 && <Text style={{padding:20, fontSize:17, fontWeight:'700'}}>Sync bikes from strava or add bike using '+' button</Text>}
+
             {bikes.map(bike => {
 
               const bikeOptions = [
                 {
-                  text: "Delete",
+                  text: "Retire",
                   onPress: () =>{ 
-                    deleteBike(bike.bikeId).then(() => 
+                    retireBike(bike.bikeId).then(() => 
                     setIsLoaded(false)
                     )
                   }

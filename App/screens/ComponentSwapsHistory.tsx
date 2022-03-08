@@ -6,25 +6,10 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } f
 import { getFirestore, getDoc, getDocs, query, collection, where, doc, deleteDoc, updateDoc, deleteField, increment } from 'firebase/firestore';
 import ComponentSwapCard from '../components/ComponentSwapCard';
 import { useIsFocused } from "@react-navigation/native";
+import {UpdateComponentsStats} from '../modules/firestoreActions'
+
 //TODO refactor, odeccist z komponent km pri smazani recordu
 
-async function removeKmAndHoursBetweenDates(startDate, endDate, bikeRef, componentRef) {
-    let rides = await getDocs(query(collection(getFirestore(firebaseApp), "rides"),
-        where("bike", "==", bikeRef),
-        where("time", ">=", startDate),
-        where("time", "<=", endDate)))
-
-    let ridesArray = []
-    rides.forEach(ride => ridesArray.push(ride.data()))
-
-    let kmTotal = ridesArray.reduce((ride1, ride2) => ride1 + (ride2["distance"] || 0), 0)
-    let rideTimeTotal = ridesArray.reduce((ride1, ride2) => ride1 + (ride2["rideTime"] || 0), 0)
-
-    return updateDoc(componentRef, {
-        rideDistance: increment(-1 * kmTotal),
-        rideTime: increment(-1 * rideTimeTotal)
-    })
-}
 
 async function loadComponentSwaps(componentId) {
     let component = await getDocs(query(collection(getFirestore(firebaseApp), "bikesComponents"), where("component", "==", doc(getFirestore(firebaseApp), "components", componentId))))
@@ -52,7 +37,7 @@ async function loadComponentSwaps(componentId) {
     return componentsWithBikeObj
 }
 
-export default function ComponentBikesInstallationHistory({ route }) {
+export default function ComponentSwapsHistory({ route }) {
 
     const isFocused = useIsFocused();
 
@@ -89,8 +74,8 @@ export default function ComponentBikesInstallationHistory({ route }) {
                                     })
                                 }
                                 let deleteRecord = deleteDoc(componentSwapRecord.ref)
-                                let removeKmAndHours = removeKmAndHoursBetweenDates(componentSwapRecord.installTime, componentSwapRecord.uninstallTime ? componentSwapRecord.uninstallTime : new Date(),
-                                    componentSwapRecord.bikeDoc.ref, componentSwapRecord.componentDoc.ref)
+                                let removeKmAndHours = UpdateComponentsStats(componentSwapRecord.installTime, componentSwapRecord.uninstallTime ? componentSwapRecord.uninstallTime : new Date(),
+                                    componentSwapRecord.bikeDoc.ref, componentSwapRecord.componentDoc.ref, -1)
                                 Promise.all([deleteRecord, removeKmAndHours]).then(() => {
                                     setIsLoaded(false)
                                 })
@@ -100,8 +85,8 @@ export default function ComponentBikesInstallationHistory({ route }) {
                         }
 
                     ]
-
-                    return <ComponentSwapCard options={swapRecordOptions} maintext={componentSwapRecord.bikeDoc.data().name}
+                    
+                    return <ComponentSwapCard options={swapRecordOptions} maintext={ componentSwapRecord.bikeDoc.data() ? componentSwapRecord.bikeDoc.data().name : "Deleted bike" }
                         description={componentSwapRecord.installTime.toDate().toLocaleString()}
                         description2={componentSwapRecord.uninstallTime ? componentSwapRecord.uninstallTime.toDate().toLocaleString() : "Currently installed"} />
                 })}

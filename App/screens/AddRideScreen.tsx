@@ -10,6 +10,7 @@ import { useState } from "react";
 import RNPickerSelect from 'react-native-picker-select';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useIsFocused } from "@react-navigation/native";
+import {addRide} from '../modules/firestoreActions'
 export default function AddRideScreen({ navigation }) {
   const isFocused = useIsFocused();
   const [rideDate, setRideDate] = useState(new Date());
@@ -22,7 +23,7 @@ export default function AddRideScreen({ navigation }) {
   };
 
 
-  const [rideTime, setRideTime] = useState(new Date());
+  const [rideTime, setRideTime] = useState(new Date(0,0,0,0,0,0));
   const [showRideTimePicker, setShowRideTimePicker] = useState(false);
 
   const timePickerHandler = (selectedTime) => {
@@ -38,7 +39,7 @@ export default function AddRideScreen({ navigation }) {
   const [isLoaded, setIsLoaded] = React.useState(false);
   React.useEffect(() => {
       let bikesArray = []
-      getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("user", "==", doc(getFirestore(firebaseApp), "users", User.uid)))).then(bikesDocRef => {
+      getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("user", "==", doc(getFirestore(firebaseApp), "users", User.uid)), where("state","==", "active"))).then(bikesDocRef => {
         bikesDocRef.forEach(bike => {
           bikesArray.push({
             label: bike.data().name,
@@ -65,7 +66,7 @@ export default function AddRideScreen({ navigation }) {
       throw new Error("Date of ride cant be in future")
     }
     data.rideTime = rideTime.getHours()*60*60 + rideTime.getMinutes()*60
-    addDoc(collection(getFirestore(firebaseApp), "rides"), data).then(() => {
+    addRide(data).then(() => {
       navigation.navigate("RidesListScreen", { forceReload: true })
     })
   }
