@@ -122,6 +122,14 @@ export default function BikesListScreen({ navigation, route }) {
               {
                 const bikeOptions = [
                   {
+                    text: "Edit",
+                    onPress: () => {
+                      navigation.navigate("AddBikeScreen", {
+                        bikeId: bike.bikeId
+                      })
+                    }
+                  },
+                  {
                     text: "Retire",
                     onPress: () =>{ 
                       retireBike(bike.bikeId).then(() => 

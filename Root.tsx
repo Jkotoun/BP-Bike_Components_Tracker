@@ -11,7 +11,7 @@ import BikesListStack from './App/screens/BikesListStack';
 import RidesListStack from './App/screens/RidesListStack';
 import { useNavigationState } from '@react-navigation/native';
 import { MenuProvider } from 'react-native-popup-menu';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, StatusBar } from 'react-native';
 import activeScreenName from './App/modules/screenName';
 import { AuthenticatedUserContext } from './context'
 import { getFirestore, getDoc, doc } from 'firebase/firestore';
@@ -86,6 +86,9 @@ export default function Root() {
   if (isUpdatingAuth || isSyncing) {
     return (
     <View style={styles.mainContainer}>
+      <StatusBar
+              backgroundColor="#F44336"
+            />
       <ActivityIndicator size='large' color="#ffffff"/>  
       <View style={{padding:20}}>
 
@@ -103,6 +106,7 @@ export default function Root() {
         <NavigationContainer>
           {/* Main 3 tabs if logged in */}
           {IsLoggedIn ?
+          
             <Tab.Navigator
               screenOptions={({ route }) => ({
                 headerStyle: styles.header,

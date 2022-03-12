@@ -10,8 +10,8 @@ import { useState } from "react";
 import RNPickerSelect from 'react-native-picker-select';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useIsFocused } from "@react-navigation/native";
-import {addRide} from '../modules/firestoreActions'
-export default function AddRideScreen({ navigation }) {
+import {addRide, getRide, updateRide} from '../modules/firestoreActions'
+export default function AddRideScreen({ navigation, route }) {
   const isFocused = useIsFocused();
   const [rideDate, setRideDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -37,8 +37,10 @@ export default function AddRideScreen({ navigation }) {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
   const [bikes, setBikes] = React.useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
+  const [rideToEdit, setrideToEdit] = useState(Object)
   React.useEffect(() => {
-      let bikesArray = []
+    setIsLoaded(false)
+    let bikesArray = []
       getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("user", "==", doc(getFirestore(firebaseApp), "users", User.uid)), where("state","==", "active"))).then(bikesDocRef => {
         bikesDocRef.forEach(bike => {
           bikesArray.push({
@@ -48,10 +50,27 @@ export default function AddRideScreen({ navigation }) {
         })
         setBikes(bikesArray)
 
-      }).then(() => {
-        setIsLoaded(true)
+      }).then(()=>{
+
+        if (route.params && route.params.rideId) {
+          console.log(route.params.rideId)
+          getRide(route.params.rideId)
+          .then(rideDoc=> {
+            setrideToEdit(rideDoc.data())
+            setRideDate(rideDoc.data().date.toDate())
+            setRideTime(new Date(rideDoc.data().rideTime*1000))
+          })
+          .then(() => {
+            setIsLoaded(true)
+          })
+        }
+        else {
+          setIsLoaded(true)
+        }
+
       })
   }, [isFocused]);
+
   const [selectedLanguage, setSelectedLanguage] = useState();
   const { control, setError, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'all' });
 
@@ -66,9 +85,21 @@ export default function AddRideScreen({ navigation }) {
       throw new Error("Date of ride cant be in future")
     }
     data.rideTime = rideTime.getHours()*60*60 + rideTime.getMinutes()*60
-    addRide(data).then(() => {
-      navigation.navigate("RidesListScreen", { forceReload: true })
-    })
+    
+    if(route.params && route.params.rideId)
+    {
+      updateRide(rideToEdit, data, route.params.rideId)
+      .then(() => {
+        navigation.navigate("RidesListScreen")
+      })
+    }
+    else
+    {
+      addRide(data)
+      .then(() => {
+        navigation.navigate("RidesListScreen")
+      })
+    }
   }
 
   if (!isLoaded) {
@@ -110,7 +141,7 @@ export default function AddRideScreen({ navigation }) {
                 />
               )}
               name="name"
-              defaultValue=""
+              defaultValue={rideToEdit.name? rideToEdit.name: ""}
             />
             {errors.name && <Text style={styles.errorMessage}>{errors.name.message}</Text>}
             <Controller
@@ -132,7 +163,7 @@ export default function AddRideScreen({ navigation }) {
                 />
               )}
               name="bike"
-              defaultValue=""
+              defaultValue={rideToEdit.bike? rideToEdit.bike.id: ""}
             />
             {errors.bike && <Text style={styles.errorMessage}>{errors.bike.message}</Text>}
 
@@ -162,7 +193,7 @@ export default function AddRideScreen({ navigation }) {
                 />
               )}
               name="distance"
-              defaultValue=""
+              defaultValue={rideToEdit.distance? (rideToEdit.distance/1000).toString(): ""}
             />
             {errors.distance && <Text style={styles.errorMessage}>{errors.distance.message}</Text>}
 

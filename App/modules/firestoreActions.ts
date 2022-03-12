@@ -2,7 +2,7 @@
 
 import firebaseApp from '../config/firebase';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc, deleteField, increment, addDoc, orderBy, DocumentReference, Firestore } from 'firebase/firestore';
-import { getAllBikes, getBike, getAllActivities } from './stravaApi';
+import { getAllBikes, getStravaGear, getAllActivities } from './stravaApi';
 import { getAuth } from 'firebase/auth';
 
 interface bikeType
@@ -84,13 +84,13 @@ export async function getAllStravaSyncedBikes()
 }
 
 
-export async function updateBike(bikeRef, data)
+export async function updateBike(bikeRef, data: bike)
 {
     return updateDoc(bikeRef, data)
 }
 
 
-function gearDataToBikeDoc(gearData)
+function gearDataToBikeDoc(gearData):stravaBike
 {
 
     let stravaBikeTypesMapping  ={
@@ -99,7 +99,7 @@ function gearDataToBikeDoc(gearData)
             "label": "MTB full suspension"
         }
     }
-    let stravaBike = {
+    let bike :stravaBike = {
         brand: gearData.brand_name,
         model: gearData.model_name,
         name: gearData.name,
@@ -108,9 +108,13 @@ function gearDataToBikeDoc(gearData)
         type: stravaBikeTypesMapping[gearData.frame_type],
         user: doc(getFirestore(firebaseApp), "users", getAuth(firebaseApp).currentUser.uid),
         stravaSynced: true,
-        stravaId: gearData.id
+        stravaId: gearData.id,
+        rideDistance: 0,
+        rideTime: 0,
+        initialRideDistance: 0,
+        initialRideTime: 0
     }
-    return stravaBike
+    return bike
 }
 
 
@@ -120,7 +124,7 @@ async function syncBikes(User, setUser)
     let stravaBikes =  await getAllBikes(User, setUser)
     for(let i = 0;i<stravaBikes.length;i++)
     {
-        let gearData = await getBike(stravaBikes[i]["id"], User, setUser)
+        let gearData = await getStravaGear(stravaBikes[i]["id"], User, setUser)
         //exists in both, update data except rideTime and distance
         let syncedBike = syncedBikes.find(bike => bike.data().stravaId && bike.data().stravaId == gearData.id);
         if(syncedBike)
@@ -168,7 +172,7 @@ function stravaActivityToRide(activity) : stravaRide
     return ride    
 }
 
-async function updateRide(oldRideData: any, newRideData: ride, rideId)
+export async function updateRide(oldRideData: any, newRideData: ride, rideId)
 {
     updateDoc(doc(getFirestore(firebaseApp), "rides", rideId), {...newRideData})
     //bike ref updated
@@ -487,16 +491,36 @@ export async function installComponent(componentId, bikeId, installTime: Date) {
         await updateDoc(doc(getFirestore(firebaseApp), "components", componentId), {
           bike: doc(getFirestore(firebaseApp), "bikes", bikeId)
         })
-  
-
-
-
         return UpdateComponentsStats(installTime, new Date(), bikeDoc.ref, componentRef)
-  
       }
-  
     }
     else {
       throw new Error("You can not set installation time, which is earlier than existing component installation record")
     }
   }
+
+export async function getBike(bikeId)
+{
+    return getDoc(doc(getFirestore(firebaseApp), "bikes", bikeId))
+}
+
+export async function getComponent(componentId)
+{
+    return getDoc(doc(getFirestore(firebaseApp), "components", componentId))
+}
+
+//interface component
+export async function addComponent(data)
+{
+    return addDoc(collection(getFirestore(firebaseApp), "components"), data)
+}
+
+export async function updateComponent(componentRef, data)
+{
+    return updateDoc(componentRef, data)
+}
+
+export async function getRide(rideId)
+{
+    return getDoc(doc(getFirestore(firebaseApp), "rides", rideId))
+}

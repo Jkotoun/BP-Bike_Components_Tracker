@@ -75,6 +75,22 @@ export default function AllComponentsListScreen({ navigation, route }) {
 
               const componentOptions = [
                 {
+                  text: "Edit",
+                  onPress: () => {
+                    navigation.navigate("AddComponentScreen", {
+                      componentId: component.id
+                    })
+                  }
+                },
+                {
+                  text: "Retire",
+                  onPress: () => {
+                    retireComponent(component.id).then(() =>
+                    setIsLoaded(false)
+                    )
+                  }
+                },
+                {
                   text: "Delete",
                   onPress: () => {
                     deleteComponent(component.id).then(() =>
@@ -82,14 +98,6 @@ export default function AllComponentsListScreen({ navigation, route }) {
                     )
                   }
                 },
-                {
-                  text: "Retire",
-                  onPress: () => {
-                    retireComponent(component.id).then(() =>
-                      setIsLoaded(false)
-                    )
-                  }
-                }
 
               ]
 

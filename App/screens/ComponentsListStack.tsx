@@ -36,7 +36,7 @@ export default function BikesListScreen({ navigation }) {
         <Stack.Screen name='AddComponentScreen' component={AddComponentScreen}  options={{
           title:"Add component", 
           // headerRight:()=>{ return <Button  theme={{colors: {primary: 'black'}}} onPress={()=>navigation.navigate("ComponentsListScreen")}><Check name="check" size={24} color="white"/></Button>},
-          headerLeft: () => {return <Button theme={{colors: {primary: 'black'}}} style={{marginLeft:-20}} onPress={()=>navigation.goBack(null)}><Close name="close" size={24} color="white"/></Button>}
+          headerLeft: () => {return <Button theme={{colors: {primary: 'black'}}} style={{marginLeft:-20}} onPress={()=>navigation.navigate("ComponentsListScreen")}><Close name="close" size={24} color="white"/></Button>}
         }}/>
       </Stack.Group>
     </Stack.Navigator>

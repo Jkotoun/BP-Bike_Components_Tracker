@@ -85,6 +85,14 @@ export default function BikesListScreen({ navigation, route }) {
 
                 const rideOptions = [
                   {
+                    text: "Edit",
+                    onPress: () => {
+                      navigation.navigate("AddRideScreen", {
+                        rideId: ride.id
+                      })
+                    }
+                  },
+                  {
                     text: "Delete",
                     onPress: () => {
                       deleteRide(ride.id).then(() =>

@@ -168,7 +168,7 @@ export async function getAllBikes(User, setUser)
 
 
 
-export async function getBike(bikeStravaId, User, setUser)
+export async function getStravaGear(bikeStravaId, User, setUser)
 {
   return stravaApiRequest(User, setUser, ("gear/" +bikeStravaId))
 
