@@ -57,7 +57,7 @@ export default function AddRideScreen({ navigation }) {
 
 
   const onSubmit = data => {
-    data.distance = Number(data.distance)
+    data.distance = Number(data.distance)*1000
     data.user = doc(getFirestore(firebaseApp), "users", auth.currentUser.uid)
     data.bike = doc(getFirestore(firebaseApp), "bikes", data.bike)
     data.date = rideDate

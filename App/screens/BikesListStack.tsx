@@ -48,7 +48,7 @@ export default function BikesListStack({ navigation , route}) {
         <Stack.Screen name='AddBikeScreen'
           options={{
             title: "Add bike",
-            headerRight: () => { return <Button theme={{ colors: { primary: 'black' } }} onPress={() => navigation.navigate("BikesListScreen")}><Check name="check" size={24} color="white" /></Button> },
+            // headerRight: () => { return <Button theme={{ colors: { primary: 'black' } }} onPress={() => navigation.navigate("BikesListScreen")}><Check name="check" size={24} color="white" /></Button> },
             headerLeft: () => { return <Button theme={{ colors: { primary: 'black' } }} style={{ marginLeft: -20 }}><Close name="close" size={24} color="white" /></Button> }
           }}
 

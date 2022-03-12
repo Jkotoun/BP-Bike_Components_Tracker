@@ -8,6 +8,7 @@ import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import { useIsFocused } from "@react-navigation/native";
 import { deleteComponent, retireComponent } from "../modules/firestoreActions";
+import {rideSecondsToString ,rideDistanceToString} from '../modules/helpers';
 
 async function loadComponents(loggedUser) {
   let componentsArray = []  
@@ -93,8 +94,8 @@ export default function AllComponentsListScreen({ navigation, route }) {
               ]
 
               return <Card options={componentOptions} title={component.name} description={component.type.displayName} description2={"Bike: " + (component.bike ? component.bike.name : "Not assigned")} icon={images[component.type.value]} displayInfo={{
-                "Distance": component.rideDistance + " km",
-                "Ride Time": Math.floor(component.rideTime / 3600) + " h " + Math.floor((component.rideTime % 3600) / 60) + " m"
+                "Distance": rideDistanceToString(component.initialRideDistance+component.rideDistance),
+                "Ride Time": rideSecondsToString(component.rideTime + component.initialRideTime)
               }} onPress={() => {
                 navigation.navigate('ComponentDetailTabs', {
                   componentId: component.id

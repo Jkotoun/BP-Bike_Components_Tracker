@@ -1,17 +1,17 @@
 
 import * as React from 'react';
 import { View, StyleSheet, Text, ScrollView, ActivityIndicator, StatusBar } from 'react-native';
-import { getFirestore, doc, getDocs, getDoc, query, collection, where, deleteDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDocs, getDoc, query, collection, where, deleteDoc, orderBy } from 'firebase/firestore';
 import Card from '../components/Card';
 import { FAB } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import { useIsFocused } from "@react-navigation/native";
 import { deleteRide } from "../modules/firestoreActions";
-
+import {rideSecondsToString, rideDistanceToString} from '../modules/helpers'
 async function loadRides(loggedUser) {
   let ridesArray = []
-  let ridesDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "rides"), where("user", "==", doc(getFirestore(firebaseApp), "users", loggedUser.uid))))
+  let ridesDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "rides"), where("user", "==", doc(getFirestore(firebaseApp), "users", loggedUser.uid)), orderBy('date', "desc")))
 
   ridesDocRef.forEach(ride => {
     let rideData = ride.data()
@@ -68,14 +68,14 @@ export default function BikesListScreen({ navigation, route }) {
 
 
               let infoObj = {
-                "Distance": ride.distance + " km",
-                "Total time": Math.floor(ride.rideTime / 3600) + " h " + Math.floor((ride.rideTime % 3600) / 60) + " m"
+                "Distance": rideDistanceToString(ride.distance),
+                "Total time": rideSecondsToString(ride.rideTime)
               }
 
               infoObj["Activity date"] = ride.date.toDate().toISOString().split('T')[0]
-              if (ride.stravaActivity) {
+              if (ride.stravaSynced) {
 
-                return <Card title={ride.name} description2={"Bike: " + (ride.bike ? ride.bike.name : "not assigned")} icon={images.route} displayInfo={infoObj} onPress={() => {
+                return <Card title={ride.name} stravaIcon={true} description2={"Bike: " + (ride.bike ? ride.bike.name : "not assigned")} icon={images.route} displayInfo={infoObj} onPress={() => {
                   navigation.navigate('RideDetail', {
                     rideId: ride.id
                   })

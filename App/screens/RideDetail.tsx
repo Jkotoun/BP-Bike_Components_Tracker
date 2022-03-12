@@ -4,6 +4,7 @@ import { Text, View, Image, StyleSheet, ActivityIndicator, StatusBar } from 'rea
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection } from 'firebase/firestore';
 import firebaseApp from '../config/firebase';
 import { useIsFocused } from "@react-navigation/native";
+import {rideSecondsToString ,rideDistanceToString} from '../modules/helpers';
 
 async function loadRide(rideId) {
   let rideDocRef = await getDoc(doc(getFirestore(firebaseApp), "rides", rideId))
@@ -53,20 +54,20 @@ export default function RideDetail({ route }) {
         <View style={styles.statsContainer}>
           <View style={styles.statsRow}>
             <View style={styles.statContainter}>
-              <Text style={styles.statValue}>{ride.distance} km</Text>
+              <Text style={styles.statValue}>{rideDistanceToString(ride.distance)} km</Text>
               <Text style={styles.statName}>Distance</Text>
             </View>
             <View style={styles.statContainter}>
-              <Text style={styles.statValue}>{Math.floor(ride.rideTime / 3600) + " h " + Math.floor((ride.rideTime % 3600) / 60) + " m"}</Text>
+              <Text style={styles.statValue}>{rideSecondsToString(ride.rideTime)}</Text>
               <Text style={styles.statName}>Ride time</Text>
             </View>
-            {ride.stravaActivity &&
+            {ride.stravaSynced &&
               <View style={styles.statContainter}>
                 <Text style={styles.statValue}>{ride.elevationGain} m</Text>
                 <Text style={styles.statName}>Elevation gain</Text>
               </View>}
           </View>
-          {ride.stravaActivity &&
+          {ride.stravaSynced &&
             <View style={styles.statsRow}>
               <View style={styles.statContainter}>
                 <Text style={styles.statValue}>{ride.maxSpeed} km/h</Text>
@@ -77,7 +78,7 @@ export default function RideDetail({ route }) {
                 <Text style={styles.statName}>Average speed</Text>
               </View>
               <View style={styles.statContainter}>
-                <Text style={styles.statValue}>{Math.floor(ride.elapsedTime / 3600) + " h " + Math.floor((ride.elapsedTime % 3600) / 60) + " m"}</Text>
+                <Text style={styles.statValue}>{rideSecondsToString(ride.elapsedTime)}</Text>
                 <Text style={styles.statName}>Elapsed time</Text>
               </View>
             </View>

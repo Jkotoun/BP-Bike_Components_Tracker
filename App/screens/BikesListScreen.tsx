@@ -1,18 +1,17 @@
 
 import * as React from 'react';
-import { View, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, Image, StatusBar, ActivityIndicator } from 'react-native';
+import { View, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, Image, StatusBar, ActivityIndicator, Button } from 'react-native';
 import Card from '../components/Card';
 import { FAB } from 'react-native-paper';
 import { AuthenticatedUserContext } from '../../context'
-import { getAuth } from 'firebase/auth';
 import firebaseApp from '../config/firebase';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc } from 'firebase/firestore';
-import Constants from 'expo-constants';
 import * as stravaApi from '../modules/stravaApi';
 import { makeRedirectUri, useAuthRequest, exchangeCodeAsync } from 'expo-auth-session';
+import {retireBike, syncDataWithStrava} from "../modules/firestoreActions";
 import { useIsFocused } from "@react-navigation/native";
-import {retireBike} from "../modules/firestoreActions";
-
+import {isStravaUser} from '../modules/stravaApi';
+import {rideSecondsToString ,rideDistanceToString} from '../modules/helpers';
 //TODO mozna presunout do firestore func modelu
 //add strava account info to firestore doc in users collection
 async function connectAccWithStrava(tokens, user) {
@@ -77,7 +76,7 @@ export default function BikesListScreen({ navigation, route }) {
   const images = {
     mtbfull: require("../assets/images/full_suspension_mtb_icon.png"),
     mtbht: require("../assets/images/mtbht.png"),
-    road: require("../assets/images/road_icon.png")
+    road: require("../assets/images/road_icon.png"),
   };
 
   if (!isLoaded) {
@@ -108,26 +107,40 @@ export default function BikesListScreen({ navigation, route }) {
 
             {bikes.map(bike => {
 
-              const bikeOptions = [
-                {
-                  text: "Retire",
-                  onPress: () =>{ 
-                    retireBike(bike.bikeId).then(() => 
-                    setIsLoaded(false)
-                    )
+              if(bike.stravaSynced)
+              {
+                return <Card stravaIcon={true} title={bike.name} description={bike.type.label} icon={images[bike.type.value]} displayInfo={{
+                  "Distance": rideDistanceToString(bike.initialRideDistance + bike.rideDistance),
+                  "Ride Time": rideSecondsToString(bike.rideTime + bike.initialRideTime)
+                }} onPress={() => {
+                  navigation.navigate('BikeDetailTabs', {
+                    bikeId: bike.bikeId
+                  })
+                }} />
+              }
+              else
+              {
+                const bikeOptions = [
+                  {
+                    text: "Retire",
+                    onPress: () =>{ 
+                      retireBike(bike.bikeId).then(() => 
+                      setIsLoaded(false)
+                      )
+                    }
                   }
-                }
-
-              ]
-
-              return <Card options={bikeOptions} title={bike.name} description={bike.type.label} icon={images[bike.type.value]} displayInfo={{
-                "Distance": bike.rideDistance + " km",
-                "Ride Time": Math.floor(bike.rideTime / 3600) + " h " + Math.floor((bike.rideTime % 3600) / 60) + " m"
-              }} onPress={() => {
-                navigation.navigate('BikeDetailTabs', {
-                  bikeId: bike.bikeId
-                })
-              }} ></Card>
+                ]
+                return <Card  options={bikeOptions} title={bike.name} description={bike.type.label} icon={images[bike.type.value]} displayInfo={{
+                  "Distance": rideDistanceToString(bike.initialRideDistance + bike.rideDistance),
+                  "Ride Time": rideSecondsToString(bike.rideTime + bike.initialRideTime)
+                }} onPress={() => {
+                  navigation.navigate('BikeDetailTabs', {
+                    bikeId: bike.bikeId
+                  })
+                }} />
+              }
+              
+                
             })}
 
 
@@ -140,7 +153,7 @@ export default function BikesListScreen({ navigation, route }) {
             onPress={() => navigation.navigate("AddBikeScreen")}
           />
         </View>
-        {!(User.stravaConnected || User.stravaAuth) &&
+        {!(isStravaUser(User)) &&
           <TouchableOpacity onPress={() => {
             promptAsync();
           }}>

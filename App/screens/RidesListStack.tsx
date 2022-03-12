@@ -34,7 +34,7 @@ export default function RidesListStack({ navigation }) {
       <Stack.Group screenOptions={{ presentation: 'card' }}>
         <Stack.Screen name="RideDetail" options={{title: "Ride xxx"}} component={RideDetail} />
         <Stack.Screen component={AddRideScreen} name='AddRideScreen' options={{title:"Add ride", 
-          headerRight:()=> { return <Button  theme={{colors: {primary: 'black'}}} onPress={()=>navigation.navigate("RidesListScreen")}><Check name="check" size={24} color="white"/></Button>},
+          // headerRight:()=> { return <Button  theme={{colors: {primary: 'black'}}} onPress={()=>navigation.navigate("RidesListScreen")}><Check name="check" size={24} color="white"/></Button>},
           headerLeft: () => {return <Button theme={{colors: {primary: 'black'}}} style={{marginLeft:-20}} onPress={()=>navigation.goBack(null)}><Close name="close" size={24} color="white"/></Button>}
         }}  />
       </Stack.Group>

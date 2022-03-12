@@ -23,8 +23,10 @@ export default function AddComponentScreen({ navigation }) {
   const { control, setError, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'all' });
   const onSubmit = data => {
     data.type = componentTypes.find(biketype => biketype.value == data.type)
-    data.rideTime = Number(data.rideTime) * 60 * 60
-    data.rideDistance = Number(data.rideDistance)
+    data.initialRideTime = Number(data.initialRideTime) * 60 * 60
+    data.initialRideDistance = Number(data.initialRideDistance)*1000
+    data.rideTime = 0
+    data.rideDistance =0 
     data.user = doc(getFirestore(firebaseApp), "users", auth.currentUser.uid)
     data.state = "active"
     addDoc(collection(getFirestore(firebaseApp), "components"), data).then(() => {
@@ -171,7 +173,7 @@ export default function AddComponentScreen({ navigation }) {
                 label='Km to date'
               />
             )}
-            name="rideDistance"
+            name="initialRideDistance"
             defaultValue=""
           />
           {errors.rideDistance && <Text style={styles.errorMessage}>{errors.rideDistance.message}</Text>}
@@ -202,7 +204,7 @@ export default function AddComponentScreen({ navigation }) {
                 label='Ride hours to date'
               />
             )}
-            name="rideTime"
+            name="initialRideTime"
             defaultValue=""
           />
           {errors.rideTime && <Text style={styles.errorMessage}>{errors.rideTime.message}</Text>}

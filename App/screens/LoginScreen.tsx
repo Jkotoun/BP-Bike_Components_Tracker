@@ -25,15 +25,15 @@ async function createStravaAuthAccount(authTokens, athlete) {
     Crypto.CryptoDigestAlgorithm.SHA256,
     String(athlete.id + Constants.manifest.stravaAccPwdSec)
   );
+  
   createUserWithEmailAndPassword(auth, athlete.id + "@stravauser.com", hash).then(userObj => saveUserData(userObj.user.uid, {
     username: athlete.username,
     stravaAuth: true,
     stravaInfo: {
       accessToken: authTokens.accessToken,
       refreshToken: authTokens.refreshToken,
-      accessTokenExpiration: authTokens.issuedAt + authTokens.expiresIn
+      accessTokenExpiration: new Date((authTokens.issuedAt + authTokens.expiresIn)*1000) //new date takes miliseconds
     }
-
   }));
 }
 
@@ -55,8 +55,7 @@ export default function LoginScreen({ navigation }) {
       let authAthlete, authStravaTokens;
       stravaApi.getTokens(code).then(tokens => {
         authStravaTokens = tokens
-        return stravaApi.getAthlete(tokens.accessToken)
-
+        return stravaApi.getCurrentlyAuthorizedAthlete(authStravaTokens.accessToken)
       }).then(athlete => {
         authAthlete = athlete;
         return fetchSignInMethodsForEmail(auth, athlete.id + "@stravauser.com");
@@ -150,7 +149,7 @@ export default function LoginScreen({ navigation }) {
         <Text onPress={() => navigation.navigate('Register')} style={styles.registerFormRedirect}>Don't have account? <Text style={{ fontWeight: 'bold' }}>Sign Up! </Text></Text>
         <Text style={styles.orText}>Or</Text>
         <TouchableOpacity onPress={() => {
-          promptAsync();
+          promptAsync({useProxy:false});
         }}>
           <Image source={require('../assets/images/btn_strava_connectwith_light.png')} />
         </TouchableOpacity>

@@ -11,14 +11,15 @@ interface cardProps {
     icon?: ImageSourcePropType,
     title: string
     options?: Array<Option>
+    stravaIcon?: boolean
 }
 
 interface Option{
     onPress: () => void,
     text: string
 }
-
 export default function Card(props: cardProps) {
+    const stravaIcon = require("../assets/images/strava_icon_small.png")
     //calc flex for count of stats passed in props to view in card
     let flexSize: number
     if (props.displayInfo)
@@ -66,6 +67,11 @@ export default function Card(props: cardProps) {
                         )})}
                     </MenuOptions>
                 </Menu>}
+                {
+                    props.stravaIcon &&  <View style={Styles.stravaIconContainer}>
+                        <Image source={stravaIcon} style={Styles.stravaIcon} />
+                    </View>
+                }
             </View>
         </CardBase>
     )
@@ -123,6 +129,15 @@ const Styles = StyleSheet.create({
     menu:{
         flex:1, 
         paddingTop:5
+    },
+    stravaIconContainer:{
+        flex:1, 
+        paddingTop:7,
+        paddingRight:3
+    },
+    stravaIcon:{
+        width:25, 
+        height:25
     },
     menuOption:{
         padding:8

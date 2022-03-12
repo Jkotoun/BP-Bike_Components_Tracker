@@ -9,7 +9,7 @@ import { useNavigationState } from '@react-navigation/native';
 import activeScreenName from '../modules/screenName';
 function topTabBarVisible(state) {
   const routeName = activeScreenName(state);
-  const tabBarHiddenPages = ["ComponentInstallListStack", "ComponentInstallFormScreen", "ComponentUninstallFormScreen"]
+  const tabBarHiddenPages = ["ComponentInstallListStack", "ComponentInstallFormScreen", "ComponentUninstallFormScreen", "ComponentDetailTabs"]
   return !tabBarHiddenPages.includes(routeName)
 }
 const Tab = createMaterialTopTabNavigator();

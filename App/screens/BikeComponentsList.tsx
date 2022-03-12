@@ -5,6 +5,7 @@ import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where
 import { FAB } from 'react-native-paper';
 import Card from '../components/Card';
 import firebaseApp from '../config/firebase';
+import {rideSecondsToString} from '../modules/helpers';
 
 import { useIsFocused } from "@react-navigation/native";
 
@@ -75,7 +76,8 @@ export default function BikeComponentsList({ navigation, route }) {
             ]
             return <Card options={componentOptions} title={component.name} description={component.type.displayName} icon={images[component.type.value]} displayInfo={{
               "Distance": component.rideDistance + " km",
-              "Ride Time": Math.floor(component.rideTime / 3600) + " h " + Math.floor((component.rideTime % 3600) / 60) + " m"
+              "Ride Time": rideSecondsToString(component.rideTime + component.initialRideTime)
+
             }} onPress={() => { Alert.alert("TODO show correct component") }}></Card>
           })}
         </View>

@@ -8,7 +8,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import { getFirestore, addDoc, collection, doc, updateDoc, query, where, getDocs, orderBy, deleteField, increment } from 'firebase/firestore';
 import firebaseApp from '../config/firebase';
 import { getAuth } from 'firebase/auth';
-
+import {addBike} from '../modules/firestoreActions'
 export default function AddBikeScreen({ navigation }) {
   const [purchaseDate, setPurchaseDate] = useState(new Date());
   const [show, setShow] = useState(false);
@@ -28,11 +28,14 @@ export default function AddBikeScreen({ navigation }) {
   const onSubmit = data => {
     data.type = bikeTypes.find(biketype => biketype.value == data.type)
     data.purchaseDate = purchaseDate
-    data.rideTime = Number(data.rideTime)*60*60
-    data.rideDistance = Number(data.rideDistance)
+    data.rideTime = 0
+    data.rideDistance = 0
+    data.initialRideTime = Number(data.initialRideTime)*60*60
+    data.initialRideDistance = Number(data.initialRideDistance)*1000
     data.state = "active"
     data.user = doc(getFirestore(firebaseApp), "users", auth.currentUser.uid)
-    addDoc(collection(getFirestore(firebaseApp), "bikes"), data).then(() => {
+
+    addBike(data).then(() => {
       navigation.navigate("BikesListScreen", {forceReload: true})
     })
   }
@@ -207,7 +210,7 @@ export default function AddBikeScreen({ navigation }) {
                 label='Km to date'
               />
             )}
-            name="rideDistance"
+            name="initialRideDistance"
           />
           {errors.rideDistance && <Text style={styles.errorMessage}>{errors.rideDistance.message}</Text>}
 
@@ -241,7 +244,7 @@ export default function AddBikeScreen({ navigation }) {
                 label='Ride hours to date'
               />
             )}
-            name="rideTime"
+            name="initialRideTime"
           />
           {errors.rideTime && <Text style={styles.errorMessage}>{errors.rideTime.message}</Text>}
           <View style={{padding:20, width:"100%"}}>

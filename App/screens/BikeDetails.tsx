@@ -4,7 +4,7 @@ import { Text, View, StyleSheet } from 'react-native';
 import firebaseApp from '../config/firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 import { getFirestore, setDoc, doc, getDoc } from 'firebase/firestore';
-
+import {rideSecondsToString} from '../modules/helpers';
 
 async function loadBike(bikeId) {
   let bike = await getDoc(doc(getFirestore(firebaseApp), "bikes", bikeId))
@@ -35,8 +35,8 @@ export default function BikeDetails({ route }) {
   }
   else {
   const bikeInfo = {
-    'Distance': bike.rideDistance + " km ",
-    'Ride Time': Math.floor(bike.rideTime/3600) + " h " + Math.floor((bike.rideTime%3600)/60) + " m",
+    'Distance': ((bike.rideDistance + bike.initialRideDistance)/1000).toFixed(2) + " km ",
+    'Ride Time': rideSecondsToString(bike.rideTime + bike.initialRideTime),
     'Bike Name': bike.name,
     'Type': bike.type.label,
     'Brand': bike.brand,

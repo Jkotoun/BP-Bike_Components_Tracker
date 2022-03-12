@@ -4,6 +4,7 @@ import { Text, View, StyleSheet, ActivityIndicator } from 'react-native';
 import firebaseApp from '../config/firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 import { getFirestore, setDoc, doc, getDoc } from 'firebase/firestore';
+import {rideSecondsToString} from '../modules/helpers';
 
 
 async function loadComponent(componentId) {
@@ -40,8 +41,8 @@ export default function ComponentDetails({ route }) {
       'Component type': component.type.displayName,
       'Brand': component.brand,
       'Model': component.model,
-      'Distance': component.rideDistance + " km",
-      'Ride Time': Math.floor(component.rideTime / 3600) + " h " + Math.floor((component.rideTime % 3600) / 60) + " m"
+      'Distance': ((component.rideDistance+component.initialRideDistance)/1000).toFixed(2) + " km",
+      'Ride Time':rideSecondsToString(component.rideTime + component.initialRideTime)
     }
     return (
       <View style={styles.mainContainer}>
