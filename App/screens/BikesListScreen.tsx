@@ -8,7 +8,7 @@ import firebaseApp from '../config/firebase';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc } from 'firebase/firestore';
 import * as stravaApi from '../modules/stravaApi';
 import { makeRedirectUri, useAuthRequest, exchangeCodeAsync } from 'expo-auth-session';
-import {retireBike, syncDataWithStrava} from "../modules/firestoreActions";
+import {changeBikeState, syncDataWithStrava} from "../modules/firestoreActions";
 import { useIsFocused } from "@react-navigation/native";
 import {isStravaUser} from '../modules/stravaApi';
 import {rideSecondsToString ,rideDistanceToString} from '../modules/helpers';
@@ -33,7 +33,6 @@ export default function BikesListScreen({ navigation, route }) {
   const [isLoaded, setIsLoaded] = React.useState(false);
   //strava auth request
   const [request, response, promptAsync] = stravaApi.authReq()
-
   const isFocused = useIsFocused();
 
 
@@ -61,7 +60,17 @@ export default function BikesListScreen({ navigation, route }) {
   }, [response]);
   //bikes loading
   React.useEffect(() => {
-      getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("user", "==", doc(getFirestore(firebaseApp), "users", User.uid)), where("state", "==", "active"))).then(bikesDocRef => {
+    if(route.params)
+    {
+      console.log(route.params.viewRetired)
+    }
+
+      let bikeStatesQuery = ["active"];
+      if(route.params.viewRetired == true)
+      {
+        bikeStatesQuery.push("retired")
+      }
+      getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("user", "==", doc(getFirestore(firebaseApp), "users", User.uid)), where("state", 'in', bikeStatesQuery))).then(bikesDocRef => {
         const bikesArray = []
         bikesDocRef.forEach(bike => {
           let bikeData = bike.data()
@@ -98,9 +107,7 @@ export default function BikesListScreen({ navigation, route }) {
     return (
       <View style={styles.mainContainer}>
         <ScrollView >
-        <StatusBar
-              backgroundColor="#F44336"
-            />
+        <StatusBar backgroundColor="#F44336"/>
           <View style={styles.bikeCardsContainer}>
           
           {bikes.length == 0 && <Text style={{padding:20, fontSize:17, fontWeight:'700'}}>Sync bikes from strava or add bike using '+' button</Text>}
@@ -128,17 +135,34 @@ export default function BikesListScreen({ navigation, route }) {
                         bikeId: bike.bikeId
                       })
                     }
-                  },
-                  {
+                  }
+                ]
+                if(bike.state == "active")
+                {
+                  bikeOptions.push({
                     text: "Retire",
                     onPress: () =>{ 
-                      retireBike(bike.bikeId).then(() => 
+                      changeBikeState(bike.bikeId, "retired").then(() => 
                       setIsLoaded(false)
                       )
                     }
-                  }
-                ]
-                return <Card  options={bikeOptions} title={bike.name} description={bike.type.label} icon={images[bike.type.value]} displayInfo={{
+                  })
+                }
+                else if(bike.state=="retired")
+                {
+                  bikeOptions.push({
+                    text: "Reactivate",
+                    onPress: () =>{ 
+                      changeBikeState(bike.bikeId, "active").then(() => 
+                      setIsLoaded(false)
+                      )
+                    }
+                  })
+                } 
+                
+
+
+                return <Card options={bikeOptions} active={bike.state == "active"} title={bike.state=="active"? bike.name : (bike.name + " - retired")} description={bike.type.label} icon={images[bike.type.value]} displayInfo={{
                   "Distance": rideDistanceToString(bike.initialRideDistance + bike.rideDistance),
                   "Ride Time": rideSecondsToString(bike.rideTime + bike.initialRideTime)
                 }} onPress={() => {

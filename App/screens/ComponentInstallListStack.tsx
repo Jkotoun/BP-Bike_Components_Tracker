@@ -34,8 +34,6 @@ export default function ComponentInstallListStack({ navigation, route }) {
         initialParams={{bikeId: route.params.bikeId}}
          options={{
            title:"Add component", 
-          //  headerRight:()=> { return <Button  theme={{colors: {primary: 'black'}}} onPress={()=>navigation.goBack(null)}><Check name="check" size={24} color="white"/></Button>},
-           headerLeft: () => {return <Button theme={{colors: {primary: 'black'}}} style={{marginLeft:-20}} onPress={()=>navigation.goBack(null)}><Close name="close" size={24} color="white"/></Button>}
           }}
            component={ComponentInstallFormScreen} />
 

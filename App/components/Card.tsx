@@ -11,7 +11,8 @@ interface cardProps {
     icon?: ImageSourcePropType,
     title: string
     options?: Array<Option>
-    stravaIcon?: boolean
+    stravaIcon?: boolean,
+    active?: boolean
 }
 
 interface Option{
@@ -28,7 +29,7 @@ export default function Card(props: cardProps) {
     }
     return (
         <CardBase>
-            <View style={Styles.mainContainer}>
+            <View style={(props.active===undefined || props.active===true) ?  Styles.mainContainer : [Styles.mainContainer, Styles.notActiveStyle]}>
                 <TouchableOpacity onPress={props.onPress} style={Styles.touchableContainer}>
                     <View style={Styles.upperHalfContainer}>
                         <View style={Styles.textsContainer}>
@@ -80,7 +81,10 @@ export default function Card(props: cardProps) {
 const Styles = StyleSheet.create({
     mainContainer:{
         display: 'flex', 
-        flexDirection: 'row'
+        flexDirection: 'row',
+    },
+    notActiveStyle:{
+        opacity:0.5
     },
     touchableContainer:{
         flex:12
@@ -126,10 +130,6 @@ const Styles = StyleSheet.create({
         fontSize: 15, 
         fontWeight: 'bold' 
     },
-    menu:{
-        flex:1, 
-        paddingTop:5
-    },
     stravaIconContainer:{
         flex:1, 
         paddingTop:7,
@@ -138,6 +138,10 @@ const Styles = StyleSheet.create({
     stravaIcon:{
         width:25, 
         height:25
+    },
+    menu:{
+        flex:1, 
+        paddingTop:5
     },
     menuOption:{
         padding:8

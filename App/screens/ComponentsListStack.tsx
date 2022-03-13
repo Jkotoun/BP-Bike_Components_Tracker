@@ -11,10 +11,21 @@ import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 import Close from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebaseApp from '../config/firebase'
 import { getAuth } from 'firebase/auth';
+import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import activeScreenName  from '../modules/helpers';
+import { useNavigationState } from '@react-navigation/native';
+
+function stackHeaderVisible(navigationState) {
+    
+  const routeName = activeScreenName(navigationState);
+  return !["ComponentsListScreen", undefined, "All components"].includes(routeName) 
+}
+
 const auth = getAuth(firebaseApp)
 export default function BikesListScreen({ navigation }) {
   const Stack = createNativeStackNavigator();
-  
+  const navigationState = useNavigationState(state => state);
   return (
 
     <Stack.Navigator initialRouteName="ComponentsListScreen" screenOptions={{
@@ -22,8 +33,15 @@ export default function BikesListScreen({ navigation }) {
         backgroundColor: '#F44336'
       },
       headerShadowVisible:false,
+      headerShown:stackHeaderVisible(navigationState),
       headerRight: () => (
-        <Text style={{ color: "white" }} onPress={async () => { await auth.signOut()}}>Logout</Text>
+        <Menu>
+          <MenuTrigger text={<Icon name="dots-vertical" size={25} color="#ffffff" />} />
+          <MenuOptions>
+                 <MenuOption onSelect={async () => { await auth.signOut()}} text={"Log out"} style={styles.menuOption}/>
+          </MenuOptions>
+
+      </Menu>
       ),
       animation: 'none',
       headerTintColor: '#ffffff'
@@ -42,4 +60,9 @@ export default function BikesListScreen({ navigation }) {
     </Stack.Navigator>
 
   );
+}
+const styles = {
+menuOption:{
+    padding:8
+}
 }

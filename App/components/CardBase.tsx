@@ -20,6 +20,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#FDFDFD", 
         margin: 4, 
         elevation: 2, 
-        borderRadius: 3
+        borderRadius: 3,
     }
 })

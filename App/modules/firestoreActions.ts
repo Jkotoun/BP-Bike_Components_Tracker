@@ -287,10 +287,10 @@ export async function retireComponent(componentId)
     })
 } 
 
-export async function retireBike(bikeId)
+export async function changeBikeState(bikeId, newState)
 {
     return updateDoc(doc(getFirestore(firebaseApp), "bikes", bikeId), {
-        state: "retired"
+        state: newState
     })
 } 
 

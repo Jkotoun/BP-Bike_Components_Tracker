@@ -8,16 +8,17 @@ import BikesListScreen from "./BikesListScreen"
 import AddBikeScreen from './AddBikeScreen';
 import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 import Close from 'react-native-vector-icons/MaterialCommunityIcons';
-import activeScreenName from '../modules/screenName';
+import activeScreenName from '../modules/helpers';
 import { useNavigationState } from '@react-navigation/native';
 import { getAuth } from 'firebase/auth';
 import firebaseApp from '../config/firebase';
-
+import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
   function stackHeaderVisible(navigationState) {
     
     const routeName = activeScreenName(navigationState);
-    const headerHiddenPages = ["ComponentInstallListStack", "ComponentInstallFormScreen", "ComponentUninstallFormScreen"]
-    return !headerHiddenPages.includes(routeName)
+    // const headerHiddenPages = ["ComponentInstallListStack", "ComponentInstallFormScreen", "ComponentUninstallFormScreen", "BikesListScreen", "ComponentInstallListScreen"]
+    return ["BikeDetailTabs", "History", "Components", "Details"].includes(routeName)
   }
 const auth = getAuth(firebaseApp)
 
@@ -31,7 +32,13 @@ export default function BikesListStack({ navigation , route}) {
       },
       headerShadowVisible: false,
       headerRight: () => (
-        <Text style={{ color: "white" }} onPress={async () => { await auth.signOut()}}>Logout</Text>
+        <Menu>
+          <MenuTrigger text={<Icon name="dots-vertical" size={25} color="#ffffff" />} />
+          <MenuOptions>
+                 <MenuOption onSelect={async () => { await auth.signOut()}} text={"Log out"} style={styles.menuOption}/>
+          </MenuOptions>
+
+      </Menu>
       ),
       animation: 'none',
       headerTintColor: '#ffffff',
@@ -40,7 +47,7 @@ export default function BikesListStack({ navigation , route}) {
     })}>
 
       <Stack.Group>
-        <Stack.Screen name="BikesListScreen" options={{ title: "Bikes" }} component={BikesListScreen} />
+        <Stack.Screen name="BikesListScreen" initialParams={{viewRetired: route.params.viewRetired}} options={{ title: "Bikes" }} component={BikesListScreen} />
       </Stack.Group>
       
       <Stack.Group screenOptions={{ presentation: 'card' }}>
@@ -57,4 +64,10 @@ export default function BikesListStack({ navigation , route}) {
     </Stack.Navigator>
 
   );
+}
+
+const styles = {
+    menuOption:{
+        padding:8
+    }
 }

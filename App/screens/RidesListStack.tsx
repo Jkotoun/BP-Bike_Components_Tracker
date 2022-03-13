@@ -1,7 +1,8 @@
 
 import * as React from 'react';
 import { Text} from 'react-native';
-
+import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RidesListScreen from "./RidesListScreen"
 import RideDetail from "./RideDetail"
@@ -11,7 +12,18 @@ import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 import Close from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebaseApp from '../config/firebase'
 import { getAuth } from 'firebase/auth';
+import { useNavigationState } from '@react-navigation/native';
+
+import activeScreenName from '../modules/helpers';
 const auth = getAuth(firebaseApp)
+
+
+function headerVisible()
+{
+  const currentScreen = activeScreenName(useNavigationState(state => state));
+  return !["RidesListScreen", "Rides"].includes(currentScreen)   
+}
+
 export default function RidesListStack({ navigation }) {
  
   const Stack = createNativeStackNavigator();
@@ -21,8 +33,15 @@ export default function RidesListStack({ navigation }) {
       headerStyle: {
         backgroundColor: '#F44336'
       },
+      headerShown: headerVisible(),
       headerRight: () => (
-        <Text style={{ color: "white" }} onPress={async () => { await auth.signOut()}}>Logout</Text>
+        <Menu>
+          <MenuTrigger text={<Icon name="dots-vertical" size={25} color="#ffffff" />} />
+          <MenuOptions>
+                 <MenuOption onSelect={async () => { await auth.signOut()}} text={"Log out"} style={styles.menuOption}/>
+          </MenuOptions>
+
+      </Menu>
       ),
       headerShadowVisible:false,
       animation: 'none',
@@ -42,3 +61,8 @@ export default function RidesListStack({ navigation }) {
 
   );
 }
+const styles = {
+  menuOption:{
+      padding:8
+  }
+  }

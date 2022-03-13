@@ -9,7 +9,7 @@ import { useNavigationState } from '@react-navigation/native';
 import activeScreenName from '../modules/screenName';
 function topTabBarVisible(state) {
   const routeName = activeScreenName(state);
-  const tabBarHiddenPages = ["ComponentInstallListStack", "ComponentInstallFormScreen", "ComponentUninstallFormScreen", "ComponentDetailTabs"]
+  const tabBarHiddenPages = ["ComponentInstallListStack", "ComponentInstallListScreen", "ComponentInstallFormScreen", "ComponentUninstallFormScreen", "ComponentDetailTabs"]
   return !tabBarHiddenPages.includes(routeName)
 }
 const Tab = createMaterialTopTabNavigator();
@@ -23,7 +23,7 @@ export default function BikeTabs({route}) {
       headerStyle: {
         backgroundColor: '#F44336'
       },
-      headerShown: false,
+      headerShown: true,
       headerTitleStyle: {
         color: 'white'
       }, 
@@ -34,6 +34,7 @@ export default function BikeTabs({route}) {
       tabBarStyle:{
       display: topTabBarVisible(state)? "flex":"none"
       },
+      swipeEnabled: topTabBarVisible(state)
     
     })}>
 

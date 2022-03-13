@@ -1,5 +1,6 @@
 import * as React from 'react';
-
+import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NavigationContainer, useIsFocused } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -11,37 +12,51 @@ import BikesListStack from './App/screens/BikesListStack';
 import RidesListStack from './App/screens/RidesListStack';
 import { useNavigationState } from '@react-navigation/native';
 import { MenuProvider } from 'react-native-popup-menu';
-import { StyleSheet, Text, View, StatusBar } from 'react-native';
-import activeScreenName from './App/modules/screenName';
+import { StyleSheet, Text, View, StatusBar, Alert, Button } from 'react-native';
+import activeScreenName from './App/modules/helpers';
 import { AuthenticatedUserContext } from './context'
 import { getFirestore, getDoc, doc } from 'firebase/firestore';
 import firebaseApp from './App/config/firebase';
 import { getAuth } from "firebase/auth"
-import {syncDataWithStrava} from "./App/modules/firestoreActions";
-import { ActivityIndicator } from 'react-native-paper';
+import { syncDataWithStrava } from "./App/modules/firestoreActions";
+import { ActivityIndicator, Checkbox } from 'react-native-paper';
+
 const auth = getAuth(firebaseApp)
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
+
+
 //check if tabbar should be visible on current active screen
-function tabBarVisible() {
+function tabBarVisible(): boolean {
   const currentScreen = activeScreenName(useNavigationState(state => state));
   const tabBarHiddenPages = ["BikeDetail", "ComponentDetail", "RideDetail", "AddBikeScreen"]
   //true if current screen is not in array
   return !tabBarHiddenPages.includes(currentScreen)
 }
 
+function headerVisible(Test): boolean {
+  console.log(Test)
+  const currentScreen = activeScreenName(useNavigationState(state => state));
+  console.log("SCREEN")
+  console.log(currentScreen)
+  //undefined is first screen on app launch
+  return ["BikesListScreen", "ComponentsListScreen", "RidesListScreen", undefined, "Bikes", "All components", "Rides"].includes(currentScreen)
+}
+
 export default function Root() {
-  
+
+  const [Test, setTest] = React.useState(0)
+  const [checked, setChecked] = React.useState(false);
   const [isUpdatingAuth, setIsUpdatingAuth] = React.useState(false);
   const [isSyncing, setIsSyncing] = React.useState(false);
+  const [isLoaded, setIsLoaded] = React.useState(true);
+
+
   const { User, setUser, IsLoggedIn, setIsLoggedIn } = React.useContext(AuthenticatedUserContext);
   React.useEffect(() => {
     console.log("loading app")
-    
-    
-
     // onAuthStateChanged returns an unsubscriber
     const unsubscribeAuth = auth.onAuthStateChanged(authenticatedUser => {
       try {
@@ -62,111 +77,167 @@ export default function Root() {
         console.log("err");
       }
     });
-    
+
     // unsubscribe auth listener on unmount
     return unsubscribeAuth;
   }, []);
-  
-  React.useEffect(() => { 
-    if(IsLoggedIn)
-    {
-      if(User.stravaAuth || User.stravaConnected)    
-      {
-        setIsSyncing(true)
-        syncDataWithStrava(User, setUser).then(() => {
-    
-          setIsSyncing(false)
-        })
+
+  React.useEffect(() => {
+    if (IsLoggedIn) {
+      if (User.stravaAuth || User.stravaConnected) {
+        // setIsSyncing(true)
+        // syncDataWithStrava(User, setUser).then(() => {
+
+        //   setIsSyncing(false)
+        // })
       }
-    } 
+    }
   }, [IsLoggedIn])
-  
-  
+
+
+//TODO predelat znovunacitani
+  React.useEffect(() => {
+    setIsLoaded(true)
+  }, [checked]);
+
   // if (initializing) return null;
   if (isUpdatingAuth || isSyncing) {
     return (
-    <View style={styles.mainContainer}>
-      <StatusBar
-              backgroundColor="#F44336"
-            />
-      <ActivityIndicator size='large' color="#ffffff"/>  
-      <View style={{padding:20}}>
+      <>
+        <StatusBar
+          backgroundColor="#F44336"
+        />
+        <View style={styles.mainContainer}>
+          <ActivityIndicator size='large' color="#ffffff" />
+          <View style={{ padding: 20 }}>
 
-        {isUpdatingAuth && <Text style={{color:"#ffffff",  fontSize:20, fontWeight:'700'}}>Logging in</Text>}
-        {isSyncing && <Text style={{color:"#ffffff", fontSize:20, fontWeight:'700'}}>Syncing with strava</Text>}    
+            {isUpdatingAuth && <Text style={{ color: "#ffffff", fontSize: 20, fontWeight: '700' }}>Logging in</Text>}
+            {isSyncing && <Text style={{ color: "#ffffff", fontSize: 20, fontWeight: '700' }}>Syncing with strava</Text>}
 
-      </View>
-    </View>)
+          </View>
+        </View>
+      </>
+    )
   }
   else {
-    return (
-      // pass info about logged user to all child screens
+    if (!isLoaded) {
+      return (
+        <>
+          <View style={styles.loadContainer}>
+            <StatusBar
+              backgroundColor="#F44336"
+            />
 
-      <MenuProvider>
-        <NavigationContainer>
-          {/* Main 3 tabs if logged in */}
-          {IsLoggedIn ?
-          
-            <Tab.Navigator
-              screenOptions={({ route }) => ({
+            <ActivityIndicator size="large" color="#F44336" />
+          </View>
+        </>
+      )
+    }
+    else {
+      return (
+        // pass info about logged user to all child screens
+
+        <MenuProvider>
+          <NavigationContainer>
+            {/* Main 3 tabs if logged in */}
+            {IsLoggedIn ?
+
+              <Tab.Navigator
+                screenOptions={({ route }) => ({
+                  headerStyle: styles.header,
+                  tabBarLabelStyle: styles.tabBarLabel,
+                  tabBarIconStyle: styles.tabBarIcon,
+                  headerShown: headerVisible(Test),  //
+                  headerTitleStyle: styles.headerTitle,
+                  tabBarStyle: {
+                    height: 55,
+                    display: tabBarVisible() ? "flex" : "none"
+                  },
+                  //TODO refactor
+                  headerRight: () => (
+                    <Menu style={styles.menu}>
+                      <MenuTrigger text={<Icon name="dots-vertical" size={25} color="#ffffff" />} />
+                      <MenuOptions>
+                        <MenuOption onSelect={() => { setIsLoaded(false); setChecked(!checked); }} text={
+                          <>
+                            <View style={{ flexDirection: 'column' }}>
+
+                              <View style={{ flexDirection: 'row' }}>
+
+                                <Checkbox
+
+                                  color={customOrange}
+                                  status={checked ? 'checked' : 'unchecked'}
+                                  onPress={() => {
+                                    setIsLoaded(false);
+                                    setChecked(!checked);
+                                  }} />
+                                <Text style={{ marginTop: 7.5 }}> View retired</Text>
+                              </View>
+                            </View>
+
+
+                          </>
+                        }
+
+                          style={styles.menuOption} />
+                        <MenuOption onSelect={async () => { await auth.signOut() }} text={"Log out"} style={styles.menuOption} />
+                      </MenuOptions>
+
+                    </Menu>
+                  ),
+                  tabBarActiveTintColor: customOrange,
+                  tabBarInactiveTintColor: 'gray',
+                })}
+              >
+
+                <Tab.Screen name="Bikes" initialParams={{ viewRetired: checked }} component={BikesListStack} options={{
+                  tabBarLabel: 'Bikes',
+
+                  tabBarIcon: ({ color, size }) => (
+                    <MaterialCommunityIcons name="bike" color={color} size={size} />
+                  ),
+                }}
+                />
+
+                <Tab.Screen name="All components" initialParams={{ viewRetired: checked }} component={ComponentsListStack} options={{
+                  tabBarLabel: 'All components',
+                  tabBarIcon: ({ color, size }) => (
+                    <MaterialCommunityIcons name="cog-outline" color={color} size={size} />
+                  ),
+                }}
+                />
+
+                <Tab.Screen name="Rides" component={RidesListStack} options={{
+                  tabBarLabel: 'Rides',
+                  tabBarIcon: ({ color, size }) => (
+                    <MaterialCommunityIcons name="map-marker" color={color} size={size} />
+                  ),
+                }}
+                />
+
+              </Tab.Navigator>
+              :
+
+              // Login screen if not logged in 
+              <Stack.Navigator initialRouteName="Login" screenOptions={{
+                headerShadowVisible: false,
+                headerTitle: "",
                 headerStyle: styles.header,
-                tabBarLabelStyle: styles.tabBarLabel,
-                tabBarIconStyle: styles.tabBarIcon,
-                headerShown: false,
-                headerTitleStyle: styles.headerTitle,
-                tabBarStyle: {
-                  height: 55,
-                  display: tabBarVisible() ? "flex" : "none"
-                },
-                tabBarActiveTintColor: customOrange,
-                tabBarInactiveTintColor: 'gray',
-              })}
-            >
-
-              <Tab.Screen name="Bikes" component={BikesListStack} options={{
-                tabBarLabel: 'Bikes',
-                tabBarIcon: ({ color, size }) => (
-                  <MaterialCommunityIcons name="bike" color={color} size={size} />
-                ),
               }}
-              />
+              >
+                <Stack.Screen name="Login" options={{ animation: "none" }} component={LoginScreen} />
+                <Stack.Screen name="Register" options={{ animation: "slide_from_right" }} component={RegisterScreen} />
+              </Stack.Navigator>
+            }
 
-              <Tab.Screen name="All components" component={ComponentsListStack} options={{
-                tabBarLabel: 'All components',
-                tabBarIcon: ({ color, size }) => (
-                  <MaterialCommunityIcons name="cog-outline" color={color} size={size} />
-                ),
-              }}
-              />
+          </NavigationContainer>
+        </MenuProvider>
 
-              <Tab.Screen name="Rides" component={RidesListStack} options={{
-                tabBarLabel: 'Rides',
-                tabBarIcon: ({ color, size }) => (
-                  <MaterialCommunityIcons name="map-marker" color={color} size={size} />
-                ),
-              }}
-              />
-
-            </Tab.Navigator>
-            :
-
-            // Login screen if not logged in 
-            <Stack.Navigator initialRouteName="Login" screenOptions={{
-              headerShadowVisible: false,
-              headerTitle: "",
-              headerStyle: styles.header,
-            }}
-            >
-              <Stack.Screen name="Login" options={{ animation: "none" }} component={LoginScreen} />
-              <Stack.Screen name="Register" options={{ animation: "slide_from_right" }} component={RegisterScreen} />
-            </Stack.Navigator>
-          }
-
-        </NavigationContainer>
-      </MenuProvider>
-
-    );
+      );
+    }
   }
+
 
 }
 
@@ -191,13 +262,25 @@ const styles = StyleSheet.create({
   tabBarIcon:
   {
     marginTop: 5
-  },   
+  },
   mainContainer: {
     flex: 1,
     alignItems: 'center',
     backgroundColor: customOrange,
     justifyContent: 'center'
   },
-
-
+  menu: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingRight: 15,
+  },
+  menuOption: {
+    padding:8
+    
+  },
+  loadContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
 })
