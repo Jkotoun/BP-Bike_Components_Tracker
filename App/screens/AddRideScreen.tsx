@@ -32,7 +32,6 @@ export default function AddRideScreen({ navigation, route }) {
     setRideTime(currentTime);
   };
 
-
   const auth = getAuth(firebaseApp)
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
   const [bikes, setBikes] = React.useState([]);
@@ -49,11 +48,9 @@ export default function AddRideScreen({ navigation, route }) {
           })
         })
         setBikes(bikesArray)
-
       }).then(()=>{
 
         if (route.params && route.params.rideId) {
-          console.log(route.params.rideId)
           getRide(route.params.rideId)
           .then(rideDoc=> {
             setrideToEdit(rideDoc.data())
@@ -70,10 +67,9 @@ export default function AddRideScreen({ navigation, route }) {
 
       })
   }, [isFocused]);
-
+ 
   const [selectedLanguage, setSelectedLanguage] = useState();
   const { control, setError, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'all' });
-
 
   const onSubmit = data => {
     data.distance = Number(data.distance)*1000

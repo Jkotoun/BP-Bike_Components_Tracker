@@ -122,13 +122,14 @@ async function stravaApiRequest(User, setUser, path)
     let authToken = User.stravaInfo.accessToken
     if(tokenExpired(User))
     {
+      console.log("expired token, refreshing")
       authToken = (await refreshAccessToken(User, setUser)).accessToken
     }
 
   
     return axios.get('https://www.strava.com/api/v3/' + path, {
       headers:{
-          'Authorization': 'Bearer ' + User.stravaInfo.accessToken
+          'Authorization': 'Bearer ' + authToken
       }
   }).then(response => {
       if(response.status == 200)
