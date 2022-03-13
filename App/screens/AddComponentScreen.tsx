@@ -221,7 +221,7 @@ export default function AddComponentScreen({ navigation, route }) {
                 />
               )}
               name="initialRideDistance"
-              defaultValue={componentToEdit !== undefined ? (componentToEdit.initialRideDistance / 1000).toString() : ""}
+              defaultValue={componentToEdit.initialRideDistance !== undefined ? (componentToEdit.initialRideDistance / 1000).toString() : ""}
             />
             {errors.rideDistance && <Text style={styles.errorMessage}>{errors.rideDistance.message}</Text>}
 

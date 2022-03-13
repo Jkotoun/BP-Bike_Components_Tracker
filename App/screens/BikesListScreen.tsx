@@ -60,7 +60,6 @@ export default function BikesListScreen({ navigation, route }) {
   }, [response]);
   //bikes loading
   React.useEffect(() => {
-
       let bikeStatesQuery = ["active"];
       if(route.params.viewRetired == true)
       {

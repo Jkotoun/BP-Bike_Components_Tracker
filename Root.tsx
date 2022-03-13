@@ -85,11 +85,11 @@ export default function Root() {
   React.useEffect(() => {
     if (IsLoggedIn) {
       if (User.stravaAuth || User.stravaConnected) {
-        // setIsSyncing(true)
-        // syncDataWithStrava(User, setUser).then(() => {
+        setIsSyncing(true)
+        syncDataWithStrava(User, setUser).then(() => {
 
-        //   setIsSyncing(false)
-        // })
+          setIsSyncing(false)
+        })
       }
     }
   }, [IsLoggedIn])

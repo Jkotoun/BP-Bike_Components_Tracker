@@ -15,10 +15,8 @@ import firebaseApp from '../config/firebase';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
   function stackHeaderVisible(navigationState) {
-    
     const routeName = activeScreenName(navigationState);
-    // const headerHiddenPages = ["ComponentInstallListStack", "ComponentInstallFormScreen", "ComponentUninstallFormScreen", "BikesListScreen", "ComponentInstallListScreen"]
-    return ["BikeDetailTabs", "History", "Components", "Details"].includes(routeName)
+    return ["BikeDetailTabs", "History", "Components", "Details", "AddBikeScreen", "BikeComponentsList"].includes(routeName)
   }
 const auth = getAuth(firebaseApp)
 
@@ -55,10 +53,8 @@ export default function BikesListStack({ navigation , route}) {
         <Stack.Screen name='AddBikeScreen'
           options={{
             title: "Add bike",
-            // headerRight: () => { return <Button theme={{ colors: { primary: 'black' } }} onPress={() => navigation.navigate("BikesListScreen")}><Check name="check" size={24} color="white" /></Button> },
             headerLeft: () => { return <Button theme={{ colors: { primary: 'black' } }} onPress={() => navigation.goBack(null)} style={{ marginLeft: -20 }}><Close name="close" size={24} color="white" /></Button> }
           }}
-
           component={AddBikeScreen} />
       </Stack.Group>
     </Stack.Navigator>

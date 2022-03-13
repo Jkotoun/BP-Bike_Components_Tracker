@@ -17,10 +17,10 @@ interface bike
     model: string,
     name: string,
     purchaseDate: Date,
-    rideDistance: number,
-    rideTime: number,
-    initialRideDistance: number,
-    initialRideTime: number,
+    rideDistance?: number,
+    rideTime?: number,
+    initialRideDistance?: number,
+    initialRideTime?: number,
     state:string,
     type: bikeType,
     user: DocumentReference
@@ -109,10 +109,6 @@ function gearDataToBikeDoc(gearData):stravaBike
         user: doc(getFirestore(firebaseApp), "users", getAuth(firebaseApp).currentUser.uid),
         stravaSynced: true,
         stravaId: gearData.id,
-        rideDistance: 0,
-        rideTime: 0,
-        initialRideDistance: 0,
-        initialRideTime: 0
     }
     return bike
 }
@@ -122,16 +118,16 @@ async function syncBikes(User, setUser)
 {
     let syncedBikes = (await getAllStravaSyncedBikes()).docs
     let stravaBikes =  await getAllBikes(User, setUser)
-    for(let i = 0;i<stravaBikes.length;i++)
-    {
-        let gearData = await getStravaGear(stravaBikes[i]["id"], User, setUser)
+    
+    let promises = stravaBikes.map(async stravaBike => {
+        let gearData = await getStravaGear(stravaBike["id"], User, setUser)
         //exists in both, update data except rideTime and distance
         let syncedBike = syncedBikes.find(bike => bike.data().stravaId && bike.data().stravaId == gearData.id);
         if(syncedBike)
         {
             updateBike(syncedBike.ref, gearDataToBikeDoc(gearData))
             //remove bike from list
-            syncedBikes = syncedBikes.filter(bike => bike.data().stravaId != gearData.id)
+            // syncedBikes = syncedBikes.filter(bike => bike.data().stravaId != gearData.id)
         }
         else //bike exists in strava, does not exist in db
         {
@@ -144,13 +140,16 @@ async function syncBikes(User, setUser)
             }
             addBike(bikeDocData)
         }
-    }
-    
+    })
+    return Promise.all(promises)
     //delete bikes, which are no longer in strava account
-    for(let i = 0;i<syncedBikes.length;i++)
-    {
-        deleteDoc(syncedBikes[i].ref)
-    }
+    
+    // let deleteBikesPromise = syncedBikes.map(async bike =>{
+    //     deleteDoc(bike.ref)
+    // })
+
+
+    // return Promise.all(deleteBikesPromise)
 }
 
 function stravaActivityToRide(activity) : stravaRide
@@ -206,20 +205,20 @@ async function syncRides(User, setUser)
     let stravaRides = await getAllStravaRides(User, setUser)
 
     console.log("syncing " + stravaRides.length + " rides")
-    for(let i = 0;i<stravaRides.length;i++)
-    {
-        let syncedRide = syncedRides.find(ride => ride.data().stravaId && ride.data().stravaId == stravaRides[i].id);
+    
+    let promises = stravaRides.map(async stravaRide => {
+        let syncedRide = syncedRides.find(ride => ride.data().stravaId && ride.data().stravaId == stravaRide.id);
         if(syncedRide)
         {
-            let newRide: stravaRide = await stravaActivityToRide(stravaRides[i])
+            let newRide: stravaRide = await stravaActivityToRide(stravaRide)
             let oldRide = syncedRide.data()
             if(!oldRide.bike)
             {
                 oldRide.bike = null
             }
-            if(stravaRides[i].gear_id != null)
+            if(stravaRide.gear_id != null)
             {
-                newRide.bike = (await getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("stravaId", "==", stravaRides[i].gear_id)))).docs[0].ref
+                newRide.bike = (await getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("stravaId", "==", stravaRide.gear_id)))).docs[0].ref
             }
             
 
@@ -237,28 +236,35 @@ async function syncRides(User, setUser)
 
                 console.log("exists, dont update")
             }
-        //     //is in db, udpate, if km and ride hours are different - update components
-        //     syncedRides = syncedRides.filter(ride => ride.id !=stravaRides[i].id)
-        //     //remove from synced rides
+            // syncedRides = syncedRides.filter(ride => ride.id !=stravaRide.id)
         }
         else
         {
             console.log("adding")
-            let ride: stravaRide = await stravaActivityToRide(stravaRides[i])
-            if(stravaRides[i].gear_id != null)
+            let ride: stravaRide = await stravaActivityToRide(stravaRide)
+            if(stravaRide.gear_id != null)
             {
-                ride.bike = (await getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("stravaId", "==", stravaRides[i].gear_id)))).docs[0].ref
+                ride.bike = (await getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("stravaId", "==", stravaRide.gear_id)))).docs[0].ref
             }
             await addRide(ride)
         //     //not in DB, add to db and add kms to components
         }
-    }
-    console.log("remove not existing")
-    //remove non existing, remove km from components
-    // for(let i = 0;i<syncedRides.length;i++)
-    // {
-    //         deleteRide(syncedRides[i].id)
-    // }
+    } )
+    await Promise.all(promises)
+
+//TODO projit strava rides a zjistit, jestli tam aktualnic ride je, jestli ne, tak smazat, to stejny u kol
+    // syncedRides.map(async syncedRide => {
+    //     if(stravaRides)
+    // })
+    //TODO
+    // console.log("remove not existing")
+    // //remove non existing, remove km from components
+    
+    
+    // let deleteRidesPromises= syncedRides.map(async ride => {
+    //     deleteRide(ride.id)
+    // })
+    // return Promise.all(deleteRidesPromises)
 }
 
 export async function syncDataWithStrava(User, setUser: Function)

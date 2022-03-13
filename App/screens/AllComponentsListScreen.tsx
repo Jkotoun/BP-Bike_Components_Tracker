@@ -107,7 +107,7 @@ export default function AllComponentsListScreen({ navigation, route }) {
                     setIsLoaded(false)
                     )
                   }
-                },)
+                })
               }
               else if(component.state == "retired")
               {
@@ -118,9 +118,8 @@ export default function AllComponentsListScreen({ navigation, route }) {
                     setIsLoaded(false)
                     )
                   }
-                },)
+                })
               }
-
               return <Card options={componentOptions} active={component.state=="active"} title={component.state == "active"? component.name : (component.name + " - retired")} description={component.type.displayName} description2={"Bike: " + (component.bike ? component.bike.name : "Not assigned")} icon={images[component.type.value]} displayInfo={{
                 "Distance": rideDistanceToString(component.initialRideDistance+component.rideDistance),
                 "Ride Time": rideSecondsToString(component.rideTime + component.initialRideTime)
