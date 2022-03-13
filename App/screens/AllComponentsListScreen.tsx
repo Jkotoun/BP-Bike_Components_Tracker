@@ -7,12 +7,19 @@ import { FAB } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import { useIsFocused } from "@react-navigation/native";
-import { deleteComponent, retireComponent } from "../modules/firestoreActions";
+import { deleteComponent, changeComponentState } from "../modules/firestoreActions";
 import {rideSecondsToString ,rideDistanceToString} from '../modules/helpers';
 
-async function loadComponents(loggedUser) {
+async function loadComponents(loggedUser, viewRetired) {
   let componentsArray = []  
-  let componentsDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "components"), where("user", "==", doc(getFirestore(firebaseApp), "users", loggedUser.uid)), where("state", "==", "active")))
+  let componentsStateQuery = ["active"]
+  console.log("compview")
+  console.log(viewRetired)
+  if(viewRetired)
+  {
+    componentsStateQuery.push("retired")
+  } 
+  let componentsDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "components"), where("user", "==", doc(getFirestore(firebaseApp), "users", loggedUser.uid)), where("state", "in", componentsStateQuery)))
   componentsDocRef.forEach(component => {
     let componentData = component.data()
     componentData.id = component.id
@@ -35,7 +42,7 @@ export default function AllComponentsListScreen({ navigation, route }) {
   const [isLoaded, setIsLoaded] = React.useState(false);
   //bikes loading
   React.useEffect(() => {
-      loadComponents(User).then((componentsArray) => {
+      loadComponents(User, route.params.viewRetired).then((componentsArray) => {
         setComponents(componentsArray)
         setIsLoaded(true)
       })
@@ -83,25 +90,38 @@ export default function AllComponentsListScreen({ navigation, route }) {
                   }
                 },
                 {
-                  text: "Retire",
-                  onPress: () => {
-                    retireComponent(component.id).then(() =>
-                    setIsLoaded(false)
-                    )
-                  }
-                },
-                {
                   text: "Delete",
                   onPress: () => {
                     deleteComponent(component.id).then(() =>
-                      setIsLoaded(false)
+                    setIsLoaded(false)
                     )
                   }
-                },
-
+                }
               ]
+              if(component.state=="active")
+              {
+                componentOptions.push({
+                  text: "Retire",
+                  onPress: () => {
+                    changeComponentState(component.id, "retired").then(() =>
+                    setIsLoaded(false)
+                    )
+                  }
+                },)
+              }
+              else if(component.state == "retired")
+              {
+                componentOptions.push({
+                  text: "Reactivate",
+                  onPress: () => {
+                    changeComponentState(component.id, "active").then(() =>
+                    setIsLoaded(false)
+                    )
+                  }
+                },)
+              }
 
-              return <Card options={componentOptions} title={component.name} description={component.type.displayName} description2={"Bike: " + (component.bike ? component.bike.name : "Not assigned")} icon={images[component.type.value]} displayInfo={{
+              return <Card options={componentOptions} active={component.state=="active"} title={component.state == "active"? component.name : (component.name + " - retired")} description={component.type.displayName} description2={"Bike: " + (component.bike ? component.bike.name : "Not assigned")} icon={images[component.type.value]} displayInfo={{
                 "Distance": rideDistanceToString(component.initialRideDistance+component.rideDistance),
                 "Ride Time": rideSecondsToString(component.rideTime + component.initialRideTime)
               }} onPress={() => {

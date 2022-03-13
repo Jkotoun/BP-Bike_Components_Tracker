@@ -23,7 +23,7 @@ function stackHeaderVisible(navigationState) {
 }
 
 const auth = getAuth(firebaseApp)
-export default function BikesListScreen({ navigation }) {
+export default function BikesListScreen({ navigation, route }) {
   const Stack = createNativeStackNavigator();
   const navigationState = useNavigationState(state => state);
   return (
@@ -47,7 +47,7 @@ export default function BikesListScreen({ navigation }) {
       headerTintColor: '#ffffff'
     }}>
       <Stack.Group>
-        <Stack.Screen name="ComponentsListScreen" options={{ title: "All Components" }} component={ComponentsListScreen} />
+        <Stack.Screen name="ComponentsListScreen" initialParams={{viewRetired: route.params.viewRetired}} options={{ title: "All Components" }} component={ComponentsListScreen} />
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'card' }}>
         <Stack.Screen name="ComponentDetailTabs" options={{title: "Component xxx"}} component={ComponentTabs} />

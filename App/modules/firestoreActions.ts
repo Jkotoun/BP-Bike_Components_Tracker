@@ -280,10 +280,10 @@ export async function deleteComponent(componentId)
     return deleteDoc(doc(getFirestore(firebaseApp), "components", componentId))
 } 
 
-export async function retireComponent(componentId)
+export async function changeComponentState(componentId, newState)
 {
     return updateDoc(doc(getFirestore(firebaseApp), "components", componentId), {
-        state: "retired"
+        state: newState
     })
 } 
 

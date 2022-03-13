@@ -60,10 +60,6 @@ export default function BikesListScreen({ navigation, route }) {
   }, [response]);
   //bikes loading
   React.useEffect(() => {
-    if(route.params)
-    {
-      console.log(route.params.viewRetired)
-    }
 
       let bikeStatesQuery = ["active"];
       if(route.params.viewRetired == true)
@@ -160,8 +156,6 @@ export default function BikesListScreen({ navigation, route }) {
                   })
                 } 
                 
-
-
                 return <Card options={bikeOptions} active={bike.state == "active"} title={bike.state=="active"? bike.name : (bike.name + " - retired")} description={bike.type.label} icon={images[bike.type.value]} displayInfo={{
                   "Distance": rideDistanceToString(bike.initialRideDistance + bike.rideDistance),
                   "Ride Time": rideSecondsToString(bike.rideTime + bike.initialRideTime)
