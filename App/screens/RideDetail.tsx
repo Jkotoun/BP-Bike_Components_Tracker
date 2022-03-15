@@ -54,7 +54,7 @@ export default function RideDetail({ route }) {
         <View style={styles.statsContainer}>
           <View style={styles.statsRow}>
             <View style={styles.statContainter}>
-              <Text style={styles.statValue}>{rideDistanceToString(ride.distance)} km</Text>
+              <Text style={styles.statValue}>{rideDistanceToString(ride.distance)}</Text>
               <Text style={styles.statName}>Distance</Text>
             </View>
             <View style={styles.statContainter}>
@@ -74,7 +74,7 @@ export default function RideDetail({ route }) {
                 <Text style={styles.statName}>Max speed</Text>
               </View>
               <View style={styles.statContainter}>
-                <Text style={styles.statValue}>{ride.avgSpeed} km/h</Text>
+                <Text style={styles.statValue}>{(ride.avgSpeed).toFixed(2)} km/h</Text>
                 <Text style={styles.statName}>Average speed</Text>
               </View>
               <View style={styles.statContainter}>

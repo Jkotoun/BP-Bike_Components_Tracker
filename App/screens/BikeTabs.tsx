@@ -6,10 +6,10 @@ import BikeComponentsHistoryScreen from './BikeComponentsHistoryScreen';
 import BikeDetails from './BikeDetails';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigationState } from '@react-navigation/native';
-import activeScreenName from '../modules/screenName';
+import activeScreenName from '../modules/helpers';
 function topTabBarVisible(state) {
   const routeName = activeScreenName(state);
-  const tabBarHiddenPages = ["ComponentInstallListStack", "ComponentInstallListScreen", "ComponentInstallFormScreen", "ComponentUninstallFormScreen", "ComponentDetailTabs"]
+  const tabBarHiddenPages = ["ComponentInstallListStack", "ComponentInstallListScreen", "ComponentInstallFormScreen", "ComponentUninstallFormScreen", "ComponentDetail", "Wear", "Services", "Swaps", "Details"]
   return !tabBarHiddenPages.includes(routeName)
 }
 const Tab = createMaterialTopTabNavigator();
@@ -40,7 +40,7 @@ export default function BikeTabs({route}) {
 
       <Tab.Screen name="Components" initialParams={{bikeId: route.params.bikeId}}component={BikeComponentsStack} />
       <Tab.Screen name="History" initialParams={{bikeId: route.params.bikeId}} component={BikeComponentsHistoryScreen} />
-      <Tab.Screen name="Details" initialParams={{bikeId: route.params.bikeId}} component={BikeDetails} />
+      <Tab.Screen name="Bike Details"  initialParams={{bikeId: route.params.bikeId}} component={BikeDetails} />
     </Tab.Navigator>
 
    );

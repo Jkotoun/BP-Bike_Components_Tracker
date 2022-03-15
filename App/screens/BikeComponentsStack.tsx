@@ -20,8 +20,8 @@ export default function BikesListStack({ navigation, route }) {
   return (
 
     <Stack.Navigator initialRouteName="BikeComponentsList" screenOptions={{
-      animation: 'none',
-      headerShown: false,
+      animation: 'fade',
+      headerShown:false
       
     }}>
       <Stack.Group>
@@ -29,7 +29,7 @@ export default function BikesListStack({ navigation, route }) {
         <Stack.Screen name='ComponentUninstallFormScreen'
         initialParams={{bikeId: route.params.bikeId}}
          options={{
-           title:"Component YYY uninstall", 
+           title:"Component uninstall", 
            headerShown:true,
            headerTitleStyle: styles.uninstallFormHeaderTitle, 
            headerStyle: styles.uninstallFormHeaderStyles,
@@ -39,11 +39,18 @@ export default function BikesListStack({ navigation, route }) {
            component={ComponentUninstallFormScreen} />
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'card' }}>
-        <Stack.Screen name="ComponentDetail" options={{title: "Component xxx"}} component={ComponentTabs} />
+        <Stack.Screen name="ComponentDetail" options={{title: "Component", 
+        headerShown:true, 
+        headerTitleStyle:{color:'#ffffff'},  
+        headerStyle: {backgroundColor: '#F44336'},
+        headerShadowVisible:false,
+        headerTintColor: '#ffffff',
+      
+      
+          }} component={ComponentTabs} />
         <Stack.Screen name='ComponentInstallListStack'
         initialParams={{bikeId: route.params.bikeId}}
          options={{
-           title:"Add component", 
            headerShown: false
           }}
            component={ComponentInstallListStack} />

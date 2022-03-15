@@ -6,7 +6,7 @@ import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import WearRecordCard from '../components/WearRecordCard';
 import { FAB } from 'react-native-paper';
-import { useIsFocused } from "@react-navigation/native";
+import { NavigationContainer, useIsFocused } from "@react-navigation/native";
 async function loadWearRecords(componentId) {
   let wearRecordsArray = []
   let wearRecordsDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "componentWearRecords"), where("component", "==", doc(getFirestore(firebaseApp), "components", componentId))))
@@ -23,7 +23,7 @@ async function loadWearRecords(componentId) {
 
 
 
-export default function ComponentWearHistoryScreen({ route }) {
+export default function ComponentWearHistoryScreen({ route, navigation }) {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
   const isFocused = useIsFocused();
   
@@ -46,7 +46,9 @@ export default function ComponentWearHistoryScreen({ route }) {
           <FAB
             style={styles.addButton}
             icon="plus"
-            onPress={() => Alert.alert("TODO add wear history form")}
+            onPress={() => navigation.navigate("AddWearRecordScreen", {
+              componentId: route.params.componentId
+            })}
           />
         </View>
       </View>)
@@ -65,7 +67,10 @@ export default function ComponentWearHistoryScreen({ route }) {
           <FAB
             style={styles.addButton}
             icon="plus"
-            onPress={() => Alert.alert("TODO add wear history form")}
+            onPress={() => navigation.navigate("AddWearRecordScreen", {
+              componentId: route.params.componentId
+            })}
+
           />
         </View>
       </View>

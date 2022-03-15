@@ -14,7 +14,7 @@ export default function BikeComponentsHistoryStack({ navigation }) {
   return (
 
     <Stack.Navigator initialRouteName="BikeComponentsHistoryScreen" screenOptions={{
-      animation: 'none',
+      animation: 'fade',
       headerShown: false
     }}>
       <Stack.Group>

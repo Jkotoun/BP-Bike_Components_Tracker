@@ -78,7 +78,7 @@ export default function BikeComponentsList({ navigation, route }) {
               "Distance": component.rideDistance + " km",
               "Ride Time": rideSecondsToString(component.rideTime + component.initialRideTime)
 
-            }} onPress={() => { Alert.alert("TODO show correct component") }}></Card>
+            }} onPress={() =>navigation.navigate("ComponentDetail", {componentId: component.id}) }></Card>
           })}
         </View>
         <View style={styles.addButtonContainer}>

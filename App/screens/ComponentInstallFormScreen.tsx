@@ -12,7 +12,7 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
-  const [checked, setChecked] = React.useState('default');
+  const [checked, setChecked] = React.useState('selected');
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -52,7 +52,6 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
         }
         } value={checked}>
 
-        <RadioButton.Item label="Since beggining" value="default" color="#F44336" style={styles.radioItem} />
         <RadioButton.Item
           style={styles.radioItem}
           color='#F44336'
@@ -62,6 +61,7 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
                 <Text style={styles.selectedDateText}>{date.toLocaleDateString('cs-CZ').split('T')[0] + " " + date.getHours() + ":" + date.getMinutes()}</Text>
               </View>
             </TouchableOpacity>} value="selected" />
+          <RadioButton.Item label="Since beggining" value="default" color="#F44336" style={styles.radioItem} />
       </RadioButton.Group>
 
       <View style={{ paddingTop: 10, paddingHorizontal: 20 }}>

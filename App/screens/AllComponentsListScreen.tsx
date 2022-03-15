@@ -7,7 +7,7 @@ import { FAB } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import { useIsFocused } from "@react-navigation/native";
-import { deleteComponent, changeComponentState } from "../modules/firestoreActions";
+import { deleteComponent, changeComponentState, retireComponent } from "../modules/firestoreActions";
 import {rideSecondsToString ,rideDistanceToString} from '../modules/helpers';
 
 async function loadComponents(loggedUser, viewRetired) {
@@ -103,7 +103,7 @@ export default function AllComponentsListScreen({ navigation, route }) {
                 componentOptions.push({
                   text: "Retire",
                   onPress: () => {
-                    changeComponentState(component.id, "retired").then(() =>
+                    retireComponent(component.id).then(() =>
                     setIsLoaded(false)
                     )
                   }

@@ -15,11 +15,13 @@ import { MenuProvider } from 'react-native-popup-menu';
 import { StyleSheet, Text, View, StatusBar, Alert, Button } from 'react-native';
 import activeScreenName from './App/modules/helpers';
 import { AuthenticatedUserContext } from './context'
-import { getFirestore, getDoc, doc } from 'firebase/firestore';
+import { getFirestore, getDoc, doc, updateDoc } from 'firebase/firestore';
 import firebaseApp from './App/config/firebase';
 import { getAuth } from "firebase/auth"
-import { syncDataWithStrava } from "./App/modules/firestoreActions";
+import { syncDataWithStrava, getLoggedUserData } from "./App/modules/firestoreActions";
 import { ActivityIndicator, Checkbox } from 'react-native-paper';
+import {isStravaUser, stravaAuthReq} from './App/modules/stravaApi';
+import * as stravaApi from './App/modules/stravaApi';
 
 const auth = getAuth(firebaseApp)
 
@@ -28,22 +30,36 @@ const Stack = createNativeStackNavigator();
 
 
 
-//check if tabbar should be visible on current active screen
-function tabBarVisible(): boolean {
-  const currentScreen = activeScreenName(useNavigationState(state => state));
-  const tabBarHiddenPages = ["BikeDetail", "ComponentDetail", "RideDetail", "AddBikeScreen"]
-  //true if current screen is not in array
-  return !tabBarHiddenPages.includes(currentScreen)
-}
+// //check if tabbar should be visible on current active screen
+// function tabBarVisible(): boolean {
+//   const currentScreen = activeScreenName(useNavigationState(state => state));
+//   const tabBarHiddenPages = ["BikeDetail", "ComponentDetail", "RideDetail", "AddBikeScreen"]
+//   //true if current screen is not in array
+//   return !tabBarHiddenPages.includes(currentScreen)
+// }
 
-function headerVisible(Test): boolean {
-  console.log(Test)
+function headerVisible(): boolean {
   const currentScreen = activeScreenName(useNavigationState(state => state));
-  console.log("SCREEN")
-  console.log(currentScreen)
   //undefined is first screen on app launch
   return ["BikesListScreen", "ComponentsListScreen", "RidesListScreen", undefined, "Bikes", "All components", "Rides"].includes(currentScreen)
 }
+
+//TODO mozna presunout do firestore func modelu
+//add strava account info to firestore doc in users collection
+async function connectAccWithStrava(tokens, user) {
+  updateDoc(doc(getFirestore(firebaseApp), "users", user.uid),
+    {
+      stravaConnected: true,
+      stravaInfo: {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+        accessTokenExpiration: new Date((tokens.issuedAt + tokens.expiresIn)*1000)
+      }
+    })
+}
+
+
+
 
 export default function Root() {
 
@@ -52,9 +68,37 @@ export default function Root() {
   const [isUpdatingAuth, setIsUpdatingAuth] = React.useState(false);
   const [isSyncing, setIsSyncing] = React.useState(false);
   const [isLoaded, setIsLoaded] = React.useState(true);
-
-
+  const [request, response, promptAsync] = stravaAuthReq()
   const { User, setUser, IsLoggedIn, setIsLoggedIn } = React.useContext(AuthenticatedUserContext);
+
+
+  // connect account with strava on authorization success
+  React.useEffect(() => {
+    if (response?.type === 'success') {
+      const { code } = response.params;
+      stravaApi.getTokens(code).then(tokens => {
+        return connectAccWithStrava(tokens, User)
+      }).then(() => {
+        return getLoggedUserData()
+      }).then((loggedUserData) => {
+          setUser(loggedUserData)
+        })
+
+        // setUser({
+        //   ...User, ...{
+        //     stravaConnected: true,
+        //     stravaInfo: {
+        //       accessToken: tokens.accessToken,
+        //       refreshToken: tokens.refreshToken,
+        //       accessTokenExpiration: (new Date((tokens.issuedAt + tokens.expiresIn)*1000)).getTime()
+        //     }
+        //   }
+        // })
+      // })
+    }
+  }, [response]);
+
+
   React.useEffect(() => {
     console.log("loading app")
     // onAuthStateChanged returns an unsubscriber
@@ -92,14 +136,13 @@ export default function Root() {
         })
       }
     }
-  }, [IsLoggedIn])
+  }, [IsLoggedIn, User])
 
 
 //TODO predelat znovunacitani
   React.useEffect(() => {
     setIsLoaded(true)
   }, [checked]);
-
   // if (initializing) return null;
   if (isUpdatingAuth || isSyncing) {
     return (
@@ -147,11 +190,10 @@ export default function Root() {
                   headerStyle: styles.header,
                   tabBarLabelStyle: styles.tabBarLabel,
                   tabBarIconStyle: styles.tabBarIcon,
-                  headerShown: headerVisible(Test),  //
+                  headerShown: headerVisible(), 
                   headerTitleStyle: styles.headerTitle,
                   tabBarStyle: {
                     height: 55,
-                    display: tabBarVisible() ? "flex" : "none"
                   },
                   //TODO refactor
                   headerRight: () => (
@@ -181,6 +223,11 @@ export default function Root() {
                         }
 
                           style={styles.menuOption} />
+                                {!(isStravaUser(User)) &&
+                        <MenuOption onSelect={() => { promptAsync() }} text={"Connect to Strava"} style={styles.menuOption} />
+
+            
+        }
                         <MenuOption onSelect={async () => { await auth.signOut() }} text={"Log out"} style={styles.menuOption} />
                       </MenuOptions>
 
@@ -193,7 +240,6 @@ export default function Root() {
 
                 <Tab.Screen name="Bikes" initialParams={{ viewRetired: checked }} component={BikesListStack} options={{
                   tabBarLabel: 'Bikes',
-
                   tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons name="bike" color={color} size={size} />
                   ),

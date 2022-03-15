@@ -6,9 +6,10 @@ import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import { useIsFocused } from "@react-navigation/native";
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where } from 'firebase/firestore';
+import {rideSecondsToString, rideDistanceToString} from '../modules/helpers'
 async function loadComponents(loggedUser) {
   let componentsArray = []
-  let componentsDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "components"), where("user", "==", doc(getFirestore(firebaseApp), "users", loggedUser.uid))))
+  let componentsDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "components"), where("user", "==", doc(getFirestore(firebaseApp), "users", loggedUser.uid)), where("state", "==", "active")))
   componentsDocRef.forEach(component => {
     let componentData = component.data()
     if (!componentData.bike) {
@@ -58,8 +59,8 @@ export default function ComponentInstallListScreen({ navigation }) {
         <View style={styles.componentCards}>
           {components.map(component => {
             return <Card title={component.name} description={component.type.displayName} icon={images[component.type.value]} displayInfo={{
-              "Distance": component.rideDistance + " km",
-              "Ride Time": Math.floor(component.rideTime / 3600) + " h " + Math.floor((component.rideTime % 3600) / 60) + " m"
+              "Distance":  rideDistanceToString(component.rideDistance),
+              "Ride Time": rideSecondsToString(component.rideTime)              
             }} onPress={() => {
               navigation.navigate('ComponentInstallFormScreen', {
                 componentId: component.id

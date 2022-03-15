@@ -38,7 +38,7 @@ export default function ComponentDetails({ route }) {
   else {
     const componentInfo = {
       'Component Name': component.name,
-      'Component type': component.type.displayName,
+      'Component type': component.type.label,
       'Brand': component.brand,
       'Model': component.model,
       'Distance': ((component.rideDistance+component.initialRideDistance)/1000).toFixed(2) + " km",

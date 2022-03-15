@@ -47,7 +47,7 @@ async function loginWithStravaAcc(athlete) {
 
 export default function LoginScreen({ navigation }) {
 
-  const [request, response, promptAsync] = stravaApi.authReq()
+  const [request, response, promptAsync] = stravaApi.stravaAuthReq()
 
   React.useEffect(() => {
     if (response?.type === 'success') {

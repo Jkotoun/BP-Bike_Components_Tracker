@@ -141,15 +141,16 @@ async function syncBikes(User, setUser)
             addBike(bikeDocData)
         }
     })
-    return Promise.all(promises)
-    //delete bikes, which are no longer in strava account
+    await Promise.all(promises)
     
-    // let deleteBikesPromise = syncedBikes.map(async bike =>{
-    //     deleteDoc(bike.ref)
-    // })
-
-
-    // return Promise.all(deleteBikesPromise)
+    //delete bikes, which are no longer in strava account
+    let bikeRetirePromises = syncedBikes.map(async syncedBike => {
+        if(!(stravaBikes.some(stravaBike => stravaBike.id == syncedBike.data().stravaId)))
+        {
+            retireBike(syncedBike.id)
+        }
+    })
+    return Promise.all(bikeRetirePromises)
 }
 
 function stravaActivityToRide(activity) : stravaRide
@@ -160,8 +161,8 @@ function stravaActivityToRide(activity) : stravaRide
         rideTime:activity.moving_time,
         name:activity.name,
         user: doc(getFirestore(firebaseApp), "users", getAuth(firebaseApp).currentUser.uid),
-        avgSpeed: activity.average_speed,
-        maxSpeed: activity.max_speed,
+        avgSpeed: (activity.average_speed)*3.6, //mps to kmh
+        maxSpeed: (activity.max_speed)*3.6,
         elapsedTime: activity.elapsed_time,
         elevationGain: activity.total_elevation_gain,
         stravaSynced:true,
@@ -236,7 +237,6 @@ async function syncRides(User, setUser)
 
                 console.log("exists, dont update")
             }
-            // syncedRides = syncedRides.filter(ride => ride.id !=stravaRide.id)
         }
         else
         {
@@ -252,19 +252,13 @@ async function syncRides(User, setUser)
     } )
     await Promise.all(promises)
 
-//TODO projit strava rides a zjistit, jestli tam aktualnic ride je, jestli ne, tak smazat, to stejny u kol
-    // syncedRides.map(async syncedRide => {
-    //     if(stravaRides)
-    // })
-    //TODO
-    // console.log("remove not existing")
-    // //remove non existing, remove km from components
-    
-    
-    // let deleteRidesPromises= syncedRides.map(async ride => {
-    //     deleteRide(ride.id)
-    // })
-    // return Promise.all(deleteRidesPromises)
+    let rideDeletePromises = syncedRides.map(async syncedRide => {
+        if(!(stravaRides.some(stravaRide => stravaRide.id == syncedRide.data().stravaId)))
+        {
+            deleteRide(syncedRide.id)
+        }
+    })
+    return Promise.all(rideDeletePromises)
 }
 
 export async function syncDataWithStrava(User, setUser: Function)
@@ -293,12 +287,35 @@ export async function changeComponentState(componentId, newState)
     })
 } 
 
+//change component state and uninstall from bike if installed on any
+export async function retireComponent(componentId)
+{
+    let componentToDelete = await getDoc(doc(getFirestore(firebaseApp), "components", componentId))
+    await changeComponentState(componentToDelete.id, "retired")
+    if(componentToDelete.data().bike)
+    {
+        await uninstallComponent(componentToDelete.data().bike.id, componentToDelete.id)
+    }
+}
+
+
 export async function changeBikeState(bikeId, newState)
 {
     return updateDoc(doc(getFirestore(firebaseApp), "bikes", bikeId), {
         state: newState
     })
 } 
+
+export async function retireBike(bikeId)
+{
+    let changeStatePromise = changeBikeState(bikeId, "retired")
+    let installedComponents =await getDocs(query(collection(getFirestore(firebaseApp), "components"), where("bike", "==", doc(getFirestore(firebaseApp), "bikes", bikeId))))
+    //uninstall all components from bike
+    let promises = installedComponents.docs.map( async component => {
+        uninstallComponent(bikeId, component.id)
+    })
+    return Promise.all([changeStatePromise , promises])
+}
 
 async function getInstalledComponentsAtDate(date, bikeDocRef)
 {    
@@ -413,7 +430,7 @@ export async function deleteRide(rideId)
 }
 
 
-export async function uninstallComponent(bikeId, componentId, uninstallTime: Date) {
+export async function uninstallComponent(bikeId, componentId, uninstallTime: Date = new Date()) {
 
     let bikeRef = doc(getFirestore(firebaseApp), "bikes", bikeId)
     let componentRef = doc(getFirestore(firebaseApp), "components", componentId)

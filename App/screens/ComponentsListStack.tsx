@@ -19,7 +19,7 @@ import { useNavigationState } from '@react-navigation/native';
 function stackHeaderVisible(navigationState) {
     
   const routeName = activeScreenName(navigationState);
-  return !["ComponentsListScreen", undefined, "All components"].includes(routeName) 
+  return !["ComponentsListScreen", undefined, "All components", "AddServiceRecord", "AddWearRecordScreen"].includes(routeName) 
 }
 
 const auth = getAuth(firebaseApp)
@@ -43,14 +43,14 @@ export default function BikesListScreen({ navigation, route }) {
 
       </Menu>
       ),
-      animation: 'none',
+      animation: 'fade',
       headerTintColor: '#ffffff'
     }}>
       <Stack.Group>
         <Stack.Screen name="ComponentsListScreen" initialParams={{viewRetired: route.params.viewRetired}} options={{ title: "All Components" }} component={ComponentsListScreen} />
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'card' }}>
-        <Stack.Screen name="ComponentDetailTabs" options={{title: "Component xxx"}} component={ComponentTabs} />
+        <Stack.Screen name="ComponentDetailTabs" options={{title: "Component"}} component={ComponentTabs} />
         <Stack.Screen name='AddComponentScreen' component={AddComponentScreen}  options={{
           title:"Add component", 
           // headerRight:()=>{ return <Button  theme={{colors: {primary: 'black'}}} onPress={()=>navigation.navigate("ComponentsListScreen")}><Check name="check" size={24} color="white"/></Button>},

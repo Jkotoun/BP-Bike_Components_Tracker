@@ -8,23 +8,10 @@ import firebaseApp from '../config/firebase';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc } from 'firebase/firestore';
 import * as stravaApi from '../modules/stravaApi';
 import { makeRedirectUri, useAuthRequest, exchangeCodeAsync } from 'expo-auth-session';
-import {changeBikeState, syncDataWithStrava} from "../modules/firestoreActions";
+import {changeBikeState, retireBike, syncDataWithStrava} from "../modules/firestoreActions";
 import { useIsFocused } from "@react-navigation/native";
-import {isStravaUser} from '../modules/stravaApi';
 import {rideSecondsToString ,rideDistanceToString} from '../modules/helpers';
-//TODO mozna presunout do firestore func modelu
-//add strava account info to firestore doc in users collection
-async function connectAccWithStrava(tokens, user) {
-  updateDoc(doc(getFirestore(firebaseApp), "users", user.uid),
-    {
-      stravaConnected: true,
-      stravaInfo: {
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
-        accessTokenExpiration: tokens.issuedAt + tokens.expiresIn
-      }
-    })
-}
+
 
 
 export default function BikesListScreen({ navigation, route }) {
@@ -32,32 +19,11 @@ export default function BikesListScreen({ navigation, route }) {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
   const [isLoaded, setIsLoaded] = React.useState(false);
   //strava auth request
-  const [request, response, promptAsync] = stravaApi.authReq()
+  
   const isFocused = useIsFocused();
 
 
 
-  // connect account with strava on authorization success
-  React.useEffect(() => {
-    if (response?.type === 'success') {
-      const { code } = response.params;
-      stravaApi.getTokens(code).then(tokens => {
-        connectAccWithStrava(tokens, User)
-        return tokens
-      }).then(tokens => {
-        setUser({
-          ...User, ...{
-            stravaConnected: true,
-            stravaInfo: {
-              accessToken: tokens.accessToken,
-              refreshToken: tokens.refreshToken,
-              accessTokenExpiration: tokens.issuedAt + tokens.expiresIn
-            }
-          }
-        })
-      })
-    }
-  }, [response]);
   //bikes loading
   React.useEffect(() => {
       let bikeStatesQuery = ["active"];
@@ -137,7 +103,7 @@ export default function BikesListScreen({ navigation, route }) {
                   bikeOptions.push({
                     text: "Retire",
                     onPress: () =>{ 
-                      changeBikeState(bike.bikeId, "retired").then(() => 
+                      retireBike(bike.bikeId).then(() => 
                       setIsLoaded(false)
                       )
                     }
@@ -178,13 +144,7 @@ export default function BikesListScreen({ navigation, route }) {
             onPress={() => navigation.navigate("AddBikeScreen")}
           />
         </View>
-        {!(isStravaUser(User)) &&
-          <TouchableOpacity onPress={() => {
-            promptAsync();
-          }}>
-            <Image source={require('../assets/images/btn_strava_connectwith_light.png')} />
-          </TouchableOpacity>
-        }
+
       </View>
     );
   }
