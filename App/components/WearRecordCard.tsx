@@ -1,14 +1,20 @@
 import * as React from 'react';
-import { Text, View, Image, ImageSourcePropType, StyleSheet } from 'react-native'
+import { Text, View, Image, ImageSourcePropType, StyleSheet, Modal, Button, Pressable } from 'react-native'
+import ImageViewer from 'react-native-image-zoom-viewer';
+
 import CardBase from './CardBase'
-interface cardProps{
+interface cardProps {
     maintext: string,
     description?: string,
-    image?: ImageSourcePropType,
+    image?: any,
 }
 
 export default function WearHistoryCard(props: cardProps) {
+    console.log(props.image)
+    const [viewGallery, setviewGallery] = React.useState(false)
+    const images = [{ url: props.image }]
     return (
+        <>
         <CardBase>
             <View style={Styles.mainContainer}>
                 <View style={Styles.textContainer}>
@@ -18,39 +24,46 @@ export default function WearHistoryCard(props: cardProps) {
                     </View>
                 </View>
                 <View style={Styles.imageContainer}>
-                    <Image source={props.image} style={Styles.imageStyles}/> 
+                    <Pressable onPress={() => setviewGallery(true)}>
+                    <Image source={{uri: props.image}} style={Styles.imageStyles}/> 
+                    </Pressable>
                 </View>
             </View>
         </CardBase>
 
+
+        <Modal visible={viewGallery} transparent={true}  >
+        <ImageViewer imageUrls={images} renderHeader={()=><Button title="asd" onPress={() => setviewGallery(false)}/>}/>
+        </Modal>
+        </>
     )
 }
 
 const Styles = StyleSheet.create({
-    mainContainer:{
-        flexDirection: "row", padding:5
+    mainContainer: {
+        flexDirection: "row", padding: 5
     },
-    textContainer:{
-        flex: 0.75, 
+    textContainer: {
+        flex: 0.75,
         padding: 15
     },
-    mainText:{
-        fontSize: 15, 
-        fontWeight: "bold" 
+    mainText: {
+        fontSize: 15,
+        fontWeight: "bold"
     },
-    secondaryTextContainer:{
-        paddingTop:3
+    secondaryTextContainer: {
+        paddingTop: 3
     },
-    secondaryText:{
-        fontSize: 12 
+    secondaryText: {
+        fontSize: 12
     },
-    imageContainer:{
-        flex: 0.25, 
-        padding: 10, 
-        paddingRight:20 
+    imageContainer: {
+        flex: 0.25,
+        padding: 10,
+        paddingRight: 20
     },
-    imageStyles:{
-        width: 80, 
+    imageStyles: {
+        width: 80,
         height: 80
     }
 })

@@ -26,7 +26,7 @@ export default function ComponentWearHistoryStack({ navigation, route }) {
 
     <Stack.Screen name="AddWearRecordScreen"   component={AddWearRecordScreen} 
         options={{ 
-          title: "Add service record",
+          title: "Add wear record",
           headerShown:true,
           headerLeft: () => {return <Button theme={{colors: {primary: 'black'}}} style={{marginLeft:-20}} onPress={()=>navigation.navigate("ComponentWearHistoryScreen")}><Close name="close" size={24} color="white"/></Button>}
         }} 

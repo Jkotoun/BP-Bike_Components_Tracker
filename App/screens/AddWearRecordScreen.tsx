@@ -4,22 +4,58 @@ import { TextInput } from "react-native-paper"
 import { useForm, Controller } from 'react-hook-form'
 import { useState } from "react";
 import { getFirestore, addDoc,getDoc, collection, doc, updateDoc, query, where, getDocs, orderBy, deleteField, increment } from 'firebase/firestore';
+
+import * as firestorage from 'firebase/storage';
 import firebaseApp from '../config/firebase';
 import { getAuth } from 'firebase/auth';
 import { useIsFocused } from "@react-navigation/native";
 import * as ImagePicker from 'expo-image-picker';
-async function AddWearRecord(data, componentId){
+async function AddWearRecord(formData, image, componentId){
   let componentRef = await getDoc(doc(getFirestore(firebaseApp), "components", componentId))
-  data.component = componentRef.ref
-  data.date = Date.now()
-  data.rideDistance = componentRef.data().rideDistance
-  data.rideTime = componentRef.data().rideTime
- return addDoc(collection(getFirestore(firebaseApp), "componentWearRecords"), data)
+  formData.component = componentRef.ref
+  formData.date = new Date()
+  formData.rideDistance = componentRef.data().rideDistance
+  formData.rideTime = componentRef.data().rideTime
+
+
+  let filename = image.uri.substring(image.uri.lastIndexOf('/')+1);
+  return uploadImageAsync(image.uri, filename).then((result)=>
+  {
+    formData.image = result.ref.fullPath
+    addDoc(collection(getFirestore(firebaseApp), "componentWearRecords"), formData)
+  }
+  )
+//  return 
 }
 
 
-export default function AddWearRecordScreen({ navigation, route }) {
+async function uploadImageAsync(uri, filename) {
+  const blob: any = await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      resolve(xhr.response);
+    };
+    xhr.onerror = function (e) {
+      console.log(e);
+    reject(new TypeError("Network request failed"));
+    };
+    xhr.responseType = "blob";
+    xhr.open("GET", uri, true);
+    xhr.send(null);
+});
+  let storageRef = firestorage.getStorage(firebaseApp)
+  return firestorage.uploadBytes(firestorage.ref(storageRef, filename), blob).then((result)=> 
+    {
+      blob.close() 
+      return result
+    })
+  
+}
 
+
+
+export default function AddWearRecordScreen({ navigation, route }) {
+  
   const isFocused = useIsFocused();
   const auth = getAuth(firebaseApp)
   const [isLoaded, setisLoaded] = useState(true)
@@ -31,14 +67,13 @@ export default function AddWearRecordScreen({ navigation, route }) {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [16, 9],
       quality: 1,
     });
 
-    console.log(result);
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      setImage(result);
     }
   };
 
@@ -51,6 +86,9 @@ export default function AddWearRecordScreen({ navigation, route }) {
   const { control, register, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'all' });
 
   const onSubmit = data => {
+    AddWearRecord(data, image, route.params.componentId).then(()=>{
+      navigation.navigate("ComponentWearHistoryScreen")
+    })
     console.log(route.params.componentId)
     // addServiceRecord(data, route.params.componentId).then(()=> navigation.navigate("ServiceRecords"))
     // console.log(route.params.componentId)
@@ -103,7 +141,7 @@ export default function AddWearRecordScreen({ navigation, route }) {
 
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Button title="Pick an image from camera roll" onPress={pickImage} />
-      {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+      {image && <Image source={{ uri: image.uri }} style={{ width: 200, height: 200 }} />}
     </View>
 
 {/* 

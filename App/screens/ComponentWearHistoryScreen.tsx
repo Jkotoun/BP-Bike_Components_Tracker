@@ -1,15 +1,19 @@
 
 import * as React from 'react';
-import { View, Alert, StyleSheet, Text, ActivityIndicator } from 'react-native';
-import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where } from 'firebase/firestore';
+import { View, Alert, StyleSheet, Text, ActivityIndicator, Button } from 'react-native';
+import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, orderBy } from 'firebase/firestore';
 import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import WearRecordCard from '../components/WearRecordCard';
 import { FAB } from 'react-native-paper';
+import { rideDistanceToString, rideSecondsToString } from "../modules/helpers"
 import { NavigationContainer, useIsFocused } from "@react-navigation/native";
+import { getStorage, getDownloadURL, ref } from 'firebase/storage';
+
+
 async function loadWearRecords(componentId) {
   let wearRecordsArray = []
-  let wearRecordsDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "componentWearRecords"), where("component", "==", doc(getFirestore(firebaseApp), "components", componentId))))
+  let wearRecordsDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "componentWearRecords"), where("component", "==", doc(getFirestore(firebaseApp), "components", componentId)), orderBy('date', 'desc')))
 
 
   wearRecordsDocRef.forEach(wearRecord => {
@@ -17,7 +21,10 @@ async function loadWearRecords(componentId) {
     wearRecordData.id = wearRecord.id
     wearRecordsArray.push(wearRecordData)
   })
+  for (let i = 0; i < wearRecordsArray.length; i++) {
 
+    wearRecordsArray[i].image = await getDownloadURL(ref(getStorage(firebaseApp), wearRecordsArray[i].image))
+  }
   return wearRecordsArray
 }
 
@@ -27,6 +34,11 @@ export default function ComponentWearHistoryScreen({ route, navigation }) {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
   const isFocused = useIsFocused();
   
+
+
+
+
+
   React.useEffect(() => {
     loadWearRecords(route.params.componentId).then((wearRecordsArray) => {
       setWearRecords(wearRecordsArray)
@@ -35,7 +47,6 @@ export default function ComponentWearHistoryScreen({ route, navigation }) {
   }, [isFocused])
   const [wearRecords, setWearRecords] = React.useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
-  const image = require("../assets/images/default.jpg")
 
 
   if (!isLoaded) {
@@ -58,11 +69,12 @@ export default function ComponentWearHistoryScreen({ route, navigation }) {
     return (
       <View style={styles.mainContainer}>
         {wearRecords.map(wearRecord => {
-          return <WearRecordCard maintext={wearRecord.rideDistance + " km, " + Math.floor(wearRecord.rideTime / 3600) + " h " + Math.floor((wearRecord.rideTime % 3600) / 60) + " m"}
-            description={wearRecord.description} image={image} /> //TODO Image
+          // console.log(wearRecord.image)
+          return <WearRecordCard maintext={rideDistanceToString(wearRecord.rideDistance) + ", " + rideSecondsToString(wearRecord.rideTime)}
+            description={wearRecord.description} image={wearRecord.image} /> //TODO Image
         })}
-        {/*<WearRecordCard maintext='200 km, 50 h' description='10% wear' image={image} />
-      <WearRecordCard maintext='5 km, 0 h' description='1% wear' image={image} /> */}
+
+
         <View style={styles.addButtonContainer}>
           <FAB
             style={styles.addButton}
