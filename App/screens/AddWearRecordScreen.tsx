@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, StatusBar, StyleSheet, ScrollView, Button, ActivityIndicator } from 'react-native';
+import { Text, View, StatusBar, StyleSheet, ScrollView, Button, ActivityIndicator, Image } from 'react-native';
 import { TextInput } from "react-native-paper"
 import { useForm, Controller } from 'react-hook-form'
 import { useState } from "react";
@@ -23,7 +23,6 @@ export default function AddWearRecordScreen({ navigation, route }) {
   const isFocused = useIsFocused();
   const auth = getAuth(firebaseApp)
   const [isLoaded, setisLoaded] = useState(true)
-
 
   const [image, setImage] = useState(null);
 
@@ -102,9 +101,10 @@ export default function AddWearRecordScreen({ navigation, route }) {
             {errors.description && <Text style={styles.errorMessage}>{errors.description.message}</Text>}
 
 
-
-            <Button title="Pick an image from camera roll" onPress={pickImage} />
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Button title="Pick an image from camera roll" onPress={pickImage} />
       {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+    </View>
 
 {/* 
             <Controller

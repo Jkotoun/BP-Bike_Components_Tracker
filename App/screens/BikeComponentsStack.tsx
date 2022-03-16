@@ -11,7 +11,14 @@ import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 import Close from 'react-native-vector-icons/MaterialCommunityIcons';
 import ComponentTabs from './ComponentTabs';
 import ComponentInstallListStack from './ComponentInstallListStack'
+import activeScreenName  from '../modules/helpers';
+import { useNavigationState } from '@react-navigation/native';
 
+function stackHeaderVisible() {
+    
+  const routeName = activeScreenName(useNavigationState(state => state));
+  return !["ComponentsListScreen", "AddServiceRecord", "AddWearRecordScreen"].includes(routeName) 
+}
 export default function BikesListStack({ navigation, route }) {
 
 
@@ -40,7 +47,7 @@ export default function BikesListStack({ navigation, route }) {
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'card' }}>
         <Stack.Screen name="ComponentDetail" options={{title: "Component", 
-        headerShown:true, 
+        headerShown:stackHeaderVisible(), 
         headerTitleStyle:{color:'#ffffff'},  
         headerStyle: {backgroundColor: '#F44336'},
         headerShadowVisible:false,
