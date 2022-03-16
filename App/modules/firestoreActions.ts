@@ -219,7 +219,9 @@ async function syncRides(User, setUser)
             }
             if(stravaRide.gear_id != null)
             {
-                newRide.bike = (await getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("stravaId", "==", stravaRide.gear_id)))).docs[0].ref
+                newRide.bike = (await getDocs(query(collection(getFirestore(firebaseApp), "bikes"), 
+                    where("stravaId", "==", stravaRide.gear_id), 
+                    where("user", "==", doc(getFirestore(firebaseApp), "users", getAuth().currentUser.uid))))).docs[0].ref
             }
             
 
@@ -244,7 +246,9 @@ async function syncRides(User, setUser)
             let ride: stravaRide = await stravaActivityToRide(stravaRide)
             if(stravaRide.gear_id != null)
             {
-                ride.bike = (await getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("stravaId", "==", stravaRide.gear_id)))).docs[0].ref
+                ride.bike = (await getDocs(query(collection(getFirestore(firebaseApp), "bikes"), 
+                    where("stravaId", "==", stravaRide.gear_id), 
+                    where("user", "==", doc(getFirestore(firebaseApp), "users", getAuth().currentUser.uid))))).docs[0].ref
             }
             await addRide(ride)
         //     //not in DB, add to db and add kms to components
@@ -290,6 +294,7 @@ export async function changeComponentState(componentId, newState)
 //change component state and uninstall from bike if installed on any
 export async function retireComponent(componentId)
 {
+    console.log(componentId)
     let componentToDelete = await getDoc(doc(getFirestore(firebaseApp), "components", componentId))
     await changeComponentState(componentToDelete.id, "retired")
     if(componentToDelete.data().bike)
@@ -393,6 +398,14 @@ export async function addRide(data)
     let addRidePromise = addDoc(collection(getFirestore(firebaseApp), "rides"), data)
     if(data.bike)
     {
+        console.log("pocitam kilometry")
+        console.log(data.date)
+        console.log(data.distance)
+        console.log(data.rideTime)
+
+        console.log(data.bike.id)
+
+
         let updateStatsPromise = updateBikeAndComponentsStatsAtDate(data.date, data.distance, data.rideTime, data.bike)
         return Promise.all([addRidePromise, updateStatsPromise])
     }

@@ -71,7 +71,6 @@ export default function Root() {
   const [request, response, promptAsync] = stravaAuthReq()
   const { User, setUser, IsLoggedIn, setIsLoggedIn } = React.useContext(AuthenticatedUserContext);
 
-
   // connect account with strava on authorization success
   React.useEffect(() => {
     if (response?.type === 'success') {
@@ -79,9 +78,14 @@ export default function Root() {
       stravaApi.getTokens(code).then(tokens => {
         return connectAccWithStrava(tokens, User)
       }).then(() => {
+       
         return getLoggedUserData()
       }).then((loggedUserData) => {
-          setUser(loggedUserData)
+
+          let currentUser = getAuth().currentUser
+          setIsLoggedIn(false)
+          setUser({...loggedUserData, ...currentUser })
+          setIsLoggedIn(true)
         })
 
         // setUser({
@@ -136,7 +140,7 @@ export default function Root() {
         })
       }
     }
-  }, [IsLoggedIn, User])
+  }, [IsLoggedIn])
 
 
 //TODO predelat znovunacitani

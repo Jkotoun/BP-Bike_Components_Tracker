@@ -70,7 +70,7 @@ export default function RideDetail({ route }) {
           {ride.stravaSynced &&
             <View style={styles.statsRow}>
               <View style={styles.statContainter}>
-                <Text style={styles.statValue}>{ride.maxSpeed} km/h</Text>
+                <Text style={styles.statValue}>{(ride.maxSpeed).toFixed(2)} km/h</Text>
                 <Text style={styles.statName}>Max speed</Text>
               </View>
               <View style={styles.statContainter}>

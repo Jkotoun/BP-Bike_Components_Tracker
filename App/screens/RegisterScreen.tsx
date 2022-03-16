@@ -25,7 +25,7 @@ export default function RegisterScreen({ navigation }) {
     try {
       if (data.email !== '' && data.password !== '' && data.password == data.password_repeat) {
         createUserWithEmailAndPassword(auth,data.email,data.password).then(userObj => saveUserData(userObj.user.uid, data));
-        signInWithEmailAndPassword(auth,data.email,data.password);
+        
       }
     } catch (error) {
       console.log(error)
