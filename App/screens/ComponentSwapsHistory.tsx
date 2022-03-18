@@ -1,12 +1,12 @@
 
 import * as React from 'react';
-import { Text, View, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { Text, View, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import firebaseApp from '../config/firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 import { getFirestore, getDoc, getDocs, query, collection, where, doc, deleteDoc, updateDoc, deleteField, increment } from 'firebase/firestore';
 import ComponentSwapCard from '../components/ComponentSwapCard';
 import { useIsFocused } from "@react-navigation/native";
-import {UpdateComponentsStats} from '../modules/firestoreActions'
+import { UpdateComponentsStats } from '../modules/firestoreActions'
 
 //TODO refactor, odeccist z komponent km pri smazani recordu
 
@@ -63,33 +63,37 @@ export default function ComponentSwapsHistory({ route }) {
     else {
         return (
             <View style={styles.mainContainer}>
-                {componentSwapRecords.map((componentSwapRecord: any) => {
-                    const swapRecordOptions = [
-                        {
-                            text: "Delete",
-                            onPress: () => {
-                                if (!componentSwapRecord.uninstallTime) {
-                                    updateDoc(componentSwapRecord.component, {
-                                        bike: deleteField()
-                                    })
+                <ScrollView>
+                    <View style={styles.cardsContainer}>
+                        {componentSwapRecords.map((componentSwapRecord: any) => {
+                            const swapRecordOptions = [
+                                {
+                                    text: "Delete",
+                                    onPress: () => {
+                                        if (!componentSwapRecord.uninstallTime) {
+                                            updateDoc(componentSwapRecord.component, {
+                                                bike: deleteField()
+                                            })
+                                        }
+                                        let deleteRecord = deleteDoc(componentSwapRecord.ref)
+                                        let removeKmAndHours = UpdateComponentsStats(componentSwapRecord.installTime, componentSwapRecord.uninstallTime ? componentSwapRecord.uninstallTime : new Date(),
+                                            componentSwapRecord.bikeDoc.ref, componentSwapRecord.componentDoc.ref, -1)
+                                        Promise.all([deleteRecord, removeKmAndHours]).then(() => {
+                                            setIsLoaded(false)
+                                        })
+
+
+                                    }
                                 }
-                                let deleteRecord = deleteDoc(componentSwapRecord.ref)
-                                let removeKmAndHours = UpdateComponentsStats(componentSwapRecord.installTime, componentSwapRecord.uninstallTime ? componentSwapRecord.uninstallTime : new Date(),
-                                    componentSwapRecord.bikeDoc.ref, componentSwapRecord.componentDoc.ref, -1)
-                                Promise.all([deleteRecord, removeKmAndHours]).then(() => {
-                                    setIsLoaded(false)
-                                })
 
+                            ]
 
-                            }
-                        }
-
-                    ]
-                    
-                    return <ComponentSwapCard options={swapRecordOptions} maintext={ componentSwapRecord.bikeDoc.data() ? componentSwapRecord.bikeDoc.data().name : "Deleted bike" }
-                        description={componentSwapRecord.installTime.toDate().toLocaleString()}
-                        description2={componentSwapRecord.uninstallTime ? componentSwapRecord.uninstallTime.toDate().toLocaleString() : "Currently installed"} />
-                })}
+                            return <ComponentSwapCard options={swapRecordOptions} maintext={componentSwapRecord.bikeDoc.data() ? componentSwapRecord.bikeDoc.data().name : "Deleted bike"}
+                                description={componentSwapRecord.installTime.toDate().toLocaleString()}
+                                description2={componentSwapRecord.uninstallTime ? componentSwapRecord.uninstallTime.toDate().toLocaleString() : "Currently installed"} />
+                        })}
+                    </View>
+                </ScrollView>
             </View>
         );
     }
@@ -123,6 +127,9 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    cardsContainer:{
+        alignItems: 'center',
     }
 
 

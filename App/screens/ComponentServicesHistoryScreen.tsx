@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { Text, View, Alert, StyleSheet, ActivityIndicator } from 'react-native';
+import { Text, View, Alert, StyleSheet, ActivityIndicator , ScrollView} from 'react-native';
 import { FAB } from 'react-native-paper';
 import ServiceRecordCard from '../components/ServiceRecordCard';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc } from 'firebase/firestore';
@@ -55,9 +55,11 @@ export default function ComponentServicesHistoryScreen({navigation, route }) {
 
     return (
       <View style={styles.mainContainer}>
+        <ScrollView>
         <View style={styles.totalPriceContainer}>
           <Text style={styles.totalPriceText}><Text style={styles.priceHighlightedText}>Total:</Text> {priceTotal} CZK</Text>
         </View>
+          <View style={styles.cardsContainer}>
         {serviceRecords.map(record => {
         const serviceRecordOptions = [
           {
@@ -71,6 +73,8 @@ export default function ComponentServicesHistoryScreen({navigation, route }) {
             maintext={rideDistanceToString(record.data().rideDistance) + ", " + rideSecondsToString(record.data().rideTime)} 
             description={record.data().description} price={record.data().price} />
         })}
+        </View>
+        </ScrollView>
         <View style={styles.addButtonContainer}>
           <FAB
             style={styles.addButton}
@@ -103,8 +107,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     bottom: 0,
-    paddingVertical: 30,
-    paddingHorizontal: 20,
+    paddingBottom: 30,
+    paddingRight: 20,
     zIndex: 99
   },
   addButton: {
@@ -115,6 +119,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
+  cardsContainer:{
+    alignItems:'center'
+  }
   
 
 })

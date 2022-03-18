@@ -159,8 +159,8 @@ const Styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     bottom: 0,
-    paddingVertical: 30,
-    paddingHorizontal: 20,
+    paddingBottom: 30,
+    paddingRight: 20,
     zIndex: 99
   },
   loadContainer: {

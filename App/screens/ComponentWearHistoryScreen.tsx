@@ -1,14 +1,14 @@
 
 import * as React from 'react';
-import { View, Alert, StyleSheet, Text, ActivityIndicator, Button } from 'react-native';
-import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, orderBy } from 'firebase/firestore';
+import { View, Alert, StyleSheet, Text, ActivityIndicator, Button, ScrollView } from 'react-native';
+import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, orderBy, deleteDoc} from 'firebase/firestore';
 import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import WearRecordCard from '../components/WearRecordCard';
 import { FAB } from 'react-native-paper';
 import { rideDistanceToString, rideSecondsToString } from "../modules/helpers"
 import { NavigationContainer, useIsFocused } from "@react-navigation/native";
-import { getStorage, getDownloadURL, ref } from 'firebase/storage';
+import { getStorage, getDownloadURL, ref, deleteObject } from 'firebase/storage';
 
 
 async function loadWearRecords(componentId) {
@@ -19,11 +19,15 @@ async function loadWearRecords(componentId) {
   wearRecordsDocRef.forEach(wearRecord => {
     let wearRecordData = wearRecord.data()
     wearRecordData.id = wearRecord.id
+    wearRecordData.ref = wearRecord.ref
     wearRecordsArray.push(wearRecordData)
   })
-  for (let i = 0; i < wearRecordsArray.length; i++) {
 
-    wearRecordsArray[i].image = await getDownloadURL(ref(getStorage(firebaseApp), wearRecordsArray[i].image))
+  for (let i = 0; i < wearRecordsArray.length; i++) {
+    if (wearRecordsArray[i].image) {
+
+      wearRecordsArray[i].image = await getDownloadURL(ref(getStorage(firebaseApp), wearRecordsArray[i].image))
+    }
   }
   return wearRecordsArray
 }
@@ -33,20 +37,15 @@ async function loadWearRecords(componentId) {
 export default function ComponentWearHistoryScreen({ route, navigation }) {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
   const isFocused = useIsFocused();
-  
-
-
-
-
+  const [isLoaded, setIsLoaded] = React.useState(false);
 
   React.useEffect(() => {
     loadWearRecords(route.params.componentId).then((wearRecordsArray) => {
       setWearRecords(wearRecordsArray)
       setIsLoaded(true)
     })
-  }, [isFocused])
+  }, [isFocused, isLoaded])
   const [wearRecords, setWearRecords] = React.useState([]);
-  const [isLoaded, setIsLoaded] = React.useState(false);
 
 
   if (!isLoaded) {
@@ -68,13 +67,33 @@ export default function ComponentWearHistoryScreen({ route, navigation }) {
 
     return (
       <View style={styles.mainContainer}>
-        {wearRecords.map(wearRecord => {
-          // console.log(wearRecord.image)
-          return <WearRecordCard maintext={rideDistanceToString(wearRecord.rideDistance) + ", " + rideSecondsToString(wearRecord.rideTime)}
-            description={wearRecord.description} image={wearRecord.image} /> //TODO Image
-        })}
+        <ScrollView>
+          <View style={styles.cardsContainer}>
+          {wearRecords.map(wearRecord => {
+            const wearRecordOptions = [
+              {
+                text: "Delete",
+                onPress: () => {
+                  if(wearRecord.image)
+                  {
+                    deleteObject(ref(getStorage(firebaseApp), wearRecord.image)).then(() => {
+                      deleteDoc(wearRecord.ref).then(()=>setIsLoaded(false))
+                    })
+                  }
+                  else
+                  {
+                    deleteDoc(wearRecord.ref).then(()=>setIsLoaded(false))
+                  }
+                }
+              }
+            ]
+            return <WearRecordCard options={wearRecordOptions} maintext={rideDistanceToString(wearRecord.rideDistance) + ", " + rideSecondsToString(wearRecord.rideTime)}
+              description={wearRecord.description} image={wearRecord.image ? wearRecord.image : null} /> //TODO Image
+          })}
+          </View>
 
 
+        </ScrollView>
         <View style={styles.addButtonContainer}>
           <FAB
             style={styles.addButton}
@@ -95,14 +114,15 @@ export default function ComponentWearHistoryScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    flex: 1
+    flex: 1,
+    
   },
   addButtonContainer: {
     position: 'absolute',
     right: 0,
     bottom: 0,
-    paddingVertical: 30,
-    paddingHorizontal: 20,
+    paddingBottom: 30,
+    paddingRight: 20,
     zIndex: 99
   },
   addButton: {
@@ -112,5 +132,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  cardsContainer:{
+    alignItems:'center'
   }
 })

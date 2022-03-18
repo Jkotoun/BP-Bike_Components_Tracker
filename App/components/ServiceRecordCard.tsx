@@ -73,7 +73,6 @@ const Styles = StyleSheet.create({
     priceView: {
         alignSelf: 'flex-end',
         paddingBottom: 10,
-        paddingRight: 15
     },
     priceText: {
         color: '#F44336',

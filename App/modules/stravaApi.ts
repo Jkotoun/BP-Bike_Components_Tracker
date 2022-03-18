@@ -4,6 +4,7 @@ import { makeRedirectUri, useAuthRequest, exchangeCodeAsync, refreshAsync, Refre
 import Constants from 'expo-constants';
 import { AuthenticatedUserContext } from '../../context'
 import {updateUserStravaTokens, getLoggedUserData} from "./firestoreActions"
+import { getAuth } from 'firebase/auth';
 
 export function isStravaUser(User)
 {
@@ -46,7 +47,7 @@ export async function refreshAccessToken(User,setUser: Function )
 
   await updateUserStravaTokens(updatedStravaInfo)
   const updatedUserData = await getLoggedUserData()
-  setUser(updatedUserData)
+  setUser({...updatedUserData, ...getAuth().currentUser})
 
   return updatedStravaInfo
 }

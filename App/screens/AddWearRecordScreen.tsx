@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Text, View, StatusBar, StyleSheet, ScrollView, Button, ActivityIndicator, Image } from 'react-native';
+import { Text, View, StatusBar, StyleSheet, ScrollView, Button, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
 import { TextInput } from "react-native-paper"
 import { useForm, Controller } from 'react-hook-form'
 import { useState } from "react";
-import { getFirestore, addDoc,getDoc, collection, doc, updateDoc, query, where, getDocs, orderBy, deleteField, increment } from 'firebase/firestore';
+import { getFirestore, addDoc,getDoc, collection, doc } from 'firebase/firestore';
 
 import * as firestorage from 'firebase/storage';
 import firebaseApp from '../config/firebase';
@@ -17,14 +17,16 @@ async function AddWearRecord(formData, image, componentId){
   formData.rideDistance = componentRef.data().rideDistance
   formData.rideTime = componentRef.data().rideTime
 
-
-  let filename = image.uri.substring(image.uri.lastIndexOf('/')+1);
-  return uploadImageAsync(image.uri, filename).then((result)=>
+  if(image)
   {
-    formData.image = result.ref.fullPath
-    addDoc(collection(getFirestore(firebaseApp), "componentWearRecords"), formData)
+    let filename = image.uri.substring(image.uri.lastIndexOf('/')+1);
+    let uploadResult = await uploadImageAsync(image.uri, filename)
+    formData.image = uploadResult.ref.fullPath
   }
-  )
+
+   return addDoc(collection(getFirestore(firebaseApp), "componentWearRecords"), formData)
+
+  
 //  return 
 }
 
@@ -67,8 +69,9 @@ export default function AddWearRecordScreen({ navigation, route }) {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
+      allowsMultipleSelection:true,
       aspect: [16, 9],
-      quality: 1,
+      quality: 0.5,
     });
 
 
@@ -89,9 +92,6 @@ export default function AddWearRecordScreen({ navigation, route }) {
     AddWearRecord(data, image, route.params.componentId).then(()=>{
       navigation.navigate("ComponentWearHistoryScreen")
     })
-    console.log(route.params.componentId)
-    // addServiceRecord(data, route.params.componentId).then(()=> navigation.navigate("ServiceRecords"))
-    // console.log(route.params.componentId)
   }
 
   if (!isLoaded) {
@@ -132,17 +132,35 @@ export default function AddWearRecordScreen({ navigation, route }) {
                   error={!!errors.name}
                   label='Description'
                 />
+
               )}
+              
               name="description"
               defaultValue={""}
             />
             {errors.description && <Text style={styles.errorMessage}>{errors.description.message}</Text>}
 
 
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button title="Pick an image from camera roll" onPress={pickImage} />
-      {image && <Image source={{ uri: image.uri }} style={{ width: 200, height: 200 }} />}
-    </View>
+          
+
+            <TouchableOpacity onPress={pickImage}>
+              <TextInput
+                theme={{ colors: { primary: '#F44336' } }}
+                underlineColor="transparent"
+                mode='flat'
+                style={styles.input}
+                editable={false}
+                pointerEvents="none"
+                value={image? image.uri.substring(image.uri.lastIndexOf('/')+1) : ""}
+                label='Component image'
+              />
+            </TouchableOpacity>
+
+
+            {/* <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}> */}
+      {/* <Button title="Pick an image from camera roll" onPress={pickImage} /> */}
+      {/* {image && <Image source={{ uri: image.uri }} style={{ width: 200, height: 200 }} />} */}
+    
 
 {/* 
             <Controller
