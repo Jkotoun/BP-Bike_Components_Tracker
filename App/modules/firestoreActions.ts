@@ -174,7 +174,7 @@ function stravaActivityToRide(activity) : stravaRide
 
 export async function updateRide(oldRideData: any, newRideData: ride, rideId)
 {
-    updateDoc(doc(getFirestore(firebaseApp), "rides", rideId), {...newRideData})
+    await updateDoc(doc(getFirestore(firebaseApp), "rides", rideId), {...newRideData})
     //bike ref updated
     if(oldRideData.bike != newRideData.bike)
     {   
@@ -443,8 +443,9 @@ export async function deleteRide(rideId)
 }
 
 
-export async function uninstallComponent(bikeId, componentId, uninstallTime: Date = new Date()) {
 
+export async function uninstallComponent(bikeId, componentId, uninstallTime: Date = new Date()) {
+  
     let bikeRef = doc(getFirestore(firebaseApp), "bikes", bikeId)
     let componentRef = doc(getFirestore(firebaseApp), "components", componentId)
     let newestSwapRecordDoc = (await getDocs(
@@ -455,23 +456,28 @@ export async function uninstallComponent(bikeId, componentId, uninstallTime: Dat
             orderBy("installTime", "desc")))).docs[0]
 
 
-    if (uninstallTime > new Date()) {
-        throw new Error("Uninstall time can't be in future")
-    }
-    if (uninstallTime < newestSwapRecordDoc.data().installTime) {
-        throw new Error("Uninstallation of component must be later than installation ")
-    }
-
-
-    let addUninstallTime = updateDoc(newestSwapRecordDoc.ref, {
-        uninstallTime: uninstallTime
-    })
-    let removeBikeRef = updateDoc(doc(getFirestore(firebaseApp), "components", componentId), {
-        bike: deleteField()
-    })
-    let decrementKmAndHours = UpdateComponentsStats(uninstallTime, new Date(), bikeRef, componentRef, -1)
-
-    Promise.all([addUninstallTime, removeBikeRef, decrementKmAndHours])
+        if (uninstallTime > new Date()) {
+            throw new Error("Uninstall time can't be in future")
+        }
+        if (uninstallTime < newestSwapRecordDoc.data().installTime) {
+            throw new Error("Uninstallation of component must be later than installation ")
+        }
+    
+        
+        let addUninstallTime = updateDoc(newestSwapRecordDoc.ref, {
+            uninstallTime: uninstallTime
+        })
+        let removeBikeRef = updateDoc(doc(getFirestore(firebaseApp), "components", componentId), {
+            bike: deleteField()
+        })
+        let decrementKmAndHours = UpdateComponentsStats(uninstallTime, new Date(), bikeRef, componentRef, -1)
+        return Promise.all([addUninstallTime, removeBikeRef, decrementKmAndHours])
+    
+    
+   
+      
+   
+ 
 }
 
 //increments stats (km and ride time) of component, computed from ridden km and hours on bike between 2 dates

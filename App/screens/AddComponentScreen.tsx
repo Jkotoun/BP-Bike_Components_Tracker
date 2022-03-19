@@ -58,7 +58,8 @@ export default function AddComponentScreen({ navigation, route }) {
 
     if (route.params && route.params.componentId) //edit
     {
-      updateComponent(doc(collection(getFirestore(firebaseApp), "components"), route.params.componentId), data).then(() => {
+      updateComponent(doc(collection(getFirestore(firebaseApp), "components"), route.params.componentId), data)
+      .then(() => {
         navigation.goBack(null)
       })
     }

@@ -87,18 +87,6 @@ export default function Root() {
           setUser({...loggedUserData, ...currentUser })
           setIsLoggedIn(true)
         })
-
-        // setUser({
-        //   ...User, ...{
-        //     stravaConnected: true,
-        //     stravaInfo: {
-        //       accessToken: tokens.accessToken,
-        //       refreshToken: tokens.refreshToken,
-        //       accessTokenExpiration: (new Date((tokens.issuedAt + tokens.expiresIn)*1000)).getTime()
-        //     }
-        //   }
-        // })
-      // })
     }
   }, [response]);
 

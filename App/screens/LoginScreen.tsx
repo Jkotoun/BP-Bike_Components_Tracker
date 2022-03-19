@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Text, View, StatusBar, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { TextInput } from "react-native-paper"
+import { ActivityIndicator, TextInput } from "react-native-paper"
 import { useForm, Controller } from 'react-hook-form'
 import { AuthenticatedUserContext } from '../../context'
 import { getAuth, signInWithEmailAndPassword, fetchSignInMethodsForEmail, createUserWithEmailAndPassword } from "firebase/auth"
@@ -11,6 +11,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { makeRedirectUri, useAuthRequest, exchangeCodeAsync } from 'expo-auth-session';
 import { getFirestore, setDoc, doc } from 'firebase/firestore';
 import * as Crypto from 'expo-crypto';
+import Toast from 'react-native-simple-toast';
 
 // Endpoint
 
@@ -26,7 +27,7 @@ async function createStravaAuthAccount(authTokens, athlete) {
     String(athlete.id + Constants.manifest.stravaAccPwdSec)
   );
   
-  createUserWithEmailAndPassword(auth, athlete.id + "@stravauser.com", hash).then(userObj => saveUserData(userObj.user.uid, {
+  return createUserWithEmailAndPassword(auth, athlete.id + "@stravauser.com", hash).then(userObj => saveUserData(userObj.user.uid, {
     username: athlete.username,
     stravaAuth: true,
     stravaInfo: {
@@ -34,7 +35,9 @@ async function createStravaAuthAccount(authTokens, athlete) {
       refreshToken: authTokens.refreshToken,
       accessTokenExpiration: new Date((authTokens.issuedAt + authTokens.expiresIn)*1000) //new date takes miliseconds
     }
-  }));
+  }),
+  );
+  
 }
 
 async function loginWithStravaAcc(athlete) {
@@ -42,49 +45,65 @@ async function loginWithStravaAcc(athlete) {
     Crypto.CryptoDigestAlgorithm.SHA256,
     String(athlete.id + Constants.manifest.stravaAccPwdSec)
   );
-  signInWithEmailAndPassword(auth, athlete.id + "@stravauser.com", hash)
+  return signInWithEmailAndPassword(auth, athlete.id + "@stravauser.com", hash)
 }
 
 export default function LoginScreen({ navigation }) {
 
   const [request, response, promptAsync] = stravaApi.stravaAuthReq()
+  const [isLoggingIn, setisLoggingIn] = React.useState(false)
 
   React.useEffect(() => {
     if (response?.type === 'success') {
+      setisLoggingIn(true)
       const { code } = response.params;
       let authAthlete, authStravaTokens;
-      stravaApi.getTokens(code).then(tokens => {
-        authStravaTokens = tokens
-        return stravaApi.getCurrentlyAuthorizedAthlete(authStravaTokens.accessToken)
-      }).then(athlete => {
-        authAthlete = athlete;
-        return fetchSignInMethodsForEmail(auth, athlete.id + "@stravauser.com");
-      }).then(authMethods => {
-        if (authMethods.length == 0) {
-          createStravaAuthAccount(authStravaTokens, authAthlete)
-        }
-        else {
-          loginWithStravaAcc(authAthlete)
-        }
-      }
-      )
+      try{
 
+        stravaApi.getTokens(code).then(tokens => {
+          authStravaTokens = tokens
+          return stravaApi.getCurrentlyAuthorizedAthlete(authStravaTokens.accessToken)
+        }).then(athlete => {
+          authAthlete = athlete;
+          return fetchSignInMethodsForEmail(auth, athlete.id + "@stravauser.com");
+        }).then(authMethods => {
+          if (authMethods.length == 0) {
+            createStravaAuthAccount(authStravaTokens, authAthlete).catch(()=>{
+              setError('password', { type: "authentication", message: "Strava authentication failed" });
+            })
+
+          }
+          else {
+            loginWithStravaAcc(authAthlete).catch(()=>{
+              setError('password', { type: "authentication", message: "Strava authentication failed" });
+              setisLoggingIn(false)
+
+            })
+          }
+        }
+        )
+      }
+      catch (error)
+      {
+        Toast.show(error, Toast.LONG);
+      }
     }
+    // setisLoggingIn(false)
   }, [response]);
 
 
   const { User, setUser } = React.useContext(AuthenticatedUserContext)
   const { control, setError, handleSubmit, formState: { errors } } = useForm();
   const onSubmit = (data) => {
-
-
-    try {
+    setisLoggingIn(true)
       if (data.email !== '' && data.password !== '') {
-        signInWithEmailAndPassword(auth, data.email, data.password);
+        signInWithEmailAndPassword(auth, data.email, data.password).then(()=>setisLoggingIn(false)).catch(()=>
+        {
+          setError('password', { type: "authentication", message: "Wrong email or password" });
+          setisLoggingIn(false)
+        });
       }
-    } catch (error) {
-      setError('password', { type: "authentication", message: "chybaaaa" });
-    }
+      // setisLoggingIn(false)
   }
 
   return (
@@ -143,7 +162,10 @@ export default function LoginScreen({ navigation }) {
 
         <Text style={{ color: "white" }}>{errors.password?.type == 'authentication' && errors.password.message}</Text>
         <TouchableOpacity style={styles.submit} onPress={handleSubmit(onSubmit)}>
-          <Text style={styles.submit_text}>SIGN IN</Text>
+          <Text style={styles.submit_text}>
+            {isLoggingIn? <ActivityIndicator color="#F44336"/> : "LOG IN"  }
+            
+            </Text>
         </TouchableOpacity>
 
         <Text onPress={() => navigation.navigate('Register')} style={styles.registerFormRedirect}>Don't have account? <Text style={{ fontWeight: 'bold' }}>Sign Up! </Text></Text>

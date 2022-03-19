@@ -10,6 +10,7 @@ import firebaseApp from '../config/firebase';
 import { getAuth } from 'firebase/auth';
 import { useIsFocused } from "@react-navigation/native";
 import { addBike, getBike, updateBike } from '../modules/firestoreActions'
+import Toast from 'react-native-simple-toast';
 export default function AddBikeScreen({ navigation, route }) {
   const [purchaseDate, setPurchaseDate] = useState(new Date());
   const [show, setShow] = useState(false);
@@ -32,7 +33,6 @@ export default function AddBikeScreen({ navigation, route }) {
       getBike(route.params.bikeId).then(bikeDoc => {
         setbikeToEdit(bikeDoc.data())
         setPurchaseDate(bikeDoc.data().purchaseDate.toDate())
-        console.log(bikeDoc.data().initialRideTime)
       }).then(() => {
 
         setisLoaded(true)
@@ -58,14 +58,14 @@ export default function AddBikeScreen({ navigation, route }) {
     if (route.params && route.params.bikeId) {
       updateBike(doc(getFirestore(firebaseApp), "bikes", route.params.bikeId),data).then(() => {
         navigation.goBack(null)
-        
       })
     }
     else {
       data.state = "active"
       data.rideTime = 0
       data.rideDistance = 0
-      addBike(data).then(() => {
+      addBike(data)
+      .then(() => {
         navigation.goBack(null)
       })
     }

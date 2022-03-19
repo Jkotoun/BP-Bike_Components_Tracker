@@ -4,11 +4,12 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { RadioButton } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
 import { getFirestore, addDoc, collection, doc, updateDoc, query, where, getDocs, getDoc, FieldValue, increment } from 'firebase/firestore';
-import {installComponent} from '../modules/firestoreActions'
+import { installComponent } from '../modules/firestoreActions'
+import Toast from 'react-native-simple-toast';
 
 export default function ComponentInstallFormScreen({ navigation, route }) {
-  
-  
+
+
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
@@ -61,33 +62,33 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
                 <Text style={styles.selectedDateText}>{date.toLocaleDateString('cs-CZ').split('T')[0] + " " + date.getHours() + ":" + date.getMinutes()}</Text>
               </View>
             </TouchableOpacity>} value="selected" />
-          <RadioButton.Item label="Since beggining" value="default" color="#F44336" style={styles.radioItem} />
+        <RadioButton.Item label="Since beggining" value="default" color="#F44336" style={styles.radioItem} />
       </RadioButton.Group>
 
       <View style={{ paddingTop: 10, paddingHorizontal: 20 }}>
         <Button title='Save' color='#F44336' onPress={() => {
 
-          let installTime: Date;
-
           if (checked == "default") {
             getDoc(doc(getFirestore(firebaseApp), "bikes", route.params.bikeId))
-            .then(bikeRef => {
-              installComponent(route.params.componentId, route.params.bikeId, bikeRef.data().purchaseDate.toDate()).then(() => {
-                navigation.navigate("BikeComponentsList", {
-                  forceReload: true
+              .then(bikeRef => {
+                installComponent(route.params.componentId, route.params.bikeId, bikeRef.data().purchaseDate.toDate()).then(() => {
+                  navigation.navigate("BikeComponentsList")
                 })
+                  .catch((error) => {
+                    Toast.show(error)
+                  })
               })
-            })
           }
           else {
-            installComponent(route.params.componentId, route.params.bikeId, date).then(() => {
-              navigation.navigate("BikeComponentsList", {
-                forceReload: true
+            installComponent(route.params.componentId, route.params.bikeId, date)
+              .then(() => {
+                navigation.navigate("BikeComponentsList", {
+                })
               })
-            })
+              .catch((error) => {
+                Toast.show(error)
+              })
           }
-
-
         }} />
       </View>
     </View>

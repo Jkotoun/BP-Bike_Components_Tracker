@@ -16,7 +16,6 @@ function tokenExpired(User)
 {
   if(isStravaUser(User))
   {
-    console.log(User.stravaInfo)
     return User.stravaInfo.accessTokenExpiration.toDate() <= new Date()
   } 
   else

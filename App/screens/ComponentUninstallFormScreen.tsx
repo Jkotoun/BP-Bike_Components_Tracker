@@ -4,6 +4,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import firebaseApp from '../config/firebase';
 import { getFirestore, addDoc, collection, doc, updateDoc, query, where, getDocs, orderBy, deleteField, increment } from 'firebase/firestore';
 import {uninstallComponent} from '../modules/firestoreActions'
+import Toast from 'react-native-simple-toast';
 
 
 
@@ -43,7 +44,9 @@ export default function ComponentUninstallFormScreen({ navigation, route }) {
                         //TODO započítat kilometry
                         //TODO check referencí - komponenta není na kole, kolo i komponenta je lognuteho usera, 
 
-                        uninstallComponent(route.params.bikeId, route.params.componentId, date).then(() => { navigation.navigate("BikeComponentsList") })
+                        uninstallComponent(route.params.bikeId, route.params.componentId, date)
+                        .then(() => { navigation.navigate("BikeComponentsList") })
+                        .catch((error)=>Toast.show(error.message))
                     }} />
                 </View>
             </View>

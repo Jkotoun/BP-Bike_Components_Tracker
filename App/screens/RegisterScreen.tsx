@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Text, View, StatusBar, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
+import { Text, View, StatusBar, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useForm, Controller } from 'react-hook-form'
 import { Headline } from 'react-native-paper';
@@ -9,8 +9,8 @@ import { getFirestore, setDoc, doc } from 'firebase/firestore';
 
 
 
-const auth  =getAuth(firebaseApp)
-function saveUserData(userId, userData){
+const auth = getAuth(firebaseApp)
+function saveUserData(userId, userData) {
   setDoc(doc(getFirestore(firebaseApp), "users", userId), {
     username: userData.username,
     stravaAuth: false,
@@ -20,15 +20,22 @@ function saveUserData(userId, userData){
 
 
 export default function RegisterScreen({ navigation }) {
-  const { control, handleSubmit, formState: { errors } } = useForm();
-  const onSubmit =  async (data) => {
-    try {
-      if (data.email !== '' && data.password !== '' && data.password == data.password_repeat) {
-        createUserWithEmailAndPassword(auth,data.email,data.password).then(userObj => saveUserData(userObj.user.uid, data));
-        
-      }
-    } catch (error) {
-      console.log(error)
+  const [isRegistering, setisRegistering] = React.useState(false)
+
+  const { control, handleSubmit, setError, formState: { errors }, clearErrors } = useForm();
+  const onSubmit = async (data) => {
+    console.log("asd")
+
+    setisRegistering(true)
+    if (data.password == data.password_repeat) {
+      createUserWithEmailAndPassword(auth, data.email, data.password).then(userObj => saveUserData(userObj.user.uid, data), () => {
+        setError('password_repeat', { type: "submit_error", message: "Email already in use" });
+      }).then(()=>setisRegistering(false))
+
+    }
+    else {
+      setError('password_repeat', { type: "submit_error", message: "Passwords don't match" });
+      setisRegistering(false)
     }
   };
 
@@ -36,9 +43,9 @@ export default function RegisterScreen({ navigation }) {
   return (
     <View style={styles.mainContainer}>
       <ScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={styles.scrollViewStyles}>
-        <StatusBar backgroundColor="#F44336"/>
+        <StatusBar backgroundColor="#F44336" />
         <Headline style={styles.formHeader}>Bike Components Manager</Headline>
-        
+
         <Controller
           control={control}
           rules={{
@@ -46,9 +53,9 @@ export default function RegisterScreen({ navigation }) {
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-            theme={{colors: {primary: 'black'}}}
-            underlineColor="transparent"
-            mode='flat'
+              theme={{ colors: { primary: 'black' } }}
+              underlineColor="transparent"
+              mode='flat'
               style={styles.input}
               onBlur={onBlur}
               onChangeText={onChange}
@@ -68,9 +75,9 @@ export default function RegisterScreen({ navigation }) {
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-            theme={{colors: {primary: 'black'}}}
-            underlineColor="transparent"
-            mode='flat'
+              theme={{ colors: { primary: 'black' } }}
+              underlineColor="transparent"
+              mode='flat'
               style={styles.input}
               onBlur={onBlur}
               onChangeText={onChange}
@@ -91,9 +98,9 @@ export default function RegisterScreen({ navigation }) {
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-            theme={{colors: {primary: 'black'}}}
-            underlineColor="transparent"
-            mode='flat'
+              theme={{ colors: { primary: 'black' } }}
+              underlineColor="transparent"
+              mode='flat'
               style={styles.input}
               onBlur={onBlur}
               onChangeText={onChange}
@@ -101,7 +108,7 @@ export default function RegisterScreen({ navigation }) {
               label='Password'
             />
           )}
-          
+
           name="password"
           defaultValue=""
         />
@@ -114,9 +121,9 @@ export default function RegisterScreen({ navigation }) {
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-            theme={{colors: {primary: 'black'}}}
-            underlineColor="transparent"
-            mode='flat'
+              theme={{ colors: { primary: 'black' } }}
+              underlineColor="transparent"
+              mode='flat'
               style={styles.input}
               onBlur={onBlur}
               onChangeText={onChange}
@@ -127,10 +134,14 @@ export default function RegisterScreen({ navigation }) {
           name="password_repeat"
           defaultValue=""
         />
-        {errors.password && <Text style={{ color: "white" }}>Password again is required</Text>}
+        {errors.password_repeat?.type == 'required' && <Text style={{ color: "white" }}>Password again is required</Text>}
+        {errors.password_repeat?.type == 'submit_error'  && <Text style={{ color: "white" }}>{errors.password_repeat.message}</Text>}
+
 
         <TouchableOpacity style={styles.submit} onPress={handleSubmit(onSubmit)}>
-          <Text style={styles.submit_text}>SIGN UP</Text>
+         
+          {isRegistering? <ActivityIndicator color="#F44336"/> :  <Text style={styles.submit_text}>SIGN UP</Text> }
+
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -165,16 +176,16 @@ const styles = StyleSheet.create({
   formHeader: {
     color: 'white',
     fontWeight: 'bold',
-    paddingBottom:25,
+    paddingBottom: 25,
     fontSize: 24,
-    textAlign:'left'
+    textAlign: 'left'
   },
-  mainContainer:{
+  mainContainer: {
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#F44336'
   },
-  scrollViewStyles:{
+  scrollViewStyles: {
     alignItems: 'center'
   }
 });
