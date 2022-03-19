@@ -19,7 +19,6 @@ interface Option {
 export default function WearHistoryCard(props: cardProps) {
     const [visible, setIsVisible] = React.useState(false);
 
-    console.log(props.image)
     const images = [{ uri: props.image }]
     return (
         <>

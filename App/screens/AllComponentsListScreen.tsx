@@ -13,8 +13,6 @@ import {rideSecondsToString ,rideDistanceToString} from '../modules/helpers';
 async function loadComponents(loggedUser, viewRetired) {
   let componentsArray = []  
   let componentsStateQuery = ["active"]
-  console.log("compview")
-  console.log(viewRetired)
   if(viewRetired)
   {
     componentsStateQuery.push("retired")

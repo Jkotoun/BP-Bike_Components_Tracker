@@ -24,7 +24,6 @@ export default function RegisterScreen({ navigation }) {
 
   const { control, handleSubmit, setError, formState: { errors }, clearErrors } = useForm();
   const onSubmit = async (data) => {
-    console.log("asd")
 
     setisRegistering(true)
     if (data.password == data.password_repeat) {

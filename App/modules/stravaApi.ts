@@ -123,7 +123,6 @@ async function stravaApiRequest(User, setUser, path)
     let authToken = User.stravaInfo.accessToken
     if(tokenExpired(User))
     {
-      console.log("expired token, refreshing")
       authToken = (await refreshAccessToken(User, setUser)).accessToken
     }
 

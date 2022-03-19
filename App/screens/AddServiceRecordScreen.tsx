@@ -30,7 +30,6 @@ export default function AddServiceRecord({ navigation, route }) {
 
   const onSubmit = data => {
     addServiceRecord(data, route.params.componentId).then(()=> navigation.navigate("ServiceRecords"))
-    console.log(route.params.componentId)
   }
 
   if (!isLoaded) {

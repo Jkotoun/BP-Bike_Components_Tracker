@@ -38,7 +38,6 @@ async function uploadImageAsync(uri, filename) {
       resolve(xhr.response);
     };
     xhr.onerror = function (e) {
-      console.log(e);
     reject(new TypeError("Network request failed"));
     };
     xhr.responseType = "blob";
@@ -152,7 +151,7 @@ export default function AddWearRecordScreen({ navigation, route }) {
                 editable={false}
                 pointerEvents="none"
                 value={image? image.uri.substring(image.uri.lastIndexOf('/')+1) : ""}
-                label='Component image'
+                label='Component image (optional)'
               />
             </TouchableOpacity>
 

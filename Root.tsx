@@ -92,10 +92,8 @@ export default function Root() {
 
 
   React.useEffect(() => {
-    console.log("loading app")
     // onAuthStateChanged returns an unsubscriber
     const unsubscribeAuth = auth.onAuthStateChanged(authenticatedUser => {
-      try {
         setIsUpdatingAuth(true)
         if (authenticatedUser) {
           getDoc(doc(getFirestore(firebaseApp), "users", authenticatedUser.uid)).then(user => {
@@ -109,9 +107,6 @@ export default function Root() {
         }
         setIsUpdatingAuth(false);
         // setIsLoading(false);
-      } catch (error) {
-        console.log("err");
-      }
     });
 
     // unsubscribe auth listener on unmount

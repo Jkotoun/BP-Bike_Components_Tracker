@@ -201,11 +201,9 @@ export async function updateRide(oldRideData: any, newRideData: ride, rideId)
 async function syncRides(User, setUser)
 {
 
-    console.log("syncing rides")
     let syncedRides = (await getAllStravaSyncedRides()).docs 
     let stravaRides = await getAllStravaRides(User, setUser)
 
-    console.log("syncing " + stravaRides.length + " rides")
     
     let promises = stravaRides.map(async stravaRide => {
         let syncedRide = syncedRides.find(ride => ride.data().stravaId && ride.data().stravaId == stravaRide.id);
@@ -230,19 +228,11 @@ async function syncRides(User, setUser)
                 oldRide.name != newRide.name || 
                 (oldRide.bike == null && newRide.bike !=null || oldRide.bike != null && newRide.bike == null || oldRide.bike != null && newRide.bike != null && oldRide.bike.id != newRide.bike.id))
             {
-                console.log("update ride")
                 await updateRide(oldRide, newRide, syncedRide.id)
-                console.log("updated")
-            }
-            else
-            {
-
-                console.log("exists, dont update")
             }
         }
         else
         {
-            console.log("adding")
             let ride: stravaRide = await stravaActivityToRide(stravaRide)
             if(stravaRide.gear_id != null)
             {
@@ -294,7 +284,6 @@ export async function changeComponentState(componentId, newState)
 //change component state and uninstall from bike if installed on any
 export async function retireComponent(componentId)
 {
-    console.log(componentId)
     let componentToDelete = await getDoc(doc(getFirestore(firebaseApp), "components", componentId))
     await changeComponentState(componentToDelete.id, "retired")
     if(componentToDelete.data().bike)
@@ -398,13 +387,6 @@ export async function addRide(data)
     let addRidePromise = addDoc(collection(getFirestore(firebaseApp), "rides"), data)
     if(data.bike)
     {
-        console.log("pocitam kilometry")
-        console.log(data.date)
-        console.log(data.distance)
-        console.log(data.rideTime)
-
-        console.log(data.bike.id)
-
 
         let updateStatsPromise = updateBikeAndComponentsStatsAtDate(data.date, data.distance, data.rideTime, data.bike)
         return Promise.all([addRidePromise, updateStatsPromise])
