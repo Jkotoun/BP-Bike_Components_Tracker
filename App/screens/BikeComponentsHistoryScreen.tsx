@@ -1,46 +1,78 @@
 
 import * as React from 'react';
-import { Text, View, StyleSheet, StatusBar } from 'react-native';
+import { Text, View, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native';
+import firebaseApp from '../config/firebase';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
+import { getFirestore, getDoc, getDocs, query, collection, where, doc, deleteDoc, updateDoc, deleteField, increment } from 'firebase/firestore';
+import ComponentSwapCard from '../components/ComponentSwapCard';
+import { useIsFocused } from "@react-navigation/native";
+import { UpdateComponentsStats } from '../modules/firestoreActions'
 
 
-export default function BikeComponentsHistoryScreen() {
 
-  const historyExample = [{
-    'distance': '520',
-    'component': 'Shimano slx',
-    'action': 'Installed'
-  },
-  {
-    'distance': '235',
-    'component': 'Schwalbe nobby nic',
-    'action': 'Installed'
-  },
-  ]
+async function loadBikeComponentSwaps(bikeId) {
+  let swaps = await getDocs(query(collection(getFirestore(firebaseApp), "bikesComponents"), where("bike", "==", doc(getFirestore(firebaseApp), "bikes", bikeId))))
+  let componentsArray = []
+  swaps.docs.forEach(comp => {
 
-  return (
-    <View style={styles.mainContainer}>
-      <StatusBar
-      backgroundColor="#F44336"
-    />
-      <View style={styles.contentContainer}>
-        {
-          historyExample.map((item) => {
-            return (
-              <Text>TODO</Text>
-              // <View style={styles.historyItemContainer}>
-              //   <View style={styles.distanceContainer}>
-              //     <Text style={styles.distanceText}>{item.distance} km</Text>
-              //   </View>
-              //   <View style={styles.descriptionContainer}>
-              //     <Text>{item.action}:  {item.component}</Text>
-              //   </View>
-              // </View>
-            )
-          })
-        }
-      </View>
-    </View>
-  );
+      let compData = comp.data()
+      compData.id = comp.id
+      compData.ref = comp.ref
+      compData.installTime = compData.installTime
+      componentsArray.push(compData)
+
+  })
+
+  const promises = componentsArray.map(async comp => {
+
+      comp.bikeDoc = (await getDoc(comp.bike))
+      comp.componentDoc = (await getDoc(comp.component))
+      return comp
+  })
+  let componentsWithBikeObj = await Promise.all(promises)
+  componentsWithBikeObj.sort((a, b) => { return b.installTime - a.installTime })
+  return componentsWithBikeObj
+}
+
+export default function BikeComponentsHistoryScreen({route}) {
+  const isFocused = useIsFocused();
+
+  const [componentSwapRecords, setComponentSwapRecords] = React.useState(Array);
+  const [isLoaded, setIsLoaded] = React.useState(true);
+  React.useEffect(() => {
+      loadBikeComponentSwaps(route.params.bikeId).then((componentSwapRecords) => {
+          setComponentSwapRecords(componentSwapRecords)
+          setIsLoaded(true)
+      })
+  }, [isLoaded, isFocused])
+
+
+  if (!isLoaded) {
+      return (
+          <View style={styles.loadContainer}>
+
+              <ActivityIndicator size="large" color="#F44336" />
+
+          </View>
+      )
+  }
+  else {
+      return (
+          <View style={styles.mainContainer}>
+              <ScrollView>
+                  <View style={styles.cardsContainer}>
+                      {componentSwapRecords.map((componentSwapRecord: any) => {
+
+
+                          return <ComponentSwapCard maintext={componentSwapRecord.bikeDoc.data() ? componentSwapRecord.bikeDoc.data().name : "Deleted bike"}
+                              description={componentSwapRecord.installTime.toDate().toLocaleString()}
+                              description2={componentSwapRecord.uninstallTime ? componentSwapRecord.uninstallTime.toDate().toLocaleString() : "Currently installed"} />
+                      })}
+                  </View>
+              </ScrollView>
+          </View>
+      );
+  }
 } 
 
 
@@ -67,5 +99,14 @@ const styles = StyleSheet.create({
   },
   descriptionContainer:{
     flex: 3
-  }
+  },
+  loadContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+},
+cardsContainer:{
+    alignItems: 'center',
+}
+
 })

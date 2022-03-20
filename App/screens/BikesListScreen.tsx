@@ -90,14 +90,14 @@ export default function BikesListScreen({ navigation, route }) {
               </>
             }
             style={styles.menuOption} />
-
+{/* 
             {!(isStravaUser(User)) &&
-              <MenuOption onSelect={() => { promptAsync() }} text={"Connect to Strava"} style={styles.menuOption} />
-            }
+              <MenuOption onSelect={()=>promptAsync()} text={"Connect to Strava"} style={styles.menuOption} />
+            } */}
 
-            <MenuOption onSelect={() =>
+            {(isStravaUser(User) && <MenuOption onSelect={() =>
               runStravaSync()
-            } text={"Resync strava"} style={styles.menuOption} />
+            } text={"Resync strava"} style={styles.menuOption} />)}
 
             <MenuOption onSelect={async () => { await auth.signOut() }} text={"Log out"} style={styles.menuOption} />
           </MenuOptions>
@@ -239,6 +239,16 @@ export default function BikesListScreen({ navigation, route }) {
 
           </View>
         </ScrollView>
+          
+          {!isStravaUser(User) &&
+          <View style={styles.stravaConnectContainer}>
+          <TouchableOpacity onPress={() => {
+            promptAsync();
+          }}>
+            <Image source={require('../assets/images/btn_strava_connectwith_light.png')} />
+          </TouchableOpacity>
+          </View>}
+        
         <View style={styles.addButtonContainer}>
           <FAB
             style={styles.addButton}
@@ -254,6 +264,11 @@ export default function BikesListScreen({ navigation, route }) {
 }
 
 const styles = {
+  stravaConnectContainer:{
+    margin:10, 
+    justifyContent:'center', 
+    alignItems:'center'
+  },
   mainContainer: {
     flex: 1
   },

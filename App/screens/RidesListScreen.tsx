@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { View, StyleSheet, Text, ScrollView, ActivityIndicator, StatusBar } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, ActivityIndicator, StatusBar, TouchableOpacity, Image } from 'react-native';
 import { getFirestore, doc, getDocs, getDoc, query, collection, where, deleteDoc, orderBy } from 'firebase/firestore';
 import Card from '../components/Card';
 import { FAB } from 'react-native-paper';
@@ -89,13 +89,13 @@ export default function BikesListScreen({ navigation, route }) {
           <MenuTrigger text={<Icon name="dots-vertical" size={25} color="#ffffff" />} />
           <MenuOptions>
 
-            {!(isStravaUser(User)) &&
+            {/* {!(isStravaUser(User)) &&
               <MenuOption onSelect={() => { promptAsync() }} text={"Connect to Strava"} style={styles.menuOption} />
-            }
+            } */}
 
-            <MenuOption onSelect={() =>
+            {(isStravaUser(User) && <MenuOption onSelect={() =>
               runStravaSync()
-            } text={"Resync strava"} style={styles.menuOption} />
+            } text={"Resync strava"}style={styles.menuOption} />)}
 
             <MenuOption onSelect={async () => { await auth.signOut() }} text={"Log out"} style={styles.menuOption} />
           </MenuOptions>
@@ -180,6 +180,14 @@ export default function BikesListScreen({ navigation, route }) {
             })}
           </View>
         </ScrollView>
+           {!isStravaUser(User) &&
+          <View style={styles.stravaConnectContainer}>
+          <TouchableOpacity onPress={() => {
+            promptAsync();
+          }}>
+            <Image source={require('../assets/images/btn_strava_connectwith_light.png')} />
+          </TouchableOpacity>
+          </View>}
         <View style={styles.addButtonContainer}>
           <FAB style={styles.addButton} icon="plus" onPress={() => navigation.navigate("AddRideScreen")} />
         </View>
@@ -189,6 +197,11 @@ export default function BikesListScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
+  stravaConnectContainer:{
+    margin:10, 
+    justifyContent:'center', 
+    alignItems:'center'
+  },
   mainContainer: {
     flex: 1
   },

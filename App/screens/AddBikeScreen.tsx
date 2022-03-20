@@ -264,7 +264,7 @@ export default function AddBikeScreen({ navigation, route }) {
                 />
               )}
               name="initialRideDistance"
-              defaultValue={bikeToEdit.initialRideDistance? (bikeToEdit.initialRideDistance/1000).toString(): ""}
+              defaultValue={bikeToEdit.initialRideDistance != undefined? (bikeToEdit.initialRideDistance/1000).toString(): ""}
             />
             {errors.initialRideDistance && <Text style={styles.errorMessage}>{errors.initialRideDistance.message}</Text>}
 
@@ -299,7 +299,7 @@ export default function AddBikeScreen({ navigation, route }) {
                 />
               )}
               name="initialRideTime"
-              defaultValue={bikeToEdit.initialRideTime? (bikeToEdit.initialRideTime/3600).toString(): ""}
+              defaultValue={bikeToEdit.initialRideTime != undefined ? (bikeToEdit.initialRideTime/3600).toString(): ""}
             />
             {errors.initialRideTime && <Text style={styles.errorMessage}>{errors.initialRideTime.message}</Text>}
             {/* <View style={{ padding: 20, width: "100%" }}>

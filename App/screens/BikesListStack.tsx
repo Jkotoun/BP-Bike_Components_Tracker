@@ -18,7 +18,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 function stackHeaderVisible(navigationState) {
   const routeName = activeScreenName(navigationState);
-  const tabBarHiddenPages = ["BikeComponentsList", "Components", "History", "Bike Details", "BikeDetailTabs", "BikesListScreen", "Bikes"]
+  const tabBarHiddenPages = ["BikeComponentsList", "Components", "History", "Bike Details", "BikeDetailTabs", "BikesListScreen", "Bikes", "AddBikeScreen"]
   return tabBarHiddenPages.includes(routeName)
 
 }

@@ -113,13 +113,13 @@ export default function AllComponentsListScreen({ navigation, route }) {
             }
             style={Styles.menuOption} />
 
-            {!(isStravaUser(User)) &&
+            {/* {!(isStravaUser(User)) &&
               <MenuOption onSelect={() => { promptAsync() }} text={"Connect to Strava"} style={Styles.menuOption} />
-            }
-
+            } */}
+            {isStravaUser(User) && 
             <MenuOption onSelect={() =>
               runStravaSync()
-            } text={"Resync strava"} style={Styles.menuOption} />
+            } text={"Resync strava"} style={Styles.menuOption} />}
 
             <MenuOption onSelect={async () => { await auth.signOut() }} text={"Log out"} style={Styles.menuOption} />
           </MenuOptions>
