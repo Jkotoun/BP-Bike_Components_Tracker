@@ -18,11 +18,6 @@ import activeScreenName from '../modules/helpers';
 const auth = getAuth(firebaseApp)
 
 
-function headerVisible()
-{
-  const currentScreen = activeScreenName(useNavigationState(state => state));
-  return currentScreen == "RideDetail"   
-}
 
 export default function RidesListStack({ navigation }) {
  
@@ -43,15 +38,15 @@ export default function RidesListStack({ navigation }) {
       </Menu>
       ),
       headerShadowVisible:false,
-      animation: 'fade',
+      animation: 'none',
       headerTintColor: '#ffffff',
-      headerShown: headerVisible(),
+      
     }} >
       <Stack.Group>
         <Stack.Screen name="RidesListScreen" options={{ title: "Rides" }} component={RidesListScreen} />
       </Stack.Group>
       <Stack.Group >
-        <Stack.Screen name="RideDetail" options={{title: "Ride", animation: 'fade'}} component={RideDetail} />
+        <Stack.Screen name="RideDetail" options={{title: "Ride"}} component={RideDetail} />
         <Stack.Screen component={AddRideScreen} name='AddRideScreen' options={{title:"Add ride", 
           // headerRight:()=> { return <Button  theme={{colors: {primary: 'black'}}} onPress={()=>navigation.navigate("RidesListScreen")}><Check name="check" size={24} color="white"/></Button>},
           headerLeft: () => {return <Button theme={{colors: {primary: 'black'}}} style={{marginLeft:-20}} onPress={()=>navigation.goBack(null)}><Close name="close" size={24} color="white"/></Button>}

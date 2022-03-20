@@ -1,15 +1,17 @@
 import * as React from 'react';
-import { Text, View, StatusBar, StyleSheet, ScrollView, Button, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
+import { Text, View, StatusBar, StyleSheet, ScrollView,  ActivityIndicator, Image, TouchableOpacity } from 'react-native';
 import { TextInput } from "react-native-paper"
 import { useForm, Controller } from 'react-hook-form'
 import { useState } from "react";
 import { getFirestore, addDoc,getDoc, collection, doc } from 'firebase/firestore';
-
 import * as firestorage from 'firebase/storage';
 import firebaseApp from '../config/firebase';
 import { getAuth } from 'firebase/auth';
 import { useIsFocused } from "@react-navigation/native";
 import * as ImagePicker from 'expo-image-picker';
+import Check from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Button} from 'react-native-paper'
+
 async function AddWearRecord(formData, image, componentId){
   let componentRef = await getDoc(doc(getFirestore(firebaseApp), "components", componentId))
   formData.component = componentRef.ref
@@ -80,7 +82,15 @@ export default function AddWearRecordScreen({ navigation, route }) {
   };
 
 
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+        headerRight:()=> 
+        { 
+          return <Button  theme={{colors: {primary: 'black'}}}  onPress={handleSubmit(onSubmit)}><Check name="check" size={24} color="white"/></Button>
+      }
 
+    });
+  }, [navigation]);
 
 
 
@@ -156,51 +166,6 @@ export default function AddWearRecordScreen({ navigation, route }) {
             </TouchableOpacity>
 
 
-            {/* <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}> */}
-      {/* <Button title="Pick an image from camera roll" onPress={pickImage} /> */}
-      {/* {image && <Image source={{ uri: image.uri }} style={{ width: 200, height: 200 }} />} */}
-    
-
-{/* 
-            <Controller
-              control={control}
-              rules={{
-                required: {
-                  value: true,
-                  message: "Ride hours to date is required"
-                },
-                pattern: {
-                  value: /^[0-9]*[\.]?[0-9]+$/,
-                  message: "Ride hours must be positive number"
-                }
-
-              }}
-
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  theme={{ colors: { primary: '#F44336' } }}
-                  underlineColor="transparent"
-                  mode='flat'
-
-                  style={styles.input}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  keyboardType='numeric'
-                  label='Service price'
-                />
-              )}
-              name="price"
-              defaultValue=""
-            />
-            {errors.price && <Text style={styles.errorMessage}>{errors.price.message}</Text>} */}
-
-
-
-
-            <View style={{ padding: 20, width: "100%" }}>
-              <Button color={"#F44336"} title="Submit" disabled={!isValid} onPress={handleSubmit(onSubmit)} />
-            </View>
           </ScrollView >
         </View>
       </View>

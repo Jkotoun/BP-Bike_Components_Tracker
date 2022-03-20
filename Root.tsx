@@ -29,43 +29,22 @@ const auth = getAuth(firebaseApp)
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-function headerVisible(): boolean {
-  const currentScreen = activeScreenName(useNavigationState(state => state));
-  //undefined is first screen on app launch
-  return ["BikesListScreen", "ComponentsListScreen", "RidesListScreen", undefined, "Bikes", "All components", "Rides"].includes(currentScreen)
-}
+// function headerVisible(): boolean {
+//   const currentScreen = activeScreenName(useNavigationState(state => state));
+//   //undefined is first screen on app launch
+//   return ["BikesListScreen", "ComponentsListScreen", "RidesListScreen", undefined, "Bikes", "All components", "Rides"].includes(currentScreen)
+// }
 
 
 
 
 export default function Root() {
 
-  const [Test, setTest] = React.useState(0)
-  const [checked, setChecked] = React.useState(false);
   const [isUpdatingAuth, setIsUpdatingAuth] = React.useState(false);
   const [isSyncing, setIsSyncing] = React.useState(false);
   const [isLoaded, setIsLoaded] = React.useState(true);
-  const [request, response, promptAsync] = stravaAuthReq()
   const { User, setUser, IsLoggedIn, setIsLoggedIn } = React.useContext(AuthenticatedUserContext);
 
-  // connect account with strava on authorization success
-  React.useEffect(() => {
-    if (response?.type === 'success') {
-      const { code } = response.params;
-      stravaApi.getTokens(code).then(tokens => {
-        return connectAccWithStrava(tokens, User)
-      }).then(() => {
-       
-        return getLoggedUserData()
-      }).then((loggedUserData) => {
-
-          let currentUser = getAuth().currentUser
-          setIsLoggedIn(false)
-          setUser({...loggedUserData, ...currentUser })
-          setIsLoggedIn(true)
-        })
-    }
-  }, [response]);
 
 
   function runStravaSync()
@@ -112,10 +91,10 @@ export default function Root() {
   }, [IsLoggedIn])
 
 
-  //force screen to rerender
-  React.useEffect(() => {
-    setIsLoaded(true)
-  }, [checked]);
+  // //force screen to rerender
+  // React.useEffect(() => {
+  //   setIsLoaded(true)
+  // }, [checked]);
 
   // if (initializing) return null;
   if (isUpdatingAuth || isSyncing) {
@@ -164,58 +143,20 @@ export default function Root() {
                   headerStyle: styles.header,
                   tabBarLabelStyle: styles.tabBarLabel,
                   tabBarIconStyle: styles.tabBarIcon,
-                  headerShown: headerVisible(), 
+                  headerShown: false, 
                   headerTitleStyle: styles.headerTitle,
                   tabBarStyle: {
                     height: 55,
                   },
                   
-                  //TODO refactor
-                  headerRight: () => (
-                    <Menu style={styles.menu}>
-                      <MenuTrigger text={<Icon name="dots-vertical" size={25} color="#ffffff" />} />
-                      <MenuOptions>
-                        <MenuOption onSelect={() => { setIsLoaded(false); setChecked(!checked); }} text={
-                          <>
-                            <View style={{ flexDirection: 'column' }}>
 
-                              <View style={{ flexDirection: 'row' }}>
-
-                                <Checkbox
-
-                                  color={customOrange}
-                                  status={checked ? 'checked' : 'unchecked'}
-                                  onPress={() => {
-                                    setIsLoaded(false);
-                                    setChecked(!checked);
-                                  }} />
-                                <Text style={{ marginTop: 7.5 }}> View retired</Text>
-                              </View>
-                            </View>
-
-
-                          </>
-                        }
-
-                          style={styles.menuOption} />
-                                {!(isStravaUser(User)) &&
-                        <MenuOption onSelect={() => { promptAsync() }} text={"Connect to Strava"} style={styles.menuOption} />
-
-            
-        }
-                        <MenuOption onSelect={() => runStravaSync()} text={"Resync strava"} style={styles.menuOption} />
-        
-                        <MenuOption onSelect={async () => { await auth.signOut() }} text={"Log out"} style={styles.menuOption} />
-                      </MenuOptions>
-
-                    </Menu>
-                  ),
+   
                   tabBarActiveTintColor: customOrange,
                   tabBarInactiveTintColor: 'gray',
                 })}
               >
 
-                <Tab.Screen name="Bikes" initialParams={{ viewRetired: checked }} component={BikesListStack} options={{
+                <Tab.Screen name="Bikes" component={BikesListStack} options={{
                   tabBarLabel: 'Bikes',
                   tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons name="bike" color={color} size={size} />
@@ -223,7 +164,7 @@ export default function Root() {
                 }}
                 />
 
-                <Tab.Screen name="All components" initialParams={{ viewRetired: checked }} component={ComponentsListStack} options={{
+                <Tab.Screen name="All components" component={ComponentsListStack} options={{
                   tabBarLabel: 'All components',
                   tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons name="cog-outline" color={color} size={size} />

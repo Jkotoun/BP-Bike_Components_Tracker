@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, StatusBar, StyleSheet, ScrollView, Button, ActivityIndicator } from 'react-native';
+import { Text, View, StatusBar, StyleSheet, ScrollView,  ActivityIndicator } from 'react-native';
 import { TextInput } from "react-native-paper"
 import { useForm, Controller } from 'react-hook-form'
 import { useState } from "react";
@@ -7,6 +7,8 @@ import { getFirestore, addDoc,getDoc, collection, doc, updateDoc, query, where, 
 import firebaseApp from '../config/firebase';
 import { getAuth } from 'firebase/auth';
 import { useIsFocused } from "@react-navigation/native";
+import Check from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Button} from 'react-native-paper'
 
 async function addServiceRecord(data, componentId){
   let componentRef = await getDoc(doc(getFirestore(firebaseApp), "components", componentId))
@@ -20,7 +22,15 @@ async function addServiceRecord(data, componentId){
 
 
 export default function AddServiceRecord({ navigation, route }) {
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+        headerRight:()=> 
+        { 
+          return <Button  theme={{colors: {primary: 'black'}}}  onPress={handleSubmit(onSubmit)}><Check name="check" size={24} color="white"/></Button>
+      }
 
+    });
+  }, [navigation]);
   const isFocused = useIsFocused();
   const auth = getAuth(firebaseApp)
   const [isLoaded, setisLoaded] = useState(true)
@@ -111,12 +121,6 @@ export default function AddServiceRecord({ navigation, route }) {
             />
             {errors.price && <Text style={styles.errorMessage}>{errors.price.message}</Text>}
 
-
-
-
-            <View style={{ padding: 20, width: "100%" }}>
-              <Button color={"#F44336"} title="Submit" disabled={!isValid} onPress={handleSubmit(onSubmit)} />
-            </View>
           </ScrollView >
         </View>
       </View>

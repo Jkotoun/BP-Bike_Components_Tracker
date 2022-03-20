@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, StatusBar, StyleSheet, TouchableOpacity, Image, ScrollView, Button, Platform, ActivityIndicator } from 'react-native';
+import { Text, View, StatusBar, StyleSheet, TouchableOpacity, Image, ScrollView, Platform, ActivityIndicator } from 'react-native';
 import { TextInput } from "react-native-paper"
 import { useForm, Controller } from 'react-hook-form'
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -9,6 +9,9 @@ import { getFirestore, addDoc, collection, doc, updateDoc, query, where, getDocs
 import firebaseApp from '../config/firebase';
 import { getAuth } from 'firebase/auth';
 import { useIsFocused } from "@react-navigation/native";
+import {Button} from 'react-native-paper'
+import Check from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import { addBike, getBike, updateBike } from '../modules/firestoreActions'
 import Toast from 'react-native-simple-toast';
 export default function AddBikeScreen({ navigation, route }) {
@@ -43,6 +46,15 @@ export default function AddBikeScreen({ navigation, route }) {
     }
   }, [isFocused])
 
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+        headerRight:()=> 
+        { 
+          return <Button  theme={{colors: {primary: 'black'}}}  onPress={handleSubmit(onSubmit)}><Check name="check" size={24} color="white"/></Button>
+      }
+
+    });
+  }, [navigation]);
 
   const { control, register, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'all' });
 
@@ -254,7 +266,7 @@ export default function AddBikeScreen({ navigation, route }) {
               name="initialRideDistance"
               defaultValue={bikeToEdit.initialRideDistance? (bikeToEdit.initialRideDistance/1000).toString(): ""}
             />
-            {errors.rideDistance && <Text style={styles.errorMessage}>{errors.rideDistance.message}</Text>}
+            {errors.initialRideDistance && <Text style={styles.errorMessage}>{errors.initialRideDistance.message}</Text>}
 
 
 
@@ -287,12 +299,12 @@ export default function AddBikeScreen({ navigation, route }) {
                 />
               )}
               name="initialRideTime"
-              defaultValue={bikeToEdit.initialRideTime? (bikeToEdit.initialRideTime/1000).toString(): ""}
+              defaultValue={bikeToEdit.initialRideTime? (bikeToEdit.initialRideTime/3600).toString(): ""}
             />
-            {errors.rideTime && <Text style={styles.errorMessage}>{errors.rideTime.message}</Text>}
-            <View style={{ padding: 20, width: "100%" }}>
+            {errors.initialRideTime && <Text style={styles.errorMessage}>{errors.initialRideTime.message}</Text>}
+            {/* <View style={{ padding: 20, width: "100%" }}>
               <Button color={"#F44336"} title="Submit" disabled={!isValid} onPress={handleSubmit(onSubmit)} />
-            </View>
+            </View> */}
           </ScrollView >
         </View>
       </View>

@@ -16,12 +16,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import activeScreenName  from '../modules/helpers';
 import { useNavigationState } from '@react-navigation/native';
 
-function stackHeaderVisible(navigationState) {
-    
-  const routeName = activeScreenName(navigationState);
-  return !["ComponentsListScreen", undefined, "All components", "AddServiceRecord", "AddWearRecordScreen"].includes(routeName) 
-}
-
 const auth = getAuth(firebaseApp)
 export default function BikesListScreen({ navigation, route }) {
   const Stack = createNativeStackNavigator();
@@ -33,7 +27,6 @@ export default function BikesListScreen({ navigation, route }) {
         backgroundColor: '#F44336'
       },
       headerShadowVisible:false,
-      headerShown:stackHeaderVisible(navigationState),
       headerRight: () => (
         <Menu>
           <MenuTrigger text={<Icon name="dots-vertical" size={25} color="#ffffff" />} />
@@ -43,11 +36,11 @@ export default function BikesListScreen({ navigation, route }) {
 
       </Menu>
       ),
-      animation: 'fade',
+      animation:'none',
       headerTintColor: '#ffffff'
     }}>
       <Stack.Group>
-        <Stack.Screen name="ComponentsListScreen" initialParams={{viewRetired: route.params.viewRetired}} options={{ title: "All Components" }} component={ComponentsListScreen} />
+        <Stack.Screen name="ComponentsListScreen" options={{ title: "All Components" }} component={ComponentsListScreen} />
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'card' }}>
         <Stack.Screen name="ComponentDetailTabs" options={{title: "Component"}} component={ComponentTabs} />

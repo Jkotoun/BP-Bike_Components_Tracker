@@ -7,8 +7,16 @@ import { FAB } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import { useIsFocused } from "@react-navigation/native";
-import { deleteRide } from "../modules/firestoreActions";
+import { deleteRide, syncDataWithStrava, getLoggedUserData, connectAccWithStrava } from "../modules/firestoreActions";
 import {rideSecondsToString, rideDistanceToString} from '../modules/helpers'
+import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {isStravaUser, stravaAuthReq, getTokens} from '../modules/stravaApi';
+import Toast from 'react-native-simple-toast';
+import { getAuth } from 'firebase/auth';
+
+const auth = getAuth(firebaseApp)
+
 async function loadRides(loggedUser) {
   let ridesArray = []
   let ridesDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "rides"), where("user", "==", doc(getFirestore(firebaseApp), "users", loggedUser.uid)), orderBy('date', "desc")))
@@ -32,11 +40,70 @@ async function loadRides(loggedUser) {
 export default function BikesListScreen({ navigation, route }) {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
   const isFocused = useIsFocused();
+  const [isLoaded, setIsLoaded] = React.useState(false);
+  const [isSyncing, setIsSyncing] = React.useState(false);
 
   const images = {
     route: require("../assets/images/route_icon.png"),
   };
-  const [isLoaded, setIsLoaded] = React.useState(false);
+  function runStravaSync()
+  {
+    setIsSyncing(true)
+    syncDataWithStrava(User, setUser).then(() => {
+      console.log("konec")
+      setIsSyncing(false)
+      setIsLoaded(false)
+    })
+    .catch(()=>{
+      Toast.show("Strava synchronization failed")
+      setIsSyncing(false)
+
+    })
+  }
+
+
+  const [request, response, promptAsync] = stravaAuthReq()
+  // connect account with strava on authorization success
+  React.useEffect(() => {
+    if (response?.type === 'success') {
+      const { code } = response.params;
+      getTokens(code).then(tokens => {
+        return connectAccWithStrava(tokens, User)
+      }).then(() => {
+       
+        return getLoggedUserData()
+      }).then((loggedUserData) => {
+
+          let currentUser = getAuth().currentUser
+          setIsLoggedIn(false)
+          setUser({...loggedUserData, ...currentUser })
+          setIsLoggedIn(true)
+        })
+    }
+  }, [response]);
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Menu>
+          <MenuTrigger text={<Icon name="dots-vertical" size={25} color="#ffffff" />} />
+          <MenuOptions>
+
+            {!(isStravaUser(User)) &&
+              <MenuOption onSelect={() => { promptAsync() }} text={"Connect to Strava"} style={styles.menuOption} />
+            }
+
+            <MenuOption onSelect={() =>
+              runStravaSync()
+            } text={"Resync strava"} style={styles.menuOption} />
+
+            <MenuOption onSelect={async () => { await auth.signOut() }} text={"Log out"} style={styles.menuOption} />
+          </MenuOptions>
+        </Menu>
+      ),
+    });
+  }, [navigation]);
+
 
   React.useEffect(() => {
       loadRides(User).then((ridesArray) => {
@@ -46,10 +113,12 @@ export default function BikesListScreen({ navigation, route }) {
     
   }, [isFocused, isLoaded])
   const [rides, setRides] = React.useState([]);
-  if (!isLoaded) {
+  if (!isLoaded || isSyncing) {
     return (<View style={styles.loadContainer}>
 
       <ActivityIndicator size="large" color="#F44336" />
+      {isSyncing && <Text style={{color:'#F44336', fontSize:16, fontWeight:'700'}}>Syncing strava data</Text>}
+
       <View style={styles.addButtonContainer}>
         <FAB style={styles.addButton} icon="plus" onPress={() => navigation.navigate("AddRideScreen")} />
       </View>
@@ -143,5 +212,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
-  }
+  },
+  menuOption: {
+    padding: 8
+  },
+  menu: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingRight: 15,
+  },
 })

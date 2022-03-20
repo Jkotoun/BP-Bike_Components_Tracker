@@ -7,8 +7,15 @@ import { FAB } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import { useIsFocused } from "@react-navigation/native";
-import { deleteComponent, changeComponentState, retireComponent } from "../modules/firestoreActions";
+import { deleteComponent, changeComponentState, retireComponent, syncDataWithStrava,   getLoggedUserData ,connectAccWithStrava,  } from "../modules/firestoreActions";
 import {rideSecondsToString ,rideDistanceToString} from '../modules/helpers';
+import {isStravaUser, stravaAuthReq, getTokens} from '../modules/stravaApi';
+import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Checkbox } from 'react-native-paper';
+import { getAuth } from 'firebase/auth';
+import Toast from 'react-native-simple-toast';
+const auth = getAuth(firebaseApp)
 
 async function loadComponents(loggedUser, viewRetired) {
   let componentsArray = []  
@@ -38,22 +45,109 @@ export default function AllComponentsListScreen({ navigation, route }) {
   const isFocused = useIsFocused();
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
   const [isLoaded, setIsLoaded] = React.useState(false);
+  const [isSyncing, setIsSyncing] = React.useState(false);
+
+  function runStravaSync()
+  {
+    setIsSyncing(true)
+    syncDataWithStrava(User, setUser).then(() => {
+      console.log("konec")
+      setIsSyncing(false)
+      setIsLoaded(false)
+    })
+    .catch(()=>{
+      Toast.show("Strava synchronization failed")
+      setIsSyncing(false)
+
+    })
+  }
+
+
+  const [request, response, promptAsync] = stravaAuthReq()
+  // connect account with strava on authorization success
+  React.useEffect(() => {
+    if (response?.type === 'success') {
+      const { code } = response.params;
+      getTokens(code).then(tokens => {
+        return connectAccWithStrava(tokens, User)
+      }).then(() => {
+       
+        return getLoggedUserData()
+      }).then((loggedUserData) => {
+
+          let currentUser = getAuth().currentUser
+          setIsLoggedIn(false)
+          setUser({...loggedUserData, ...currentUser })
+          setIsLoggedIn(true)
+        })
+    }
+  }, [response]);
+
+
+  const [viewRetiredChecked, setviewRetiredChecked] = React.useState(false);
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Menu>
+          <MenuTrigger text={<Icon name="dots-vertical" size={25} color="#ffffff" />} />
+          <MenuOptions>
+            <MenuOption onSelect={() => {
+              setviewRetiredChecked(!viewRetiredChecked);
+            }} 
+            text={
+              <>
+                <View style={{ flexDirection: 'column' }}>
+                  <View style={{ flexDirection: 'row' }}>
+                    <Checkbox
+                      color={'#F44336'}
+                      status={viewRetiredChecked ? 'checked' : 'unchecked'}
+                      onPress={() => {
+                        setviewRetiredChecked(!viewRetiredChecked);
+                      }}
+                    />
+                    <Text style={{ marginTop: 7.5 }}> View retired</Text>
+                  </View>
+                </View>
+              </>
+            }
+            style={Styles.menuOption} />
+
+            {!(isStravaUser(User)) &&
+              <MenuOption onSelect={() => { promptAsync() }} text={"Connect to Strava"} style={Styles.menuOption} />
+            }
+
+            <MenuOption onSelect={() =>
+              runStravaSync()
+            } text={"Resync strava"} style={Styles.menuOption} />
+
+            <MenuOption onSelect={async () => { await auth.signOut() }} text={"Log out"} style={Styles.menuOption} />
+          </MenuOptions>
+        </Menu>
+      ),
+    });
+  }, [navigation, viewRetiredChecked]);
+
+
+
   //bikes loading
   React.useEffect(() => {
-      loadComponents(User, route.params.viewRetired).then((componentsArray) => {
+      loadComponents(User, viewRetiredChecked).then((componentsArray) => {
         setComponents(componentsArray)
         setIsLoaded(true)
       })
-  }, [isFocused, isLoaded])
+  }, [isFocused, isLoaded, viewRetiredChecked])
   const [components, setComponents] = React.useState([]);
   const images = {
     chain: require("../assets/images/chain_icon.png"),
     fork: require("../assets/images/bicycle_fork_icon.png")
   };
-  if (!isLoaded) {
+  if (!isLoaded || isSyncing) {
     return (
       <View style={Styles.loadContainer}>
         <ActivityIndicator size="large" color="#F44336" />
+        {isSyncing && <Text style={{color:'#F44336', fontSize:16, fontWeight:'700'}}>Syncing strava data</Text>}
+
         <View style={Styles.addButtonContainer}>
           <FAB
             style={{
@@ -165,5 +259,13 @@ const Styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
-  }
+  },
+  menuOption: {
+    padding: 8
+  },
+  menu: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingRight: 15,
+  },
 })

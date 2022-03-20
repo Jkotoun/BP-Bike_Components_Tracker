@@ -258,7 +258,9 @@ async function syncRides(User, setUser)
 export async function syncDataWithStrava(User, setUser: Function)
 {
     await syncBikes(User, setUser)
+    console.log("synced bikes")
     await syncRides(User, setUser)
+    console.log("synced rides")
 }
 
 

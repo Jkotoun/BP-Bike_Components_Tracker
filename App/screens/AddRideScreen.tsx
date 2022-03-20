@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Platform, Text, View, StatusBar, StyleSheet, ScrollView, Button, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Platform, Text, View, StatusBar, StyleSheet, ScrollView,  TouchableOpacity, ActivityIndicator } from 'react-native';
 import { TextInput } from "react-native-paper"
 import { useForm, Controller } from 'react-hook-form'
 import { getFirestore, addDoc, collection, doc, query, where, getDocs, orderBy, deleteField, increment } from 'firebase/firestore';
@@ -11,6 +11,8 @@ import RNPickerSelect from 'react-native-picker-select';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useIsFocused } from "@react-navigation/native";
 import {addRide, getRide, updateRide} from '../modules/firestoreActions'
+import Check from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Button} from 'react-native-paper'
 export default function AddRideScreen({ navigation, route }) {
   const isFocused = useIsFocused();
   const [rideDate, setRideDate] = useState(new Date());
@@ -67,7 +69,15 @@ export default function AddRideScreen({ navigation, route }) {
 
       })
   }, [isFocused]);
- 
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+        headerRight:()=> 
+        { 
+          return <Button  theme={{colors: {primary: 'black'}}}  onPress={handleSubmit(onSubmit)}><Check name="check" size={24} color="white"/></Button>
+      }
+
+    });
+  }, [navigation]);
   const [selectedLanguage, setSelectedLanguage] = useState();
   const { control, setError, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'all' });
 
@@ -250,11 +260,6 @@ export default function AddRideScreen({ navigation, route }) {
                 label='Total ride time'
               />
             </TouchableOpacity>
-
-
-            <View style={{ padding: 20, width: "100%" }}>
-              <Button color={"#F44336"} title="Submit" disabled={!isValid} onPress={handleSubmit(onSubmit)} />
-            </View>
           </ScrollView >
         </View>
       </View>

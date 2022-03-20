@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, StatusBar, StyleSheet, TouchableOpacity, Image, ScrollView, Button, ActivityIndicator } from 'react-native';
+import { Text, View, StatusBar, StyleSheet, TouchableOpacity, Image, ScrollView,  ActivityIndicator } from 'react-native';
 import { TextInput } from "react-native-paper"
 import { useForm, Controller } from 'react-hook-form'
 import { getFirestore, addDoc, collection, doc, updateDoc, query, where, getDocs, orderBy, deleteField, increment } from 'firebase/firestore';
@@ -10,6 +10,8 @@ import { useState } from "react";
 import RNPickerSelect from 'react-native-picker-select';
 import { addComponent, getComponent, updateComponent } from '../modules/firestoreActions'
 import { useIsFocused } from "@react-navigation/native";
+import Check from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Button} from 'react-native-paper'
 
 export default function AddComponentScreen({ navigation, route }) {
   const componentTypes = [
@@ -50,6 +52,15 @@ export default function AddComponentScreen({ navigation, route }) {
 
 
   const { control, setError, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'all' });
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+        headerRight:()=> 
+        { 
+          return <Button  theme={{colors: {primary: 'black'}}}  onPress={handleSubmit(onSubmit)}><Check name="check" size={24} color="white"/></Button>
+      }
+
+    });
+  }, [navigation]);
   const onSubmit = data => {
     data.type = componentTypes.find(biketype => biketype.value == data.type)
     data.initialRideTime = Number(data.initialRideTime) * 60 * 60
@@ -224,7 +235,7 @@ export default function AddComponentScreen({ navigation, route }) {
               name="initialRideDistance"
               defaultValue={componentToEdit.initialRideDistance !== undefined ? (componentToEdit.initialRideDistance / 1000).toString() : ""}
             />
-            {errors.rideDistance && <Text style={styles.errorMessage}>{errors.rideDistance.message}</Text>}
+            {errors.initialRideDistance && <Text style={styles.errorMessage}>{errors.initialRideDistance.message}</Text>}
 
 
             <Controller
@@ -255,11 +266,9 @@ export default function AddComponentScreen({ navigation, route }) {
               name="initialRideTime"
               defaultValue={componentToEdit.initialRideTime !== undefined ? (componentToEdit.initialRideTime / 3600).toString() : ""}
             />
-            {errors.rideTime && <Text style={styles.errorMessage}>{errors.rideTime.message}</Text>}
+            {errors.initialRideTime && <Text style={styles.errorMessage}>{errors.initialRideTime.message}</Text>}
 
-            <View style={{ padding: 20, width: "100%" }}>
-              <Button color={"#F44336"} title="Submit" disabled={!isValid} onPress={handleSubmit(onSubmit)} />
-            </View>
+
           </ScrollView >
         </View>
       </View>
