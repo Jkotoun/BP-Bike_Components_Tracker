@@ -548,3 +548,18 @@ export async function getRide(rideId)
 {
     return getDoc(doc(getFirestore(firebaseApp), "rides", rideId))
 }
+
+
+//add strava account info to firestore doc in users collection
+export async function connectAccWithStrava(tokens, user) {
+    updateDoc(doc(getFirestore(firebaseApp), "users", user.uid),
+      {
+        stravaConnected: true,
+        stravaInfo: {
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
+          accessTokenExpiration: new Date((tokens.issuedAt + tokens.expiresIn)*1000)
+        }
+      })
+  }
+  

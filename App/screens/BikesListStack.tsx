@@ -28,6 +28,7 @@ export default function BikesListStack({ navigation , route}) {
       headerStyle: {
         backgroundColor: '#F44336',
       },
+      
       headerShadowVisible: false,
       headerRight: () => (
         <Menu>
@@ -38,6 +39,7 @@ export default function BikesListStack({ navigation , route}) {
 
       </Menu>
       ),
+      
       animation: 'fade',
       headerTintColor: '#ffffff',
       headerShown: stackHeaderVisible(navigationState)

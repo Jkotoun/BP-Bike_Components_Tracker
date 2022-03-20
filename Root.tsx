@@ -18,44 +18,21 @@ import { AuthenticatedUserContext } from './context'
 import { getFirestore, getDoc, doc, updateDoc } from 'firebase/firestore';
 import firebaseApp from './App/config/firebase';
 import { getAuth } from "firebase/auth"
-import { syncDataWithStrava, getLoggedUserData } from "./App/modules/firestoreActions";
+import { syncDataWithStrava, getLoggedUserData ,connectAccWithStrava } from "./App/modules/firestoreActions";
 import { ActivityIndicator, Checkbox } from 'react-native-paper';
 import {isStravaUser, stravaAuthReq} from './App/modules/stravaApi';
 import * as stravaApi from './App/modules/stravaApi';
+import Toast from 'react-native-simple-toast';
 
 const auth = getAuth(firebaseApp)
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-
-
-// //check if tabbar should be visible on current active screen
-// function tabBarVisible(): boolean {
-//   const currentScreen = activeScreenName(useNavigationState(state => state));
-//   const tabBarHiddenPages = ["BikeDetail", "ComponentDetail", "RideDetail", "AddBikeScreen"]
-//   //true if current screen is not in array
-//   return !tabBarHiddenPages.includes(currentScreen)
-// }
-
 function headerVisible(): boolean {
   const currentScreen = activeScreenName(useNavigationState(state => state));
   //undefined is first screen on app launch
   return ["BikesListScreen", "ComponentsListScreen", "RidesListScreen", undefined, "Bikes", "All components", "Rides"].includes(currentScreen)
-}
-
-//TODO mozna presunout do firestore func modelu
-//add strava account info to firestore doc in users collection
-async function connectAccWithStrava(tokens, user) {
-  updateDoc(doc(getFirestore(firebaseApp), "users", user.uid),
-    {
-      stravaConnected: true,
-      stravaInfo: {
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
-        accessTokenExpiration: new Date((tokens.issuedAt + tokens.expiresIn)*1000)
-      }
-    })
 }
 
 
@@ -91,6 +68,20 @@ export default function Root() {
   }, [response]);
 
 
+  function runStravaSync()
+  {
+    setIsSyncing(true)
+    syncDataWithStrava(User, setUser).then(() => {
+
+      setIsSyncing(false)
+    })
+    .catch(()=>{
+      Toast.show("Strava synchronization failed")
+      setIsSyncing(false)
+
+    })
+  }
+
   React.useEffect(() => {
     // onAuthStateChanged returns an unsubscriber
     const unsubscribeAuth = auth.onAuthStateChanged(authenticatedUser => {
@@ -106,7 +97,6 @@ export default function Root() {
           setUser(null)
         }
         setIsUpdatingAuth(false);
-        // setIsLoading(false);
     });
 
     // unsubscribe auth listener on unmount
@@ -116,20 +106,17 @@ export default function Root() {
   React.useEffect(() => {
     if (IsLoggedIn) {
       if (User.stravaAuth || User.stravaConnected) {
-        setIsSyncing(true)
-        syncDataWithStrava(User, setUser).then(() => {
-
-          setIsSyncing(false)
-        })
+        runStravaSync()
       }
     }
   }, [IsLoggedIn])
 
 
-//TODO predelat znovunacitani
+  //force screen to rerender
   React.useEffect(() => {
     setIsLoaded(true)
   }, [checked]);
+
   // if (initializing) return null;
   if (isUpdatingAuth || isSyncing) {
     return (
@@ -182,6 +169,7 @@ export default function Root() {
                   tabBarStyle: {
                     height: 55,
                   },
+                  
                   //TODO refactor
                   headerRight: () => (
                     <Menu style={styles.menu}>
@@ -215,6 +203,8 @@ export default function Root() {
 
             
         }
+                        <MenuOption onSelect={() => runStravaSync()} text={"Resync strava"} style={styles.menuOption} />
+        
                         <MenuOption onSelect={async () => { await auth.signOut() }} text={"Log out"} style={styles.menuOption} />
                       </MenuOptions>
 
