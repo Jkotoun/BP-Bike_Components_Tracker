@@ -16,6 +16,14 @@ import { AuthenticatedUserContext } from '../../context'
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+function stackHeaderVisible(navigationState) {
+  const routeName = activeScreenName(navigationState);
+  const tabBarHiddenPages = ["BikeComponentsList", "Components", "History", "Bike Details", "BikeDetailTabs", "BikesListScreen", "Bikes"]
+  return tabBarHiddenPages.includes(routeName)
+
+}
+
+
 
 const auth = getAuth(firebaseApp)
 
@@ -36,7 +44,7 @@ export default function BikesListStack({ navigation, route }) {
       },
 
       headerShadowVisible: false,
-
+      headerShown:stackHeaderVisible(navigationState),
 
       animation: 'none',
       headerTintColor: '#ffffff',

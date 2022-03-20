@@ -16,6 +16,13 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import activeScreenName  from '../modules/helpers';
 import { useNavigationState } from '@react-navigation/native';
 
+
+function StackHeaderVisible(state) {
+  const routeName = activeScreenName(state);
+  const tabBarHiddenPages = ["AddServiceRecord", "AddWearRecordScreen"]
+  return !tabBarHiddenPages.includes(routeName)
+}
+
 const auth = getAuth(firebaseApp)
 export default function BikesListScreen({ navigation, route }) {
   const Stack = createNativeStackNavigator();
@@ -26,6 +33,7 @@ export default function BikesListScreen({ navigation, route }) {
       headerStyle: {
         backgroundColor: '#F44336'
       },
+      headerShown:StackHeaderVisible(navigationState),
       headerShadowVisible:false,
       headerRight: () => (
         <Menu>
