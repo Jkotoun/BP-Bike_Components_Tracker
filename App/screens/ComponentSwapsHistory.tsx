@@ -89,7 +89,7 @@ export default function ComponentSwapsHistory({ route }) {
                             ]
 
                             return <ComponentSwapCard options={swapRecordOptions} maintext={componentSwapRecord.bikeDoc.data() ? componentSwapRecord.bikeDoc.data().name : "Deleted bike"}
-                                description={componentSwapRecord.installTime.toDate().toLocaleString()}
+                                description={componentSwapRecord.installTime.toDate().getTime() == 0 ? "Since purchase" : componentSwapRecord.installTime.toDate().toLocaleString()}
                                 description2={componentSwapRecord.uninstallTime ? componentSwapRecord.uninstallTime.toDate().toLocaleString() : "Currently installed"} />
                         })}
                     </View>

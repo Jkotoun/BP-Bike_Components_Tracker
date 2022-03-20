@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Text, View, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import firebaseApp from '../config/firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
-import { getFirestore, getDoc, getDocs, query, collection, where, doc, deleteDoc, updateDoc, deleteField, increment } from 'firebase/firestore';
+import { getFirestore, getDoc, getDocs, query, collection, where, doc, deleteDoc, updateDoc, deleteField, increment , orderBy} from 'firebase/firestore';
 import ComponentSwapCard from '../components/ComponentSwapCard';
 import { useIsFocused } from "@react-navigation/native";
 import { UpdateComponentsStats } from '../modules/firestoreActions'
@@ -11,14 +11,13 @@ import { UpdateComponentsStats } from '../modules/firestoreActions'
 
 
 async function loadBikeComponentSwaps(bikeId) {
-  let swaps = await getDocs(query(collection(getFirestore(firebaseApp), "bikesComponents"), where("bike", "==", doc(getFirestore(firebaseApp), "bikes", bikeId))))
+  let swaps = await getDocs(query(collection(getFirestore(firebaseApp), "bikesComponents"), where("bike", "==", doc(getFirestore(firebaseApp), "bikes", bikeId)), orderBy("uninstallTime", "desc")))
   let componentsArray = []
   swaps.docs.forEach(comp => {
 
       let compData = comp.data()
       compData.id = comp.id
       compData.ref = comp.ref
-      compData.installTime = compData.installTime
       componentsArray.push(compData)
 
   })
@@ -63,9 +62,8 @@ export default function BikeComponentsHistoryScreen({route}) {
                   <View style={styles.cardsContainer}>
                       {componentSwapRecords.map((componentSwapRecord: any) => {
 
-
-                          return <ComponentSwapCard maintext={componentSwapRecord.bikeDoc.data() ? componentSwapRecord.bikeDoc.data().name : "Deleted bike"}
-                              description={componentSwapRecord.installTime.toDate().toLocaleString()}
+                          return <ComponentSwapCard maintext={componentSwapRecord.bikeDoc.data() ? componentSwapRecord.componentDoc.data().name : "Deleted bike"}
+                              description={componentSwapRecord.installTime.toDate().getTime() == 0? "Since purchase" : componentSwapRecord.installTime.toDate().toLocaleString()}
                               description2={componentSwapRecord.uninstallTime ? componentSwapRecord.uninstallTime.toDate().toLocaleString() : "Currently installed"} />
                       })}
                   </View>
@@ -78,7 +76,8 @@ export default function BikeComponentsHistoryScreen({route}) {
 
 const styles = StyleSheet.create({
   mainContainer:{
-    flex:1
+    flex:1,
+    paddingTop:5
   },
   contentContainer:{
     display: 'flex', 
