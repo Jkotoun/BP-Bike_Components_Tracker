@@ -104,6 +104,7 @@ export default function RegisterScreen({ navigation }) {
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
+              secureTextEntry={true}
               label='Password'
             />
           )}
@@ -127,6 +128,7 @@ export default function RegisterScreen({ navigation }) {
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
+              secureTextEntry={true}
               label='Password again'
             />
           )}

@@ -40,10 +40,6 @@ export default function ComponentUninstallFormScreen({ navigation, route }) {
 
 
                     <Button color='#F44336' title='Uninstall' onPress={() => {
-
-                        //TODO započítat kilometry
-                        //TODO check referencí - komponenta není na kole, kolo i komponenta je lognuteho usera, 
-
                         uninstallComponent(route.params.bikeId, route.params.componentId, date)
                         .then(() => { navigation.navigate("BikeComponentsList") })
                         .catch((error)=>Toast.show(error.message))

@@ -54,12 +54,18 @@ export default function LoginScreen({ navigation }) {
   const [isLoggingIn, setisLoggingIn] = React.useState(false)
 
   React.useEffect(() => {
+
     if (response?.type === 'success') {
+      
       setisLoggingIn(true)
       const { code } = response.params;
       let authAthlete, authStravaTokens;
       try{
-
+        if(response.params.scope != "activity:read_all,profile:read_all,read")
+        {
+          setisLoggingIn(false)
+          throw new Error("Authorization failed, permission to activities or profile informations denied")
+        }
         stravaApi.getTokens(code).then(tokens => {
           authStravaTokens = tokens
           return stravaApi.getCurrentlyAuthorizedAthlete(authStravaTokens.accessToken)
@@ -85,7 +91,7 @@ export default function LoginScreen({ navigation }) {
       }
       catch (error)
       {
-        Toast.show(error, Toast.LONG);
+        Toast.show(error.message, Toast.LONG);
       }
     }
     // setisLoggingIn(false)

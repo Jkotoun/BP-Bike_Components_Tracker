@@ -65,7 +65,13 @@ export default function BikesListScreen({ navigation, route }) {
   const [request, response, promptAsync] = stravaAuthReq()
   // connect account with strava on authorization success
   React.useEffect(() => {
+    
     if (response?.type === 'success') {
+      try{
+        if(response.params.scope != "activity:read_all,profile:read_all,read")
+        {
+          throw new Error("Authorization failed, permission to activities or profile informations denied")
+        }
       const { code } = response.params;
       getTokens(code).then(tokens => {
         return connectAccWithStrava(tokens, User)
@@ -79,6 +85,12 @@ export default function BikesListScreen({ navigation, route }) {
           setUser({...loggedUserData, ...currentUser })
           setIsLoggedIn(true)
         })
+      }
+      catch(error)
+      {
+        Toast.show(error.message, Toast.LONG);
+
+      }
     }
   }, [response]);
 

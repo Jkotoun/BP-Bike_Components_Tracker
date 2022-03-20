@@ -108,7 +108,7 @@ export default function Root() {
           <View style={{ padding: 20 }}>
 
             {isUpdatingAuth && <Text style={{ color: "#ffffff", fontSize: 20, fontWeight: '700' }}>Logging in</Text>}
-            {isSyncing && <Text style={{ color: "#ffffff", fontSize: 20, fontWeight: '700' }}>Syncing with strava</Text>}
+            {isSyncing && <Text style={{ color: "#ffffff", fontSize: 20, fontWeight: '700' }}>Syncing Strava data</Text>}
 
           </View>
         </View>
