@@ -75,7 +75,7 @@ export default function BikeComponentsList({ navigation, route }) {
               }
             ]
             return <Card options={componentOptions} title={component.name} description={component.type.displayName} icon={images[component.type.value]} displayInfo={{
-              "Distance": rideDistanceToString(component.rideDistance),
+              "Distance": rideDistanceToString(component.rideDistance + component.initialRideDistance),
               "Ride Time": rideSecondsToString(component.rideTime + component.initialRideTime)
 
             }} onPress={() =>navigation.navigate("ComponentDetail", {componentId: component.id}) }></Card>

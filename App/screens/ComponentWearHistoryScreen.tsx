@@ -9,6 +9,7 @@ import { FAB } from 'react-native-paper';
 import { rideDistanceToString, rideSecondsToString } from "../modules/helpers"
 import { NavigationContainer, useIsFocused } from "@react-navigation/native";
 import { getStorage, getDownloadURL, ref, deleteObject } from 'firebase/storage';
+import {deleteWearRecord} from '../modules/firestoreActions'
 
 
 async function loadWearRecords(componentId) {
@@ -33,7 +34,6 @@ async function loadWearRecords(componentId) {
 }
 
 
-
 export default function ComponentWearHistoryScreen({ route, navigation }) {
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
   const isFocused = useIsFocused();
@@ -47,6 +47,30 @@ export default function ComponentWearHistoryScreen({ route, navigation }) {
   }, [isFocused, isLoaded])
   const [wearRecords, setWearRecords] = React.useState([]);
 
+  const [showBox, setShowBox] = React.useState(true);
+
+  const showConfirmDialog = (wearRecordId) => {
+    return Alert.alert(
+      "Are your sure?",
+      "Are you sure you want to delete wear record ",
+      [
+
+        {
+          text: "Yes",
+          onPress: () => {
+            setShowBox(false);
+            deleteWearRecord(wearRecordId).then(() =>
+            setIsLoaded(false))
+          },
+        },
+
+        {
+          text: "No",
+        },
+      ]
+    );
+  };
+  
 
   if (!isLoaded) {
     return (
@@ -74,16 +98,7 @@ export default function ComponentWearHistoryScreen({ route, navigation }) {
               {
                 text: "Delete",
                 onPress: () => {
-                  if(wearRecord.image)
-                  {
-                    deleteObject(ref(getStorage(firebaseApp), wearRecord.image)).then(() => {
-                      deleteDoc(wearRecord.ref).then(()=>setIsLoaded(false))
-                    })
-                  }
-                  else
-                  {
-                    deleteDoc(wearRecord.ref).then(()=>setIsLoaded(false))
-                  }
+                  showConfirmDialog(wearRecord.id)
                 }
               }
             ]

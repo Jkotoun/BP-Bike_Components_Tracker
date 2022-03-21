@@ -4,6 +4,8 @@ import firebaseApp from '../config/firebase';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc, deleteField, increment, addDoc, orderBy, DocumentReference, Firestore } from 'firebase/firestore';
 import { getAllBikes, getStravaGear, getAllActivities } from './stravaApi';
 import { getAuth } from 'firebase/auth';
+import { getStorage, getDownloadURL, ref, deleteObject } from 'firebase/storage';
+
 
 interface bikeType
 {
@@ -258,9 +260,7 @@ async function syncRides(User, setUser)
 export async function syncDataWithStrava(User, setUser: Function)
 {
     await syncBikes(User, setUser)
-    console.log("synced bikes")
     await syncRides(User, setUser)
-    console.log("synced rides")
 }
 
 
@@ -551,7 +551,36 @@ export async function getRide(rideId)
     return getDoc(doc(getFirestore(firebaseApp), "rides", rideId))
 }
 
+export async function deleteWearRecord(wearRecordId)
+{
+    let wearRecord = await getDoc(doc(getFirestore(firebaseApp), "componentWearRecords", wearRecordId))
+    if(wearRecord.data().image)
+    {
+      return deleteObject(ref(getStorage(firebaseApp), wearRecord.data().image)).then(() => {
+        deleteDoc(wearRecord.ref)
+      })
+    }
+    else
+    {
+      return deleteDoc(wearRecord.ref)
+    }
+}
 
+export async function deleteComponentSwapRecord(componentSwapRecordId)
+{
+    let componentSwapRecord = await getDoc(doc(getFirestore(firebaseApp), "bikesComponents", componentSwapRecordId))
+    if (!componentSwapRecord.data().uninstallTime) {
+        updateDoc(componentSwapRecord.data().component, {
+            bike: deleteField()
+        })
+    }
+   
+
+    let deleteRecord = deleteDoc(componentSwapRecord.ref)
+    let removeKmAndHours = UpdateComponentsStats(componentSwapRecord.data().installTime, componentSwapRecord.data().uninstallTime ? componentSwapRecord.data().uninstallTime : new Date(),
+        doc(getFirestore(firebaseApp), "bikes", componentSwapRecord.data().bike.id), doc(getFirestore(firebaseApp), "components", componentSwapRecord.data().component.id), -1)
+    return Promise.all([deleteRecord, removeKmAndHours])
+}
 //add strava account info to firestore doc in users collection
 export async function connectAccWithStrava(tokens, user) {
     updateDoc(doc(getFirestore(firebaseApp), "users", user.uid),

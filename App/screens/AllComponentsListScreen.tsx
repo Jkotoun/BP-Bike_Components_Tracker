@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { View, StyleSheet, Text, ScrollView, StatusBar, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, StatusBar, ActivityIndicator, Alert } from 'react-native';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc } from 'firebase/firestore';
 import Card from '../components/Card';
 import { FAB } from 'react-native-paper';
@@ -15,8 +15,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Checkbox } from 'react-native-paper';
 import { getAuth } from 'firebase/auth';
 import Toast from 'react-native-simple-toast';
-const auth = getAuth(firebaseApp)
 
+
+
+const auth = getAuth(firebaseApp)
 async function loadComponents(loggedUser, viewRetired) {
   let componentsArray = []  
   let componentsStateQuery = ["active"]
@@ -51,7 +53,6 @@ export default function AllComponentsListScreen({ navigation, route }) {
   {
     setIsSyncing(true)
     syncDataWithStrava(User, setUser).then(() => {
-      console.log("konec")
       setIsSyncing(false)
       setIsLoaded(false)
     })
@@ -142,6 +143,29 @@ export default function AllComponentsListScreen({ navigation, route }) {
     chain: require("../assets/images/chain_icon.png"),
     fork: require("../assets/images/bicycle_fork_icon.png")
   };
+  const [showBox, setShowBox] = React.useState(true);
+  const showConfirmDialog = (componentId, componentName) => {
+    return Alert.alert(
+      "Are your sure?",
+      "Are you sure you want to delete component " + componentName + " ?",
+      [
+        // The "Yes" button
+        {
+          text: "Yes",
+          onPress: () => {
+            setShowBox(false);
+            deleteComponent(componentId).then(() =>
+            setIsLoaded(false))
+          },
+        },
+        // The "No" button
+        // Does nothing but dismiss the dialog when tapped
+        {
+          text: "No",
+        },
+      ]
+    );
+  };
   if (!isLoaded || isSyncing) {
     return (
       <View style={Styles.loadContainer}>
@@ -184,11 +208,10 @@ export default function AllComponentsListScreen({ navigation, route }) {
                 {
                   text: "Delete",
                   onPress: () => {
-                    deleteComponent(component.id).then(() =>
-                    setIsLoaded(false)
-                    )
-                  }
-                }
+                    showConfirmDialog(component.id, component.name)
+                  }}
+                  
+                
               ]
               if(component.state=="active")
               {

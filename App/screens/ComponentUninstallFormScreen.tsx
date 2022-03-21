@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Platform, TouchableOpacity, Text, StyleSheet, Button } from 'react-native';
+import { View, Platform, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import firebaseApp from '../config/firebase';
 import { getFirestore, addDoc, collection, doc, updateDoc, query, where, getDocs, orderBy, deleteField, increment } from 'firebase/firestore';
-import {uninstallComponent} from '../modules/firestoreActions'
+import { uninstallComponent } from '../modules/firestoreActions'
 import Toast from 'react-native-simple-toast';
-
+import { Button } from 'react-native-paper'
+import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 
@@ -26,7 +27,20 @@ export default function ComponentUninstallFormScreen({ navigation, route }) {
         setShow(true);
         setMode(currentMode);
     };
+    const submit = () => {
+        uninstallComponent(route.params.bikeId, route.params.componentId, date)
+            .then(() => { navigation.navigate("BikeComponentsList") })
+            .catch((error) => Toast.show(error.message))
+    }
 
+    React.useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => {
+                return <Button theme={{ colors: { primary: 'black' } }} onPress={() => submit()}><Check name="check" size={24} color="white" /></Button>
+            }
+
+        });
+    }, [navigation, date]);
     return (
         <View>
             <View style={styles.contentContainer}>
@@ -36,15 +50,7 @@ export default function ComponentUninstallFormScreen({ navigation, route }) {
                         <Text style={styles.selectedDate}>{date.toLocaleString()}</Text>
                     </View>
                 </TouchableOpacity>
-                <View style={{ paddingTop: 10 }}>
 
-
-                    <Button color='#F44336' title='Uninstall' onPress={() => {
-                        uninstallComponent(route.params.bikeId, route.params.componentId, date)
-                        .then(() => { navigation.navigate("BikeComponentsList") })
-                        .catch((error)=>Toast.show(error.message))
-                    }} />
-                </View>
             </View>
             {show && (
                 <DateTimePicker

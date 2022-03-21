@@ -34,7 +34,31 @@ export default function ComponentServicesHistoryScreen({navigation, route }) {
   }, [isFocused, isLoaded])
 
 
+  const [showBox, setShowBox] = React.useState(true);
 
+  const showConfirmDialog = (serviceRecordRef) => {
+    return Alert.alert(
+      "Are your sure?",
+      "Are you sure you want to delete wear record ",
+      [
+
+        {
+          text: "Yes",
+          onPress: () => {
+            setShowBox(false);
+            deleteDoc(serviceRecordRef).then(()=>setIsLoaded(false))
+
+          },
+        },
+
+        {
+          text: "No",
+        },
+      ]
+    );
+  };
+
+  
 
   if (!isLoaded) {
     return (
@@ -65,7 +89,7 @@ export default function ComponentServicesHistoryScreen({navigation, route }) {
           {
             text: "Delete",
             onPress: () => {
-              deleteDoc(record.ref).then(()=>setIsLoaded(false))
+              showConfirmDialog(record.ref)
             }
           }
         ]

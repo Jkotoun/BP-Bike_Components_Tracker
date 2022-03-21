@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { View, StyleSheet, Text, ScrollView, ActivityIndicator, StatusBar, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, ActivityIndicator, StatusBar, TouchableOpacity, Image, Alert  } from 'react-native';
 import { getFirestore, doc, getDocs, getDoc, query, collection, where, deleteDoc, orderBy } from 'firebase/firestore';
 import Card from '../components/Card';
 import { FAB } from 'react-native-paper';
@@ -50,7 +50,6 @@ export default function BikesListScreen({ navigation, route }) {
   {
     setIsSyncing(true)
     syncDataWithStrava(User, setUser).then(() => {
-      console.log("konec")
       setIsSyncing(false)
       setIsLoaded(false)
     })
@@ -125,6 +124,33 @@ export default function BikesListScreen({ navigation, route }) {
     
   }, [isFocused, isLoaded])
   const [rides, setRides] = React.useState([]);
+
+  const [showBox, setShowBox] = React.useState(true);
+  const showConfirmDialog = (rideId, rideName) => {
+    return Alert.alert(
+      "Are your sure?",
+      "Are you sure you want to delete ride " + rideName + " ?",
+      [
+        // The "Yes" button
+        {
+          text: "Yes",
+          onPress: () => {
+            setShowBox(false);
+            deleteRide(rideId).then(() =>
+            setIsLoaded(false))
+          },
+        },
+        // The "No" button
+        // Does nothing but dismiss the dialog when tapped
+        {
+          text: "No",
+        },
+      ]
+    );
+  };
+
+
+
   if (!isLoaded || isSyncing) {
     return (<View style={styles.loadContainer}>
 
@@ -176,9 +202,7 @@ export default function BikesListScreen({ navigation, route }) {
                   {
                     text: "Delete",
                     onPress: () => {
-                      deleteRide(ride.id).then(() =>
-                        setIsLoaded(false)
-                      )
+                      showConfirmDialog(ride.id, ride.name)
                     }
                   }
 

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { View, Platform, TouchableOpacity, Text, StyleSheet, Button, Alert } from 'react-native';
+import { View, Platform, TouchableOpacity, Text, StyleSheet,  Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { RadioButton } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
 import { getFirestore, addDoc, collection, doc, updateDoc, query, where, getDocs, getDoc, FieldValue, increment } from 'firebase/firestore';
 import { installComponent } from '../modules/firestoreActions'
 import Toast from 'react-native-simple-toast';
+import {Button} from 'react-native-paper'
+import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default function ComponentInstallFormScreen({ navigation, route }) {
 
@@ -29,6 +31,28 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
     setMode(currentMode);
   };
 
+  let submit = () =>{
+    getDoc(doc(getFirestore(firebaseApp), "bikes", route.params.bikeId)).then((bike)=>{
+      let installationDate = checked == "default" ?  bike.data().purchaseDate.toDate() : date 
+      installComponent(route.params.componentId, route.params.bikeId, installationDate)
+      .then(() => {
+        navigation.navigate("BikeComponentsList")
+      })
+      .catch((error) => {
+        Toast.show(error)
+      })
+    })
+  }
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+        headerRight:()=> 
+        { 
+          return <Button  theme={{colors: {primary: 'black'}}}  onPress={()=>submit()}><Check name="check" size={24} color="white"/></Button>
+      }
+
+    });
+  }, [navigation, date, checked]);
   return (
     <View>
       <View style={styles.formTitleContainer}>
@@ -66,30 +90,6 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
       </RadioButton.Group>
 
       <View style={{ paddingTop: 10, paddingHorizontal: 20 }}>
-        <Button title='Save' color='#F44336' onPress={() => {
-
-          if (checked == "default") {
-            getDoc(doc(getFirestore(firebaseApp), "bikes", route.params.bikeId))
-              .then(bikeRef => {
-                installComponent(route.params.componentId, route.params.bikeId, bikeRef.data().purchaseDate.toDate()).then(() => {
-                  navigation.navigate("BikeComponentsList")
-                })
-                  .catch((error) => {
-                    Toast.show(error)
-                  })
-              })
-          }
-          else {
-            installComponent(route.params.componentId, route.params.bikeId, date)
-              .then(() => {
-                navigation.navigate("BikeComponentsList", {
-                })
-              })
-              .catch((error) => {
-                Toast.show(error)
-              })
-          }
-        }} />
       </View>
     </View>
   );

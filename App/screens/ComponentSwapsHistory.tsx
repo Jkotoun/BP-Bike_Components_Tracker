@@ -6,7 +6,7 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } f
 import { getFirestore, getDoc, getDocs, query, collection, where, doc, deleteDoc, updateDoc, deleteField, increment } from 'firebase/firestore';
 import ComponentSwapCard from '../components/ComponentSwapCard';
 import { useIsFocused } from "@react-navigation/native";
-import { UpdateComponentsStats } from '../modules/firestoreActions'
+import { deleteComponentSwapRecord } from '../modules/firestoreActions'
 
 //TODO refactor, odeccist z komponent km pri smazani recordu
 
@@ -50,6 +50,29 @@ export default function ComponentSwapsHistory({ route }) {
         })
     }, [isLoaded, isFocused])
 
+    const [showBox, setShowBox] = React.useState(true);
+
+    const showConfirmDialog = (wearRecordId) => {
+      return Alert.alert(
+        "Are your sure?",
+        "Are you sure you want to delete wear record ",
+        [
+  
+          {
+            text: "Yes",
+            onPress: () => {
+              setShowBox(false);
+              deleteComponentSwapRecord(wearRecordId).then(() =>
+              setIsLoaded(false))
+            },
+          },
+  
+          {
+            text: "No",
+          },
+        ]
+      );
+    };
 
     if (!isLoaded) {
         return (
@@ -70,19 +93,7 @@ export default function ComponentSwapsHistory({ route }) {
                                 {
                                     text: "Delete",
                                     onPress: () => {
-                                        if (!componentSwapRecord.uninstallTime) {
-                                            updateDoc(componentSwapRecord.component, {
-                                                bike: deleteField()
-                                            })
-                                        }
-                                        let deleteRecord = deleteDoc(componentSwapRecord.ref)
-                                        let removeKmAndHours = UpdateComponentsStats(componentSwapRecord.installTime, componentSwapRecord.uninstallTime ? componentSwapRecord.uninstallTime : new Date(),
-                                            componentSwapRecord.bikeDoc.ref, componentSwapRecord.componentDoc.ref, -1)
-                                        Promise.all([deleteRecord, removeKmAndHours]).then(() => {
-                                            setIsLoaded(false)
-                                        })
-
-
+                                        showConfirmDialog(componentSwapRecord.id)
                                     }
                                 }
 

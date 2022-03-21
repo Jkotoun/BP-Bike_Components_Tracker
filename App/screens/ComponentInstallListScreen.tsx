@@ -59,8 +59,8 @@ export default function ComponentInstallListScreen({ navigation }) {
         <View style={styles.componentCards}>
           {components.map(component => {
             return <Card title={component.name} description={component.type.displayName} icon={images[component.type.value]} displayInfo={{
-              "Distance":  rideDistanceToString(component.rideDistance),
-              "Ride Time": rideSecondsToString(component.rideTime)              
+              "Distance":  rideDistanceToString(component.rideDistance + component.initialRideDistance),
+              "Ride Time": rideSecondsToString(component.rideTime + component.initialRideTime)              
             }} onPress={() => {
               navigation.navigate('ComponentInstallFormScreen', {
                 componentId: component.id

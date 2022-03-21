@@ -30,7 +30,6 @@ export default function BikesListScreen({ navigation, route }) {
   {
     setIsSyncing(true)
     syncDataWithStrava(User, setUser).then(() => {
-      console.log("konec")
       setIsSyncing(false)
       setIsLoaded(false)
     })
@@ -157,6 +156,30 @@ export default function BikesListScreen({ navigation, route }) {
     road: require("../assets/images/road_icon.png"),
   };
 
+  const [showBox, setShowBox] = React.useState(true);
+  const showConfirmDialog = (bikeId, bikeName) => {
+    return Alert.alert(
+      "Are your sure?",
+      "Are you sure you want to delete bike " + bikeName + " ?",
+      [
+        // The "Yes" button
+        {
+          text: "Yes",
+          onPress: () => {
+            setShowBox(false);
+            changeBikeState(bikeId, "deleted").then(() =>
+            setIsLoaded(false))
+          },
+        },
+        // The "No" button
+        // Does nothing but dismiss the dialog when tapped
+        {
+          text: "No",
+        },
+      ]
+    );
+  };
+
   if (!isLoaded || isSyncing) {
     return (
       <View style={styles.loadContainer}>
@@ -207,9 +230,7 @@ export default function BikesListScreen({ navigation, route }) {
                   {
                     text: "Delete",
                     onPress: () => {
-                      changeBikeState(bike.bikeId, "deleted").then(() =>
-                        setIsLoaded(false)
-                      )
+                      showConfirmDialog(bike.bikeId, bike.name)
                     }
                   }
                 ]
