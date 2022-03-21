@@ -15,11 +15,18 @@ import {Button} from 'react-native-paper'
 
 export default function AddComponentScreen({ navigation, route }) {
   const componentTypes = [
-    { label: 'Fork', value: 'fork' },
+    { label: 'Brake', value: 'brake' },
+    { label: 'Brake disc', value: 'brake_disc' },
+    { label: 'Brake pads', value: 'brake_pads' },
     { label: 'Chain', value: 'chain' },
+    { label: 'Chainrings', value: 'chainrings' },
     { label: 'Cassette', value: 'cassette' },
+    { label: 'Derailleur', value: 'derailleur' },
+    { label: 'Fork', value: 'fork' },
     { label: 'Rear suspension', value: 'suspension' },
-    { label: 'todo dalsi', value: 'dalsi' }
+    { label: 'Rim', value: 'rim' },
+    { label: 'Tire', value: 'tire' },
+    { label: 'Other', value: 'other' }
   ]
   const [selectedLanguage, setSelectedLanguage] = useState();
 

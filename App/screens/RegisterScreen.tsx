@@ -41,7 +41,6 @@ export default function RegisterScreen({ navigation }) {
         }
         setisRegistering(false)
       })
-
     }
     else {
       setError('password_repeat', { type: "submit_error", message: "Passwords don't match" });

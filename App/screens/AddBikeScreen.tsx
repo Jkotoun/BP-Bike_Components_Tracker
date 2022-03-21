@@ -85,8 +85,7 @@ export default function AddBikeScreen({ navigation, route }) {
 
   
   const bikeTypes = [
-    { label: 'MTB full suspension', value: 'mtbfull' },
-    { label: 'MTB hardtail', value: 'mtbht' },
+    { label: 'Mountain bike', value: 'mtb' },
     { label: 'Gravel', value: 'gravel' },
     { label: 'Road', value: 'road' }
   ]

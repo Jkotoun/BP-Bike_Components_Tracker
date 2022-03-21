@@ -150,10 +150,14 @@ export default function BikesListScreen({ navigation, route }) {
     })
   }, [isFocused, isLoaded, viewRetiredChecked])
   const [bikes, setBikes] = React.useState([]);
+  
+  
+  
   const images = {
-    mtbfull: require("../assets/images/full_suspension_mtb_icon.png"),
-    mtbht: require("../assets/images/mtbht.png"),
+    mtb: require("../assets/images/mtbht.png"),
     road: require("../assets/images/road_icon.png"),
+    gravel: require("../assets/images/road_icon.png"),
+    other: require("../assets/images/other_bike.png")
   };
 
   const [showBox, setShowBox] = React.useState(true);

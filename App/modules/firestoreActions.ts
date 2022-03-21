@@ -94,12 +94,24 @@ export async function updateBike(bikeRef, data: bike)
 
 function gearDataToBikeDoc(gearData):stravaBike
 {
-
     let stravaBikeTypesMapping  ={
         1: {
-            "value": "mtbfull",
-            "label": "MTB full suspension"
+            "value": "mtb",
+            "label": "Mountain bike"
+        },
+        3: {
+            "value": 'road',
+            "label": "Road bike"
+        },
+        5: {
+            "value": "gravel",
+            "label": "Gravel bike"
         }
+    }
+    let other = {
+        "value": "other",
+        "label" : "Other type bike"
+
     }
     let bike :stravaBike = {
         brand: gearData.brand_name,
@@ -107,7 +119,7 @@ function gearDataToBikeDoc(gearData):stravaBike
         name: gearData.name,
         purchaseDate: new Date(0),
         state: gearData.retired ? "retired" : "active",
-        type: stravaBikeTypesMapping[gearData.frame_type],
+        type: stravaBikeTypesMapping[gearData.frame_type] !== undefined ? stravaBikeTypesMapping[gearData.frame_type] :  other,
         user: doc(getFirestore(firebaseApp), "users", getAuth(firebaseApp).currentUser.uid),
         stravaSynced: true,
         stravaId: gearData.id,
