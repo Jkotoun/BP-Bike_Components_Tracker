@@ -27,9 +27,20 @@ export default function RegisterScreen({ navigation }) {
 
     setisRegistering(true)
     if (data.password == data.password_repeat) {
-      createUserWithEmailAndPassword(auth, data.email, data.password).then(userObj => saveUserData(userObj.user.uid, data), () => {
-        setError('password_repeat', { type: "submit_error", message: "Email already in use" });
-      }).then(()=>setisRegistering(false))
+      createUserWithEmailAndPassword(auth, data.email, data.password).then(userObj => saveUserData(userObj.user.uid, data))
+      .then(()=>setisRegistering(false))
+      .catch((error)=>{
+        if(error.code == "auth/weak-password")
+        {
+          setError('password_repeat', { type: "submit_error", message: "Password should be at least 6 characters" });
+
+        }
+        else
+        {
+          setError('password_repeat', { type: "submit_error", message: "Email already in use" });
+        }
+        setisRegistering(false)
+      })
 
     }
     else {

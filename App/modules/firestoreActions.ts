@@ -1,7 +1,7 @@
 
 
 import firebaseApp from '../config/firebase';
-import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc, deleteField, increment, addDoc, orderBy, DocumentReference, Firestore } from 'firebase/firestore';
+import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteField, increment, addDoc, orderBy, DocumentReference, deleteDoc } from 'firebase/firestore';
 import { getAllBikes, getStravaGear, getAllActivities } from './stravaApi';
 import { getAuth } from 'firebase/auth';
 import { getStorage, getDownloadURL, ref, deleteObject } from 'firebase/storage';
@@ -273,7 +273,11 @@ export async function addBike(data: bike)
 
 export async function deleteComponent(componentId)
 {
-    return deleteDoc(doc(getFirestore(firebaseApp), "components", componentId))
+    let componentSwapRecords = await getDocs(query(collection(getFirestore(firebaseApp), "bikesComponents"), where("component", "==", doc(getFirestore(firebaseApp), "components", componentId))))
+    let deleteSwapsPromises = componentSwapRecords.docs.map(async record => deleteDoc(record.ref))
+    let deleteCompPromise = deleteDoc(doc(getFirestore(firebaseApp), "components", componentId))
+    return Promise.all([deleteSwapsPromises, deleteCompPromise])
+    
 } 
 
 export async function changeComponentState(componentId, newState)
