@@ -170,7 +170,7 @@ async function syncBikes(User, setUser)
 function stravaActivityToRide(activity) : stravaRide
 {
     let ride : stravaRide = {
-        date: new Date(Date.parse(activity.start_date_local)),
+        date: new Date(Date.parse(activity.start_date)),
         distance:activity.distance,
         rideTime:activity.moving_time,
         name:activity.name,
