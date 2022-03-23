@@ -29,11 +29,6 @@ const auth = getAuth(firebaseApp)
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-// function headerVisible(): boolean {
-//   const currentScreen = activeScreenName(useNavigationState(state => state));
-//   //undefined is first screen on app launch
-//   return ["BikesListScreen", "ComponentsListScreen", "RidesListScreen", undefined, "Bikes", "All components", "Rides"].includes(currentScreen)
-// }
 
 
 

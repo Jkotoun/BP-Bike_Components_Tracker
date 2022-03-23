@@ -40,7 +40,12 @@ export default function BikeDetails({ route }) {
     'Bike Name': bike.name,
     'Type': bike.type.label,
     'Brand': bike.brand,
-    'Model': bike.model
+    'Model': bike.model,
+    
+  }
+  if(bike.purchaseDate.toDate().getTime() != 0)
+  {
+    bikeInfo['Purchase date'] = bike.purchaseDate.toDate().toLocaleString()
   }
 
   return (

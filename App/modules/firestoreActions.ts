@@ -512,7 +512,7 @@ export async function installComponent(componentId, bikeId, installTime: Date) {
         where("component", "==", doc(getFirestore(firebaseApp), "components", componentId))))
   
     let correctInstallDate = componentSwaps.docs.every((value) => {
-      return value.data().uninstallTime.seconds < Math.round(installTime.getTime() / 1000)
+      return value.data().uninstallTime.toDate() < installTime
     })
   
     if (correctInstallDate) {
@@ -540,7 +540,7 @@ export async function installComponent(componentId, bikeId, installTime: Date) {
       }
     }
     else {
-      throw new Error("You can not set installation time, which is earlier than existing component installation record")
+      throw new Error("Component installations can't overlap")
     }
   }
 

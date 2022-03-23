@@ -15,8 +15,8 @@ async function addServiceRecord(data, componentId){
   data.component = componentRef.ref
   data.date = Date.now()
   data.price = Number(data.price)
-  data.rideDistance = componentRef.data().rideDistance
-  data.rideTime = componentRef.data().rideTime
+  data.rideDistance = componentRef.data().rideDistance + componentRef.data().initialRideDistance
+  data.rideTime = componentRef.data().rideTime + componentRef.data().initialRideTime
  return addDoc(collection(getFirestore(firebaseApp), "componentServiceRecords"), data)
 }
 

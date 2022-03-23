@@ -16,8 +16,8 @@ async function AddWearRecord(formData, image, componentId){
   let componentRef = await getDoc(doc(getFirestore(firebaseApp), "components", componentId))
   formData.component = componentRef.ref
   formData.date = new Date()
-  formData.rideDistance = componentRef.data().rideDistance
-  formData.rideTime = componentRef.data().rideTime
+  formData.rideDistance = componentRef.data().rideDistance + componentRef.data().initialRideDistance 
+  formData.rideTime = componentRef.data().rideTime + componentRef.data().initialRideTime
 
   if(image)
   {

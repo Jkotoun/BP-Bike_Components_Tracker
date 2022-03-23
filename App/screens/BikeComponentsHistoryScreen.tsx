@@ -29,7 +29,6 @@ async function loadBikeComponentSwaps(bikeId) {
       return comp
   })
   let componentsWithBikeObj = await Promise.all(promises)
-  componentsWithBikeObj.sort((a, b) => { return b.installTime - a.installTime })
   return componentsWithBikeObj
 }
 

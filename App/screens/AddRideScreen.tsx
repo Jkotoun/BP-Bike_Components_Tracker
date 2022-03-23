@@ -13,6 +13,8 @@ import { useIsFocused } from "@react-navigation/native";
 import {addRide, getRide, updateRide} from '../modules/firestoreActions'
 import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Button} from 'react-native-paper'
+import Toast from 'react-native-simple-toast';
+
 export default function AddRideScreen({ navigation, route }) {
   const isFocused = useIsFocused();
   const [rideDate, setRideDate] = useState(new Date());
@@ -92,31 +94,40 @@ export default function AddRideScreen({ navigation, route }) {
 
   const onSubmit = data => {
     setisSubmitting(true)
-    data.distance = Number(data.distance)*1000
-    data.user = doc(getFirestore(firebaseApp), "users", auth.currentUser.uid)
-    data.bike = doc(getFirestore(firebaseApp), "bikes", data.bike)
-    data.date = rideDate
-    if(rideDate > new Date())
+    try
     {
-      throw new Error("Date of ride cant be in future")
+      data.distance = Number(data.distance)*1000
+      data.user = doc(getFirestore(firebaseApp), "users", auth.currentUser.uid)
+      data.bike = doc(getFirestore(firebaseApp), "bikes", data.bike)
+      data.date = rideDate
+      if(rideDate > new Date())
+      {
+        throw new Error("Date of ride cant be in future")
+      }
+      data.rideTime = rideTime.getHours()*60*60 + rideTime.getMinutes()*60
+      
+      if(route.params && route.params.rideId)
+      {
+        updateRide(rideToEdit, data, route.params.rideId)
+        .then(() => {
+          setisSubmitting(false)
+          navigation.navigate("RidesListScreen")
+        })
+      }
+      else
+      {
+        addRide(data)
+        .then(() => {
+          setisSubmitting(false)
+          navigation.navigate("RidesListScreen")
+        })
+      }
     }
-    data.rideTime = rideTime.getHours()*60*60 + rideTime.getMinutes()*60
-    
-    if(route.params && route.params.rideId)
+    catch(error)
     {
-      updateRide(rideToEdit, data, route.params.rideId)
-      .then(() => {
-        setisSubmitting(false)
-        navigation.navigate("RidesListScreen")
-      })
-    }
-    else
-    {
-      addRide(data)
-      .then(() => {
-        setisSubmitting(false)
-        navigation.navigate("RidesListScreen")
-      })
+      Toast.show(error.message)
+      setisSubmitting(false)
+
     }
   }
 

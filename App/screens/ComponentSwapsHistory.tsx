@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Text, View, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import firebaseApp from '../config/firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
-import { getFirestore, getDoc, getDocs, query, collection, where, doc, deleteDoc, updateDoc, deleteField, increment } from 'firebase/firestore';
+import { getFirestore, getDoc, getDocs, query, collection, where, doc, deleteDoc, updateDoc, deleteField, increment, orderBy } from 'firebase/firestore';
 import ComponentSwapCard from '../components/ComponentSwapCard';
 import { useIsFocused } from "@react-navigation/native";
 import { deleteComponentSwapRecord } from '../modules/firestoreActions'
@@ -12,7 +12,7 @@ import { deleteComponentSwapRecord } from '../modules/firestoreActions'
 
 
 async function loadComponentSwaps(componentId) {
-    let component = await getDocs(query(collection(getFirestore(firebaseApp), "bikesComponents"), where("component", "==", doc(getFirestore(firebaseApp), "components", componentId))))
+    let component = await getDocs(query(collection(getFirestore(firebaseApp), "bikesComponents"), where("component", "==", doc(getFirestore(firebaseApp), "components", componentId)), orderBy("installTime", "desc")))
     let componentsArray = []
     component.forEach(comp => {
 
@@ -33,7 +33,6 @@ async function loadComponentSwaps(componentId) {
         return comp
     })
     let componentsWithBikeObj = await Promise.all(promises)
-    componentsWithBikeObj.sort((a, b) => { return b.installTime - a.installTime })
     return componentsWithBikeObj
 }
 

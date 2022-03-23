@@ -67,31 +67,43 @@ export default function AddBikeScreen({ navigation, route }) {
   const { control, register, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'all' });
 
   const onSubmit = data => {
-    setisSubmitting(true)
-    data.type = bikeTypes.find(biketype => biketype.value == data.type)
-    data.purchaseDate = purchaseDate
-    data.initialRideTime = Number(data.initialRideTime) * 60 * 60
-    data.initialRideDistance = Number(data.initialRideDistance) * 1000
-    data.user = doc(getFirestore(firebaseApp), "users", auth.currentUser.uid)
-    
-    
-    
-    if (route.params && route.params.bikeId) {
-      updateBike(doc(getFirestore(firebaseApp), "bikes", route.params.bikeId),data).then(() => {
-        setisSubmitting(false)
-        navigation.goBack(null)
-      })
+    try
+    {
+      setisSubmitting(true)
+      if(purchaseDate > new Date())
+      {
+        throw new Error("Purchase date can't be in future")
+      }
+      data.type = bikeTypes.find(biketype => biketype.value == data.type)
+      data.purchaseDate = purchaseDate
+      data.initialRideTime = Number(data.initialRideTime) * 60 * 60
+      data.initialRideDistance = Number(data.initialRideDistance) * 1000
+      data.user = doc(getFirestore(firebaseApp), "users", auth.currentUser.uid)
+      
+      
+      
+      if (route.params && route.params.bikeId) {
+        updateBike(doc(getFirestore(firebaseApp), "bikes", route.params.bikeId),data).then(() => {
+          setisSubmitting(false)
+          navigation.goBack(null)
+        })
+      }
+      else {
+        data.state = "active"
+        data.rideTime = 0
+        data.rideDistance = 0
+        addBike(data)
+        .then(() => {
+          setisSubmitting(false)
+          navigation.goBack(null)
+        })
+      }
     }
-    else {
-      data.state = "active"
-      data.rideTime = 0
-      data.rideDistance = 0
-      addBike(data)
-      .then(() => {
-        setisSubmitting(false)
-        navigation.goBack(null)
-      })
+    catch(error)
+    {
+      Toast.show(error.message)
     }
+  
   }
 
   
