@@ -49,7 +49,7 @@ export default function Root() {
 
       setIsSyncing(false)
     })
-    .catch(()=>{
+    .catch((error)=>{
       Toast.show("Strava synchronization failed")
       setIsSyncing(false)
 
