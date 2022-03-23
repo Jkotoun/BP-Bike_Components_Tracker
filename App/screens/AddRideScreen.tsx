@@ -17,6 +17,7 @@ export default function AddRideScreen({ navigation, route }) {
   const isFocused = useIsFocused();
   const [rideDate, setRideDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [isSubmitting, setisSubmitting] = useState(false);
 
   const datePickerHandler = (selectedDate) => {
     const currentDate = selectedDate || rideDate;
@@ -57,7 +58,7 @@ export default function AddRideScreen({ navigation, route }) {
           .then(rideDoc=> {
             setrideToEdit(rideDoc.data())
             setRideDate(rideDoc.data().date.toDate())
-            setRideTime(new Date(rideDoc.data().rideTime*1000))
+            setRideTime(new Date((rideDoc.data().rideTime*1000)-(3600*1000)))
           })
           .then(() => {
             setIsLoaded(true)
@@ -72,16 +73,25 @@ export default function AddRideScreen({ navigation, route }) {
   React.useLayoutEffect(() => {
     navigation.setOptions({
         headerRight:()=> 
-        { 
-          return <Button  theme={{colors: {primary: 'black'}}}  onPress={handleSubmit(onSubmit)}><Check name="check" size={24} color="white"/></Button>
+        {
+          if(isSubmitting)
+          {
+            return <ActivityIndicator color="white" style={{paddingRight:20}} />
+         
+          }
+          else
+          {
+            return <Button  theme={{colors: {primary: 'black'}}}  onPress={handleSubmit(onSubmit)}><Check name="check" size={24} color="white"/></Button>
+          } 
       }
 
     });
-  }, [navigation]);
+  }, [navigation, isSubmitting, rideToEdit, rideDate, rideTime]);
   const [selectedLanguage, setSelectedLanguage] = useState();
   const { control, setError, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'all' });
 
   const onSubmit = data => {
+    setisSubmitting(true)
     data.distance = Number(data.distance)*1000
     data.user = doc(getFirestore(firebaseApp), "users", auth.currentUser.uid)
     data.bike = doc(getFirestore(firebaseApp), "bikes", data.bike)
@@ -96,6 +106,7 @@ export default function AddRideScreen({ navigation, route }) {
     {
       updateRide(rideToEdit, data, route.params.rideId)
       .then(() => {
+        setisSubmitting(false)
         navigation.navigate("RidesListScreen")
       })
     }
@@ -103,6 +114,7 @@ export default function AddRideScreen({ navigation, route }) {
     {
       addRide(data)
       .then(() => {
+        setisSubmitting(false)
         navigation.navigate("RidesListScreen")
       })
     }

@@ -18,6 +18,7 @@ export default function AddBikeScreen({ navigation, route }) {
   const [purchaseDate, setPurchaseDate] = useState(new Date());
   const [show, setShow] = useState(false);
   const isFocused = useIsFocused();
+  const [isSubmitting, setisSubmitting] = useState(false);
 
   const datePickerHandler = (selectedDate) => {
     const currentDate = selectedDate || purchaseDate;
@@ -50,15 +51,23 @@ export default function AddBikeScreen({ navigation, route }) {
     navigation.setOptions({
         headerRight:()=> 
         { 
-          return <Button  theme={{colors: {primary: 'black'}}}  onPress={handleSubmit(onSubmit)}><Check name="check" size={24} color="white"/></Button>
+          if(isSubmitting)
+          {
+            return <ActivityIndicator color="white" style={{paddingRight:20}} />
+          }
+          else
+          {
+            return <Button  theme={{colors: {primary: 'black'}}}  onPress={handleSubmit(onSubmit)}><Check name="check" size={24} color="white"/></Button>
+          }
       }
 
     });
-  }, [navigation]);
+  }, [navigation, isSubmitting, purchaseDate, bikeToEdit]);
 
   const { control, register, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'all' });
 
   const onSubmit = data => {
+    setisSubmitting(true)
     data.type = bikeTypes.find(biketype => biketype.value == data.type)
     data.purchaseDate = purchaseDate
     data.initialRideTime = Number(data.initialRideTime) * 60 * 60
@@ -69,6 +78,7 @@ export default function AddBikeScreen({ navigation, route }) {
     
     if (route.params && route.params.bikeId) {
       updateBike(doc(getFirestore(firebaseApp), "bikes", route.params.bikeId),data).then(() => {
+        setisSubmitting(false)
         navigation.goBack(null)
       })
     }
@@ -78,6 +88,7 @@ export default function AddBikeScreen({ navigation, route }) {
       data.rideDistance = 0
       addBike(data)
       .then(() => {
+        setisSubmitting(false)
         navigation.goBack(null)
       })
     }

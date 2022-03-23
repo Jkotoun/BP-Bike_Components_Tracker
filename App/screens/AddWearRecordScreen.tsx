@@ -62,6 +62,7 @@ export default function AddWearRecordScreen({ navigation, route }) {
   const isFocused = useIsFocused();
   const auth = getAuth(firebaseApp)
   const [isLoaded, setisLoaded] = useState(true)
+  const [isSubmitting, setisSubmitting] = useState(false);
 
   const [image, setImage] = useState(null);
 
@@ -86,11 +87,19 @@ export default function AddWearRecordScreen({ navigation, route }) {
     navigation.setOptions({
         headerRight:()=> 
         { 
-          return <Button  theme={{colors: {primary: 'black'}}}  onPress={handleSubmit(onSubmit)}><Check name="check" size={24} color="white"/></Button>
+          if(isSubmitting)
+          {
+            return <ActivityIndicator color="white" style={{paddingRight:20}} />
+         
+          }
+          else
+          {
+            return <Button  theme={{colors: {primary: 'black'}}}  onPress={handleSubmit(onSubmit)}><Check name="check" size={24} color="white"/></Button>
+          }
       }
 
     });
-  }, [navigation, image]);
+  }, [navigation, image, isSubmitting]);
 
 
 
@@ -98,7 +107,9 @@ export default function AddWearRecordScreen({ navigation, route }) {
   const { control, register, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'all' });
 
   const onSubmit = data => {
+    setisSubmitting(true)
     AddWearRecord(data, image, route.params.componentId).then(()=>{
+      setisSubmitting(false)
       navigation.navigate("ComponentWearHistoryScreen")
     })
   }

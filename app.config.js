@@ -3,7 +3,7 @@ export default{
     expo: {
       name: "Bike Components Manager",
       description: "Bike components manager helps you to track wear of your bike's components",
-      version: "1.0.0-beta", 
+      version: "1.0.3-beta", 
       ios: {
         supportsTablet: true
       },
@@ -13,7 +13,7 @@ export default{
       android: {
         package: "com.bike_components_manager",
         permissions: [],
-        versionCode:8
+        versionCode:11
       },
       extra: {
         apiKey: process.env.API_KEY,

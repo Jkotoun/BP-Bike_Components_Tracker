@@ -188,6 +188,9 @@ function stravaActivityToRide(activity) : stravaRide
 
 export async function updateRide(oldRideData: any, newRideData: ride, rideId)
 {
+    console.log(newRideData.bike.id)
+    console.log(oldRideData.bike.id)
+
     await updateDoc(doc(getFirestore(firebaseApp), "rides", rideId), {...newRideData})
     //bike ref updated
     if(oldRideData.bike != newRideData.bike)

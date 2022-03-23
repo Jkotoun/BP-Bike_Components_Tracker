@@ -1,10 +1,13 @@
 
 import * as React from 'react';
-import { Text, View, Image, StyleSheet, ActivityIndicator, StatusBar } from 'react-native';
+import { Text, View, Image, StyleSheet, ActivityIndicator, StatusBar, TouchableOpacityBase, TouchableOpacity } from 'react-native';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection } from 'firebase/firestore';
 import firebaseApp from '../config/firebase';
 import { useIsFocused } from "@react-navigation/native";
-import {rideSecondsToString ,rideDistanceToString} from '../modules/helpers';
+import { rideSecondsToString, rideDistanceToString } from '../modules/helpers';
+
+
+import * as Linking from 'expo-linking';
 
 async function loadRide(rideId) {
   let rideDocRef = await getDoc(doc(getFirestore(firebaseApp), "rides", rideId))
@@ -19,7 +22,7 @@ async function loadRide(rideId) {
 
 export default function RideDetail({ route }) {
   const isFocused = useIsFocused();
-  
+
   React.useEffect(() => {
     loadRide(route.params.rideId).then((ride) => {
       setRide(ride)
@@ -83,7 +86,10 @@ export default function RideDetail({ route }) {
               </View>
             </View>
           }
-          {/* <Text style={styles.stravaLink}>View in strava</Text> */}
+          {ride.stravaSynced && <TouchableOpacity onPress={() => Linking.openURL('https://www.strava.com/activities/' + ride.stravaId )}>
+            <Text style={styles.stravaLink}>View in strava</Text>
+
+          </TouchableOpacity>}
         </View>
       </View>
 

@@ -22,15 +22,25 @@ async function addServiceRecord(data, componentId){
 
 
 export default function AddServiceRecord({ navigation, route }) {
+  const [isSubmitting, setisSubmitting] = useState(false);
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
         headerRight:()=> 
         { 
-          return <Button  theme={{colors: {primary: 'black'}}}  onPress={handleSubmit(onSubmit)}><Check name="check" size={24} color="white"/></Button>
+          if(isSubmitting)
+          {
+            return <ActivityIndicator color="white" style={{paddingRight:20}} />
+         
+          }
+          else
+          {
+            return <Button  theme={{colors: {primary: 'black'}}}  onPress={handleSubmit(onSubmit)}><Check name="check" size={24} color="white"/></Button>
+          }
       }
 
     });
-  }, [navigation]);
+  }, [navigation, isSubmitting]);
   const isFocused = useIsFocused();
   const auth = getAuth(firebaseApp)
   const [isLoaded, setisLoaded] = useState(true)
@@ -39,7 +49,12 @@ export default function AddServiceRecord({ navigation, route }) {
   const { control, register, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'all' });
 
   const onSubmit = data => {
-    addServiceRecord(data, route.params.componentId).then(()=> navigation.navigate("ServiceRecords"))
+    setisSubmitting(true)
+    addServiceRecord(data, route.params.componentId)
+    .then(()=>{
+      setisSubmitting(false)
+      navigation.navigate("ServiceRecords")
+    }) 
   }
 
   if (!isLoaded) {

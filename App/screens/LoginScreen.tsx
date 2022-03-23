@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, StatusBar, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { Text, View, StatusBar, StyleSheet, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 import { ActivityIndicator, TextInput } from "react-native-paper"
 import { useForm, Controller } from 'react-hook-form'
 import { AuthenticatedUserContext } from '../../context'
@@ -60,11 +60,14 @@ export default function LoginScreen({ navigation }) {
       setisLoggingIn(true)
       const { code } = response.params;
       let authAthlete, authStravaTokens;
+
       try{
-        if(response.params.scope != "activity:read_all,profile:read_all,read")
+        let authResponseScopes = response.params.scope.split(',')
+        let requiredScopes = ["activity:read_all", "profile:read_all"]
+        if(!requiredScopes.every(scope => authResponseScopes.includes(scope)))
         {
           setisLoggingIn(false)
-          throw new Error("Authorization failed, permission to activities or profile informations denied")
+          throw new Error("Authorization failed, permission to activities or profile info denied")          
         }
         stravaApi.getTokens(code).then(tokens => {
           authStravaTokens = tokens
@@ -93,8 +96,8 @@ export default function LoginScreen({ navigation }) {
       {
         Toast.show(error.message, Toast.LONG);
       }
+      setisLoggingIn(false)
     }
-    // setisLoggingIn(false)
   }, [response]);
 
 

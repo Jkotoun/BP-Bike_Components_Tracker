@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Platform, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, Platform, TouchableOpacity, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import firebaseApp from '../config/firebase';
 import { getFirestore, addDoc, collection, doc, updateDoc, query, where, getDocs, orderBy, deleteField, increment } from 'firebase/firestore';
@@ -14,6 +14,7 @@ export default function ComponentUninstallFormScreen({ navigation, route }) {
     const [date, setDate] = useState(new Date());
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
+    const [isSubmitting, setisSubmitting] = useState(false);
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -28,19 +29,34 @@ export default function ComponentUninstallFormScreen({ navigation, route }) {
         setMode(currentMode);
     };
     const submit = () => {
+        setisSubmitting(true)
         uninstallComponent(route.params.bikeId, route.params.componentId, date)
-            .then(() => { navigation.navigate("BikeComponentsList") })
-            .catch((error) => Toast.show(error.message))
+            .then(() => { 
+                setisSubmitting(false)
+                navigation.navigate("BikeComponentsList")
+             })
+            .catch((error) => 
+            {
+                setisSubmitting(false)
+                Toast.show(error.message)
+            })
     }
 
     React.useLayoutEffect(() => {
         navigation.setOptions({
             headerRight: () => {
-                return <Button theme={{ colors: { primary: 'black' } }} onPress={() => submit()}><Check name="check" size={24} color="white" /></Button>
+                if(isSubmitting)
+                {
+                  return <ActivityIndicator color="white" style={{paddingRight:20}} />
+                }
+                else
+                {                    
+                    return <Button theme={{ colors: { primary: 'black' } }} onPress={() => submit()}><Check name="check" size={24} color="white" /></Button>
+                }
             }
 
         });
-    }, [navigation, date]);
+    }, [navigation, date, isSubmitting]);
     return (
         <View>
             <View style={styles.contentContainer}>

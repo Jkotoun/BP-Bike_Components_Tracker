@@ -33,6 +33,7 @@ export default function AddComponentScreen({ navigation, route }) {
   const auth = getAuth(firebaseApp)
 
   const isFocused = useIsFocused();
+  const [isSubmitting, setisSubmitting] = useState(false);
 
   const [isLoaded, setisLoaded] = useState(false)
   const [componentToEdit, setComponentToEdit] = useState(Object)
@@ -63,12 +64,20 @@ export default function AddComponentScreen({ navigation, route }) {
     navigation.setOptions({
         headerRight:()=> 
         { 
-          return <Button  theme={{colors: {primary: 'black'}}}  onPress={handleSubmit(onSubmit)}><Check name="check" size={24} color="white"/></Button>
+          if(isSubmitting)
+          {
+            return <ActivityIndicator color="white" style={{paddingRight:20}} />
+          }
+          else
+          {
+            return <Button  theme={{colors: {primary: 'black'}}}  onPress={handleSubmit(onSubmit)}><Check name="check" size={24} color="white"/></Button>
+          }
       }
 
     });
-  }, [navigation]);
+  }, [navigation, isSubmitting, componentToEdit]);
   const onSubmit = data => {
+    setisSubmitting(true)
     data.type = componentTypes.find(biketype => biketype.value == data.type)
     data.initialRideTime = Number(data.initialRideTime) * 60 * 60
     data.initialRideDistance = Number(data.initialRideDistance) * 1000
@@ -78,6 +87,7 @@ export default function AddComponentScreen({ navigation, route }) {
     {
       updateComponent(doc(collection(getFirestore(firebaseApp), "components"), route.params.componentId), data)
       .then(() => {
+        setisSubmitting(false)
         navigation.goBack(null)
       })
     }
@@ -87,6 +97,7 @@ export default function AddComponentScreen({ navigation, route }) {
       data.rideTime = 0
       data.rideDistance = 0
       addComponent(data).then(() => {
+        setisSubmitting(false)
         navigation.goBack(null)
       })
     }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Platform, TouchableOpacity, Text, StyleSheet,  Alert } from 'react-native';
+import { View, Platform, TouchableOpacity, Text, StyleSheet,  Alert , ActivityIndicator} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { RadioButton } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
@@ -15,6 +15,7 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
+  const [isSubmitting, setisSubmitting] = useState(false);
   const [checked, setChecked] = React.useState('selected');
 
   const onChange = (event, selectedDate) => {
@@ -32,14 +33,18 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
   };
 
   let submit = () =>{
+    setisSubmitting(true)
     getDoc(doc(getFirestore(firebaseApp), "bikes", route.params.bikeId)).then((bike)=>{
       let installationDate = checked == "default" ?  bike.data().purchaseDate.toDate() : date 
       installComponent(route.params.componentId, route.params.bikeId, installationDate)
       .then(() => {
         navigation.navigate("BikeComponentsList")
+        setisSubmitting(false)
+
       })
       .catch((error) => {
-        Toast.show(error)
+        Toast.show(error.message)
+        setisSubmitting(false)
       })
     })
   }
@@ -48,11 +53,18 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
     navigation.setOptions({
         headerRight:()=> 
         { 
-          return <Button  theme={{colors: {primary: 'black'}}}  onPress={()=>submit()}><Check name="check" size={24} color="white"/></Button>
+          if(isSubmitting)
+          {
+            return <ActivityIndicator color="white" style={{paddingRight:20}} />
+          }
+          else
+          {
+            return <Button  theme={{colors: {primary: 'black'}}}  onPress={()=>submit()}><Check name="check" size={24} color="white"/></Button>
+          }
       }
 
     });
-  }, [navigation, date, checked]);
+  }, [navigation, date, checked, isSubmitting]);
   return (
     <View>
       <View style={styles.formTitleContainer}>
