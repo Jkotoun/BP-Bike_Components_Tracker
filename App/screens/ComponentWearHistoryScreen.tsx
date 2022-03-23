@@ -103,7 +103,7 @@ export default function ComponentWearHistoryScreen({ route, navigation }) {
               }
             ]
             return <WearRecordCard options={wearRecordOptions} maintext={rideDistanceToString(wearRecord.rideDistance) + ", " + rideSecondsToString(wearRecord.rideTime)}
-              description={wearRecord.description} image={wearRecord.image ? wearRecord.image : null} /> //TODO Image
+              description={wearRecord.description} image={wearRecord.image ? wearRecord.image : null} /> 
           })}
           </View>
 

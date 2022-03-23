@@ -125,8 +125,8 @@ export default function AddRideScreen({ navigation, route }) {
     }
     catch(error)
     {
-      Toast.show(error.message)
       setisSubmitting(false)
+      Toast.show(error.message)
 
     }
   }

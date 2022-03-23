@@ -101,6 +101,7 @@ export default function AddBikeScreen({ navigation, route }) {
     }
     catch(error)
     {
+      setisSubmitting(false)
       Toast.show(error.message)
     }
   

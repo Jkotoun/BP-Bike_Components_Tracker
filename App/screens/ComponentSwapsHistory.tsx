@@ -8,7 +8,6 @@ import ComponentSwapCard from '../components/ComponentSwapCard';
 import { useIsFocused } from "@react-navigation/native";
 import { deleteComponentSwapRecord } from '../modules/firestoreActions'
 
-//TODO refactor, odeccist z komponent km pri smazani recordu
 
 
 async function loadComponentSwaps(componentId) {

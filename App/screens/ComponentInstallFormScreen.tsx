@@ -98,7 +98,7 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
                 <Text style={styles.selectedDateText}>{date.toLocaleDateString('cs-CZ').split('T')[0] + " " + date.getHours() + ":" + date.getMinutes()}</Text>
               </View>
             </TouchableOpacity>} value="selected" />
-        <RadioButton.Item label="Since beggining" value="default" color="#F44336" style={styles.radioItem} />
+        <RadioButton.Item label="Since purchase" value="default" color="#F44336" style={styles.radioItem} />
       </RadioButton.Group>
 
       <View style={{ paddingTop: 10, paddingHorizontal: 20 }}>

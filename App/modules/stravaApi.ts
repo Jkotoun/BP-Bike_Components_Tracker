@@ -109,7 +109,6 @@ export function getCurrentlyAuthorizedAthlete(accessToken)
     }
     else
     {
-        //TODO error type
         throw new Error(response.statusText)
     }
 })
@@ -138,7 +137,6 @@ async function stravaApiRequest(User, setUser, path)
       }
       else
       {
-          //TODO error type
           throw new Error(response.statusText)
       }
   }) 
@@ -149,7 +147,6 @@ async function stravaApiRequest(User, setUser, path)
   }
 }
 
-//todo pořešit chyby
 export async function getAllActivities(User, setUser)
 {
   return stravaApiRequest(User, setUser, "athlete/activities")
