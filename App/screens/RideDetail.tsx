@@ -4,7 +4,7 @@ import { Text, View, Image, StyleSheet, ActivityIndicator, StatusBar, TouchableO
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection } from 'firebase/firestore';
 import firebaseApp from '../config/firebase';
 import { useIsFocused } from "@react-navigation/native";
-import { rideSecondsToString, rideDistanceToString } from '../modules/helpers';
+import { rideSecondsToString, rideDistanceToString, formatDateTime } from '../modules/helpers';
 
 
 import * as Linking from 'expo-linking';
@@ -48,12 +48,8 @@ export default function RideDetail({ route }) {
 
 
           <Text style={styles.titleText}>Bike: {ride.bike ? ride.bike.name : "not assigned"}</Text>
-          <Text style={styles.dateText}>{ride.date.toDate().toISOString().split('T')[0] + " " + ride.date.toDate().getHours() + ":" + ride.date.toDate().getMinutes()}</Text>
+          <Text style={styles.dateText}>{formatDateTime(ride.date.toDate())}</Text>
         </View>
-        {/* <View style={styles.rideMapContainer}>
-        <Image source={require("./../assets/images/ridemap.png")} style={styles.rideMap} />
-      </View> */}
-
         <View style={styles.statsContainer}>
           <View style={styles.statsRow}>
             <View style={styles.statContainter}>

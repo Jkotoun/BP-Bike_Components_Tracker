@@ -418,7 +418,6 @@ export async function addRide(data)
 
 export async function deleteRide(rideId)
 {
-    //UDELANA ZMENA, checknout jestli to jede
     let rideToDelete = await getDoc(doc(getFirestore(firebaseApp), "rides", rideId))
     if(rideToDelete.data().bike)
     {
@@ -426,13 +425,6 @@ export async function deleteRide(rideId)
         let deletePromise = deleteDoc(rideToDelete.ref)
         
         let updateStatsPromise = updateBikeAndComponentsStatsAtDate(rideToDelete.data().date.toDate(), -1*rideToDelete.data().distance, -1*rideToDelete.data().rideTime, rideToDelete.data().bike)
-        // let installedComponents =await  getInstalledComponentsAtDate(rideToDelete.data().date.toDate(), rideToDelete.data().bike)
-        
-        // incrementBikeStats(-1 * rideToDelete.data().distance,-1 *  rideToDelete.data().rideTime,rideToDelete.data().bike)
-        // const promises = installedComponents.map(async installedComponent => {
-        //     let componentRef = doc(getFirestore(firebaseApp), "components", installedComponent)
-        //     return incrementComponentDistanceAndTime(-1 * (rideToDelete.data().distance), -1 * rideToDelete.data().rideTime, componentRef)
-        // })
         return Promise.all([updateStatsPromise, deletePromise])
     }
     else
@@ -473,12 +465,6 @@ export async function uninstallComponent(bikeId, componentId, uninstallTime: Dat
         })
         let decrementKmAndHours = UpdateComponentsStats(uninstallTime, new Date(), bikeRef, componentRef, -1)
         return Promise.all([addUninstallTime, removeBikeRef, decrementKmAndHours])
-    
-    
-   
-      
-   
- 
 }
 
 //increments stats (km and ride time) of component, computed from ridden km and hours on bike between 2 dates

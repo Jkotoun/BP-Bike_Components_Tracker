@@ -5,8 +5,8 @@ import CardBase from './CardBase'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 interface cardProps{
     maintext: string,
-    description?: string,
-    description2?: string,
+    installationDateString: string,
+    uninstallationDateString: string,
     options?: Array<Option>
 }
 interface Option{
@@ -21,8 +21,8 @@ export default function ComponentSwapCard(props: cardProps) {
                 <View style={Styles.textContainer}>
                     <Text style={Styles.mainText}>{props.maintext}</Text>
                     <View style={Styles.secondaryTextContainer}>
-                        {props.description && <Text style={Styles.secondaryText}>{props.description}</Text>}
-                        {props.description2 && <Text style={Styles.secondaryText}>{props.description2}</Text>}
+                        <Text style={Styles.secondaryText}><Text style={{fontWeight:'bold'}}>Installed: </Text>{props.installationDateString}</Text>
+                        <Text style={Styles.secondaryText}><Text style={{fontWeight:'bold'}}>Uninstalled: </Text>{props.uninstallationDateString}</Text>
                     </View>
                 </View>
                 { props.options && <Menu style={Styles.menu}>

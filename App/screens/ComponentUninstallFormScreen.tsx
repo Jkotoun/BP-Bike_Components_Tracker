@@ -7,6 +7,7 @@ import { uninstallComponent } from '../modules/firestoreActions'
 import Toast from 'react-native-simple-toast';
 import { Button } from 'react-native-paper'
 import Check from 'react-native-vector-icons/MaterialCommunityIcons';
+import { formatDateTime } from '../modules/helpers';
 
 
 
@@ -63,7 +64,7 @@ export default function ComponentUninstallFormScreen({ navigation, route }) {
                 <Text style={styles.formTitle}>Uninstallation date and time</Text>
                 <TouchableOpacity onPress={() => showMode('date')}>
                     <View style={styles.selectedDateContainer}>
-                        <Text style={styles.selectedDate}>{date.toLocaleString()}</Text>
+                        <Text style={styles.selectedDate}>{formatDateTime(date)}</Text>
                     </View>
                 </TouchableOpacity>
 
@@ -73,6 +74,7 @@ export default function ComponentUninstallFormScreen({ navigation, route }) {
                     testID="dateTimePicker"
                     value={date}
                     mode={mode}
+                    maximumDate={new Date()}
                     is24Hour={true}
                     display="default"
                     onChange={onChange}
@@ -88,7 +90,9 @@ const styles = StyleSheet.create({
         padding: 20
     },
     formTitle: {
-        color: "#6F6F6F"
+        color: "#000000",
+        fontSize:17,
+        fontWeight:'700'
     },
     selectedDateContainer: {
         borderWidth: 1,

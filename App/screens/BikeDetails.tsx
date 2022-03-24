@@ -4,7 +4,7 @@ import { Text, View, StyleSheet } from 'react-native';
 import firebaseApp from '../config/firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 import { getFirestore, setDoc, doc, getDoc } from 'firebase/firestore';
-import {rideSecondsToString} from '../modules/helpers';
+import {formatDate, rideSecondsToString} from '../modules/helpers';
 
 async function loadBike(bikeId) {
   let bike = await getDoc(doc(getFirestore(firebaseApp), "bikes", bikeId))
@@ -45,7 +45,7 @@ export default function BikeDetails({ route }) {
   }
   if(bike.purchaseDate.toDate().getTime() != 0)
   {
-    bikeInfo['Purchase date'] = bike.purchaseDate.toDate().toLocaleString()
+    bikeInfo['Purchase date'] = formatDate(bike.purchaseDate.toDate())
   }
 
   return (

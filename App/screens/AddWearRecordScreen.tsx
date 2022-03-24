@@ -69,7 +69,7 @@ export default function AddWearRecordScreen({ navigation, route }) {
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       allowsMultipleSelection:true,
       aspect: [16, 9],
@@ -151,6 +151,7 @@ export default function AddWearRecordScreen({ navigation, route }) {
                   value={ value}
                   error={!!errors.name}
                   label='Description'
+                  multiline={true}
                 />
 
               )}
@@ -175,7 +176,9 @@ export default function AddWearRecordScreen({ navigation, route }) {
                 label='Component image (optional)'
               />
             </TouchableOpacity>
-
+            <View style={{padding:8, width:'100%', height:200}}>
+            {image && <Image source={{ uri: image.uri }} style={{ width: '100%', height:'100%' }} />}
+            </View>
 
           </ScrollView >
         </View>

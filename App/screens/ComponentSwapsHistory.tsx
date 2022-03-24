@@ -7,6 +7,7 @@ import { getFirestore, getDoc, getDocs, query, collection, where, doc, deleteDoc
 import ComponentSwapCard from '../components/ComponentSwapCard';
 import { useIsFocused } from "@react-navigation/native";
 import { deleteComponentSwapRecord } from '../modules/firestoreActions'
+import { formatDateTime } from '../modules/helpers';
 
 
 
@@ -96,10 +97,11 @@ export default function ComponentSwapsHistory({ route }) {
                                 }
 
                             ]
+                            
 
                             return <ComponentSwapCard options={swapRecordOptions} maintext={componentSwapRecord.bikeDoc.data() ? componentSwapRecord.bikeDoc.data().name : "Deleted bike"}
-                                description={componentSwapRecord.installTime.toDate().getTime() == 0 ? "Since purchase" : componentSwapRecord.installTime.toDate().toLocaleString()}
-                                description2={componentSwapRecord.uninstallTime ? componentSwapRecord.uninstallTime.toDate().toLocaleString() : "Currently installed"} />
+                                installationDateString={componentSwapRecord.installTime.toDate().getTime() == 0 ? "Since purchase" : formatDateTime(componentSwapRecord.installTime.toDate())}
+                                uninstallationDateString={componentSwapRecord.uninstallTime ? formatDateTime(componentSwapRecord.uninstallTime.toDate()) : "Currently installed"} />
                         })}
                     </View>
                 </ScrollView>

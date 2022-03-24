@@ -8,7 +8,7 @@ import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import { useIsFocused } from "@react-navigation/native";
 import { deleteRide, syncDataWithStrava, getLoggedUserData, connectAccWithStrava } from "../modules/firestoreActions";
-import {rideSecondsToString, rideDistanceToString} from '../modules/helpers'
+import {rideSecondsToString, rideDistanceToString, formatDate} from '../modules/helpers'
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {isStravaUser, stravaAuthReq, getTokens} from '../modules/stravaApi';
@@ -176,10 +176,10 @@ export default function BikesListScreen({ navigation, route }) {
 
               let infoObj = {
                 "Distance": rideDistanceToString(ride.distance),
-                "Total time": rideSecondsToString(ride.rideTime)
+                "Total time": rideSecondsToString(ride.rideTime),
+                "Activity date": formatDate(ride.date.toDate())
               }
 
-              infoObj["Activity date"] = ride.date.toDate().toISOString().split('T')[0]
               if (ride.stravaSynced) {
 
                 return <Card title={ride.name} stravaIcon={true} description2={"Bike: " + (ride.bike ? ride.bike.name : "not assigned")} icon={images.route} displayInfo={infoObj} onPress={() => {

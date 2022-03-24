@@ -14,6 +14,7 @@ import {addRide, getRide, updateRide} from '../modules/firestoreActions'
 import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Button} from 'react-native-paper'
 import Toast from 'react-native-simple-toast';
+import { formatDateTime } from '../modules/helpers';
 
 export default function AddRideScreen({ navigation, route }) {
   const isFocused = useIsFocused();
@@ -231,6 +232,7 @@ export default function AddRideScreen({ navigation, route }) {
             {showDatePicker && (
               <DateTimePicker
                 testID="dateTimePicker"
+                maximumDate={new Date()}
                 value={rideDate}
                 mode="date"
                 is24Hour={true}
@@ -248,7 +250,7 @@ export default function AddRideScreen({ navigation, route }) {
                 style={styles.input}
                 editable={false}
                 pointerEvents="none"
-                value={rideDate.toDateString()}
+                value={formatDateTime(rideDate)}
                 label='Ride date'
               />
             </TouchableOpacity>

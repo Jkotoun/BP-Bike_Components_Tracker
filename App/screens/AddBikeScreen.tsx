@@ -14,6 +14,7 @@ import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { addBike, getBike, updateBike } from '../modules/firestoreActions'
 import Toast from 'react-native-simple-toast';
+import { formatDateTime } from '../modules/helpers';
 export default function AddBikeScreen({ navigation, route }) {
   const [purchaseDate, setPurchaseDate] = useState(new Date());
   const [show, setShow] = useState(false);
@@ -111,7 +112,9 @@ export default function AddBikeScreen({ navigation, route }) {
   const bikeTypes = [
     { label: 'Mountain bike', value: 'mtb' },
     { label: 'Gravel', value: 'gravel' },
-    { label: 'Road', value: 'road' }
+    { label: 'Road', value: 'road' },
+    { label: 'Other', value: 'other' }
+
   ]
   if (!isLoaded) {
     return (
@@ -236,6 +239,7 @@ export default function AddBikeScreen({ navigation, route }) {
                 testID="dateTimePicker"
                 value={purchaseDate}
                 mode="date"
+                maximumDate={new Date()}
                 is24Hour={true}
                 display="default"
                 onChange={(event, value) => {
@@ -254,7 +258,7 @@ export default function AddBikeScreen({ navigation, route }) {
                 style={styles.input}
                 editable={false}
                 pointerEvents="none"
-                value={purchaseDate.toDateString()}
+                value={formatDateTime(purchaseDate)}
                 label='Purchase Date'
               />
             </TouchableOpacity>

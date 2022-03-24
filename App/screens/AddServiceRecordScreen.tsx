@@ -88,6 +88,7 @@ export default function AddServiceRecord({ navigation, route }) {
                   theme={{ colors: { primary: '#F44336' } }}
                   underlineColor="transparent"
                   mode='flat'
+                  multiline={true}
                   style={styles.input}
                   onBlur={onBlur}
                   onChangeText={onChange}

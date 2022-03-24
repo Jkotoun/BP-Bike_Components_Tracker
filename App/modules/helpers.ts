@@ -23,4 +23,22 @@ export function activeScreenName(navigationState) :string
     }
 }
 
+export function formatDateTime(date: Date) {
+  const minutes = date.getMinutes()
+  const hours = date.getHours()
+  
+  return   formatDate(date) +  " " + hours + ":" + minutes;
+}
+
+
+export function formatDate(date:Date){
+  const day = date.getDay()
+  const month = date.getMonth()
+  const year = date.getFullYear()
+
+  return day + ". " + month + ". " + year
+}
+
+
+
 export default activeScreenName;

@@ -8,6 +8,7 @@ import { installComponent } from '../modules/firestoreActions'
 import Toast from 'react-native-simple-toast';
 import {Button} from 'react-native-paper'
 import Check from 'react-native-vector-icons/MaterialCommunityIcons';
+import { formatDateTime } from '../modules/helpers';
 
 export default function ComponentInstallFormScreen({ navigation, route }) {
 
@@ -74,6 +75,7 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
         <DateTimePicker
           testID="dateTimePicker"
           value={date}
+          maximumDate={new Date()}
           mode={mode}
           is24Hour={true}
           display="default"
@@ -95,7 +97,7 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
           label={
             <TouchableOpacity onPress={() => showMode('date')}>
               <View style={styles.selectedDateContainer}>
-                <Text style={styles.selectedDateText}>{date.toLocaleDateString('cs-CZ').split('T')[0] + " " + date.getHours() + ":" + date.getMinutes()}</Text>
+                <Text style={styles.selectedDateText}>{formatDateTime(date)}</Text>
               </View>
             </TouchableOpacity>} value="selected" />
         <RadioButton.Item label="Since purchase" value="default" color="#F44336" style={styles.radioItem} />
@@ -109,10 +111,16 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
 
 const styles = StyleSheet.create({
   formTitleContainer: {
-    padding: 10
+    
+    paddingTop:20,
+    paddingLeft:25,
+    paddingBottom:10
+
   },
   formTitle: {
-    color: "#6F6F6F"
+    color: "#000000",
+    fontSize:17,
+    fontWeight:'700'
   },
   radioItem: {
     flexDirection: 'row-reverse',
