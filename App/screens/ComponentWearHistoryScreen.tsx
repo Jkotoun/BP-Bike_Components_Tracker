@@ -6,7 +6,7 @@ import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import WearRecordCard from '../components/WearRecordCard';
 import { FAB } from 'react-native-paper';
-import { rideDistanceToString, rideSecondsToString } from "../modules/helpers"
+import { formatDate, formatDateTime, rideDistanceToString, rideSecondsToString } from "../modules/helpers"
 import { NavigationContainer, useIsFocused } from "@react-navigation/native";
 import { getStorage, getDownloadURL, ref, deleteObject } from 'firebase/storage';
 import {deleteWearRecord} from '../modules/firestoreActions'
@@ -101,8 +101,10 @@ export default function ComponentWearHistoryScreen({ route, navigation }) {
                   showConfirmDialog(wearRecord.id)
                 }
               }
+                  
             ]
-            return <WearRecordCard options={wearRecordOptions} maintext={rideDistanceToString(wearRecord.rideDistance) + ", " + rideSecondsToString(wearRecord.rideTime)}
+            
+            return <WearRecordCard maintext={rideDistanceToString(wearRecord.rideDistance) + ", " + rideSecondsToString(wearRecord.rideTime)}   options={wearRecordOptions} date={formatDate(wearRecord.date.toDate())}
               description={wearRecord.description} image={wearRecord.image ? wearRecord.image : null} /> 
           })}
           </View>

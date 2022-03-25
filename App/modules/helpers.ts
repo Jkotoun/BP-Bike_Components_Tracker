@@ -1,6 +1,6 @@
 export function rideSecondsToString(rideSeconds)
 {
-    return (Math.floor((rideSeconds) / 3600) + " h " + Math.floor(((rideSeconds)% 3600) / 60) + " m")
+    return (Math.floor((rideSeconds) / 3600) + "h " + Math.floor(((rideSeconds)% 3600) / 60) + "m")
 }
 
 export function rideDistanceToString(distance)
@@ -26,19 +26,14 @@ export function activeScreenName(navigationState) :string
 export function formatDateTime(date: Date) {
   const minutes = date.getMinutes()
   const hours = date.getHours()
-  
-  return   formatDate(date) +  " " + hours + ":" + minutes;
+  return  formatDate(date) +  " " + hours + ":" + minutes;
 }
-
 
 export function formatDate(date:Date){
-  const day = date.getDay()
-  const month = date.getMonth()
+  const day = date.getDate()
+  const month = date.getMonth()+1
   const year = date.getFullYear()
-
   return day + ". " + month + ". " + year
 }
-
-
 
 export default activeScreenName;

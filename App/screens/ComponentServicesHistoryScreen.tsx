@@ -6,7 +6,7 @@ import ServiceRecordCard from '../components/ServiceRecordCard';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc } from 'firebase/firestore';
 import firebaseApp from '../config/firebase'; 3
 import { useIsFocused } from "@react-navigation/native";
-import {rideDistanceToString, rideSecondsToString} from "../modules/helpers"
+import {formatDate, rideDistanceToString, rideSecondsToString} from "../modules/helpers"
 
 
 
@@ -93,7 +93,10 @@ export default function ComponentServicesHistoryScreen({navigation, route }) {
             }
           }
         ]
+        
           return <ServiceRecordCard options={serviceRecordOptions} 
+            
+          date={formatDate(record.data().date.toDate())}
             maintext={rideDistanceToString(record.data().rideDistance) + ", " + rideSecondsToString(record.data().rideTime)} 
             description={record.data().description} price={record.data().price} />
         })}

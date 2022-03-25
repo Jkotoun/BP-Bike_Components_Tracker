@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 interface cardProps {
     maintext: string,
     description?: string,
+    date: string,
     price: number
     options?: Array<Option>
 }
@@ -24,6 +25,7 @@ export default function ServiceRecordCard(props: cardProps) {
             <View style={Styles.mainContainer}>
                 <View style={Styles.cardContent}>
                     <View style={Styles.textBlock}>
+                        <Text style={Styles.date}>{props.date}</Text>
                         <Text style={Styles.mainText}>{props.maintext}</Text>
                         <View style={Styles.secondaryTextView}>
                             {props.description && <Text style={Styles.secondaryText}>{props.description}</Text>}
@@ -59,8 +61,12 @@ const Styles = StyleSheet.create({
     {
         padding: 10
     },
-    mainText: {
+    date: {
         fontSize: 15,
+        fontWeight: "bold"
+    },
+    mainText: {
+        fontSize: 12,
         fontWeight: "bold"
     },
     secondaryTextView: {

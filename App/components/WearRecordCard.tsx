@@ -9,6 +9,7 @@ import CardBase from './CardBase'
 interface cardProps {
     maintext: string,
     description?: string,
+    date: string,
     image?: string | null,
     options?: Array<Option>
 }
@@ -27,6 +28,7 @@ export default function WearHistoryCard(props: cardProps) {
                     <View style={Styles.cardContent}>
                         <View style={Styles.contentContainer}>
                             <View style={Styles.textContainer}>
+                                <Text style={Styles.date}>{props.date}</Text>
                                 <Text style={Styles.mainText}>{props.maintext}</Text>
                                 <View style={Styles.secondaryTextContainer}>
                                     {props.description && <Text style={Styles.secondaryText}>{props.description}</Text>}
@@ -75,6 +77,10 @@ const Styles = StyleSheet.create({
         padding: 15
     },
     mainText: {
+        fontSize: 12,
+        fontWeight: "bold"
+    },
+    date: {
         fontSize: 15,
         fontWeight: "bold"
     },

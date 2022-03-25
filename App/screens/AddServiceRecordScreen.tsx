@@ -13,7 +13,7 @@ import {Button} from 'react-native-paper'
 async function addServiceRecord(data, componentId){
   let componentRef = await getDoc(doc(getFirestore(firebaseApp), "components", componentId))
   data.component = componentRef.ref
-  data.date = Date.now()
+  data.date = new Date()
   data.price = Number(data.price)
   data.rideDistance = componentRef.data().rideDistance + componentRef.data().initialRideDistance
   data.rideTime = componentRef.data().rideTime + componentRef.data().initialRideTime
