@@ -444,7 +444,6 @@ export async function uninstallComponent(bikeId, componentId, uninstallTime: Dat
     let newestSwapRecordDoc = (await getDocs(
         query(
             collection(getFirestore(firebaseApp), "bikesComponents"),
-            where("bike", "==", bikeRef),
             where("component", "==", componentRef),
             orderBy("installTime", "desc")))).docs[0]
 
@@ -492,7 +491,6 @@ export async function installComponent(componentId, bikeId, installTime: Date) {
 
     let componentSwaps = await getDocs(
       query(collection(getFirestore(firebaseApp), "bikesComponents"),
-        where("bike", "==", doc(getFirestore(firebaseApp), "bikes", bikeId)),
         where("component", "==", doc(getFirestore(firebaseApp), "components", componentId))))
   
     let correctInstallDate = componentSwaps.docs.every((value) => {
