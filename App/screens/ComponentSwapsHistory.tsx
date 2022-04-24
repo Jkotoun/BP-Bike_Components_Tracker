@@ -87,6 +87,8 @@ export default function ComponentSwapsHistory({ route }) {
             <View style={styles.mainContainer}>
                 <ScrollView>
                     <View style={styles.cardsContainer}>
+                        {componentSwapRecords.length == 0 && <Text style={{padding:20, fontSize:17, fontWeight:'700'}}>No component installations found</Text>}
+                        
                         {componentSwapRecords.map((componentSwapRecord: any) => {
                             const swapRecordOptions = [
                                 {

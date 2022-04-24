@@ -7,16 +7,41 @@ import BikeDetails from './BikeDetails';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigationState } from '@react-navigation/native';
 import activeScreenName from '../modules/helpers';
-function topTabBarVisible(state) {
-  const routeName = activeScreenName(state);
-  const tabBarHiddenPages = ["BikeComponentsList", "Components", "History", "Bike Details", "BikeDetailTabs"]
-  return tabBarHiddenPages.includes(routeName)
-}
+
 const Tab = createMaterialTopTabNavigator();
 
 
-export default function BikeTabs({route}) {
-  const state = useNavigationState(state => state)
+function stackHeaderVisible(navigationState) {
+  const routeName = activeScreenName(navigationState);
+  const tabBarHiddenPages = ["BikeComponentsList", "Components", "History", "Bike Details", "BikeDetailTabs", "BikesListScreen", "Bikes", "AddBikeScreen"]
+  return tabBarHiddenPages.includes(routeName)
+
+}
+
+
+
+
+export default function BikeTabs({route, navigation}) {
+
+
+
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      title: route.params.bikeName
+    });
+  }, []);
+  const navigationState = useNavigationState(state => state);
+
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: stackHeaderVisible(navigationState)
+  
+    });
+  }, [navigationState]);
+
+
   return (
     <Tab.Navigator
     screenOptions={() => ({
@@ -31,10 +56,7 @@ export default function BikeTabs({route}) {
       tabBarInactiveTintColor: '#fbb4af',
       tabBarIndicatorContainerStyle:{backgroundColor: "#F44336"},
       tabBarIndicatorStyle: {backgroundColor: 'white'},
-      tabBarStyle:{
-      display: topTabBarVisible(state)? "flex":"none"
-      },
-      swipeEnabled: topTabBarVisible(state)
+
     
     })}>
 

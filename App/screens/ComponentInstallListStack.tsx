@@ -17,7 +17,7 @@ export default function ComponentInstallListStack({ navigation, route }) {
         backgroundColor: '#F44336',
       },
       headerShadowVisible:false,
-      animation: 'fade',
+      animation: 'none',
       headerTintColor: '#ffffff'
     }}>
       <Stack.Group>

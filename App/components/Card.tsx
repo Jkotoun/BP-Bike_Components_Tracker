@@ -64,7 +64,7 @@ export default function Card(props: cardProps) {
                     <MenuTrigger text={<Icon name="dots-vertical" size={23} color="#000000" />} />
                     <MenuOptions>
                         {props.options.map((item) => {return (
-                           <MenuOption onSelect={item.onPress} text={item.text} style={Styles.menuOption}/>
+                           <MenuOption key={item.text} onSelect={item.onPress} text={item.text} style={Styles.menuOption}/>
                         )})}
                     </MenuOptions>
                 </Menu>}

@@ -80,7 +80,7 @@ export async function getTokens(authCode) {
       {
         clientId: Constants.manifest.extra.stravaClientId,
         redirectUri: makeRedirectUri({
-            native: "bikecomponentsmanager://stravaAuth"
+            native: "bikecomponentsmanager://redirect"
           }),
         code: authCode,
         extraParams: {

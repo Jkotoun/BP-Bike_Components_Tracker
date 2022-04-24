@@ -2,14 +2,34 @@
 import * as React from 'react';
 import {Button} from "react-native-paper"
 import Close from 'react-native-vector-icons/MaterialCommunityIcons';
+import activeScreenName from '../modules/helpers';
+import { useNavigationState } from '@react-navigation/native';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ComponentWearHistoryScreen from'./ComponentWearHistoryScreen'
 import AddWearRecordScreen from './AddWearRecordScreen'
 export default function ComponentWearHistoryStack({ navigation, route }) {
  
+  const navigationState = useNavigationState(state => state);
 
   const Stack = createNativeStackNavigator();
+  function topTabBarVisible(state) {
+    const routeName = activeScreenName(state);
+    return routeName  != "AddWearRecordScreen"
+  }
+
+
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      tabBarStyle:
+      {
+        display: topTabBarVisible(navigationState) ? "flex" : "none"
+      },
+      swipeEnabled: topTabBarVisible(navigationState)
+  
+    });
+  }, [navigationState]);
 
   return (
 
@@ -18,7 +38,7 @@ export default function ComponentWearHistoryStack({ navigation, route }) {
         backgroundColor: '#F44336',
       },
       headerShadowVisible:false,
-      animation: 'fade',
+      animation: 'none',
       headerTintColor: '#ffffff',
       headerShown:false
     }}>

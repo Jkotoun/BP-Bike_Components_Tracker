@@ -52,12 +52,14 @@ export default function LoginScreen({ navigation }) {
 
   const [request, response, promptAsync] = stravaApi.stravaAuthReq()
   const [isLoggingIn, setisLoggingIn] = React.useState(false)
+  const [authorizingStrava, setauthorizingStrava] = React.useState(false)
+
 
   React.useEffect(() => {
 
     if (response?.type === 'success') {
       
-      setisLoggingIn(true)
+      setauthorizingStrava(true)
       const { code } = response.params;
       let authAthlete, authStravaTokens;
 
@@ -66,7 +68,7 @@ export default function LoginScreen({ navigation }) {
         let requiredScopes = ["activity:read_all", "profile:read_all"]
         if(!requiredScopes.every(scope => authResponseScopes.includes(scope)))
         {
-          setisLoggingIn(false)
+          setauthorizingStrava(false)
           throw new Error("Authorization failed, permission to activities or profile info denied")          
         }
         stravaApi.getTokens(code).then(tokens => {
@@ -85,7 +87,7 @@ export default function LoginScreen({ navigation }) {
           else {
             loginWithStravaAcc(authAthlete).catch(()=>{
               setError('password', { type: "authentication", message: "Strava authentication failed" });
-              setisLoggingIn(false)
+              setauthorizingStrava(false)
 
             })
           }
@@ -95,8 +97,8 @@ export default function LoginScreen({ navigation }) {
       catch (error)
       {
         Toast.show(error.message, Toast.LONG);
+        setauthorizingStrava(false)
       }
-      setisLoggingIn(false)
     }
   }, [response]);
 
@@ -109,7 +111,6 @@ export default function LoginScreen({ navigation }) {
         signInWithEmailAndPassword(auth, data.email, data.password).then(()=>setisLoggingIn(false)).catch(()=>
         {
           setError('password', { type: "authentication", message: "Wrong email or password" });
-          setisLoggingIn(false)
         });
       }
       // setisLoggingIn(false)
@@ -179,11 +180,20 @@ export default function LoginScreen({ navigation }) {
 
         <Text onPress={() => navigation.navigate('Register')} style={styles.registerFormRedirect}>Don't have account? <Text style={{ fontWeight: 'bold' }}>Sign Up! </Text></Text>
         <Text style={styles.orText}>Or</Text>
+        
+        
+        
+        {authorizingStrava? 
+       <ActivityIndicator color="white"/>
+
+      
+      :
         <TouchableOpacity onPress={() => {
           promptAsync({useProxy:false});
         }}>
           <Image source={require('../assets/images/btn_strava_connectwith_light.png')} />
         </TouchableOpacity>
+      }
       </ScrollView >
     </View>
 
@@ -232,7 +242,8 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#F44336'
+    backgroundColor: '#F44336',
+    paddingTop:50
   },
   scrollViewContainer: {
     alignItems: 'center'

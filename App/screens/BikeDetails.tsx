@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, ActivityIndicator } from 'react-native';
 import firebaseApp from '../config/firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 import { getFirestore, setDoc, doc, getDoc } from 'firebase/firestore';
@@ -27,10 +27,13 @@ export default function BikeDetails({ route }) {
   
   if (!isLoaded) {
     return (
+ 
       <View style={styles.loadContainer}>
 
-      <Text style={{fontSize:35, fontWeight:'bold', color: "#F44336" }}>Loading...</Text>
-    </View>
+      <ActivityIndicator size="large" color="#F44336" />
+
+  </View>
+ 
     )
   }
   else {

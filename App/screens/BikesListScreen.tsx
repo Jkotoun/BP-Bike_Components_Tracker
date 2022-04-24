@@ -187,6 +187,7 @@ export default function BikesListScreen({ navigation, route }) {
   if (!isLoaded || isSyncing) {
     return (
       <View style={styles.loadContainer}>
+          <StatusBar backgroundColor="#F44336" />
 
         <ActivityIndicator size="large" color="#F44336" />
         {isSyncing && <Text style={{color:'#F44336', fontSize:16, fontWeight:'700'}}>Syncing strava data</Text>}
@@ -212,12 +213,13 @@ export default function BikesListScreen({ navigation, route }) {
             {bikes.map(bike => {
 
               if (bike.stravaSynced) {
-                return <Card stravaIcon={true} title={bike.name} description={bike.type.label} icon={images[bike.type.value]} displayInfo={{
+                return <Card key={bike.bikeId} stravaIcon={true} title={bike.name} description={bike.type.label} icon={images[bike.type.value]} displayInfo={{
                   "Distance": rideDistanceToString(bike.initialRideDistance + bike.rideDistance),
                   "Ride Time": rideSecondsToString(bike.rideTime + bike.initialRideTime)
                 }} onPress={() => {
                   navigation.navigate('BikeDetailTabs', {
-                    bikeId: bike.bikeId
+                    bikeId: bike.bikeId,
+                    bikeName: bike.name
                   })
                 }} />
               }
@@ -259,12 +261,13 @@ export default function BikesListScreen({ navigation, route }) {
                   })
                 }
 
-                return <Card options={bikeOptions} active={bike.state == "active"} title={bike.state == "active" ? bike.name : (bike.name + " - retired")} description={bike.type.label} icon={images[bike.type.value]} displayInfo={{
+                return <Card  key={bike.bikeId} options={bikeOptions} active={bike.state == "active"} title={bike.state == "active" ? bike.name : (bike.name + " - retired")} description={bike.type.label} icon={images[bike.type.value]} displayInfo={{
                   "Distance": rideDistanceToString(bike.initialRideDistance + bike.rideDistance),
                   "Ride Time": rideSecondsToString(bike.rideTime + bike.initialRideTime)
                 }} onPress={() => {
                   navigation.navigate('BikeDetailTabs', {
-                    bikeId: bike.bikeId
+                    bikeId: bike.bikeId,
+                    bikeName: bike.name
                   })
                 }} />
               }

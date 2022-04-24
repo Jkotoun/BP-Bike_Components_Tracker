@@ -15,6 +15,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Checkbox } from 'react-native-paper';
 import { getAuth } from 'firebase/auth';
 import Toast from 'react-native-simple-toast';
+import ComponentDetails from './ComponentDetails';
 
 
 
@@ -204,7 +205,7 @@ export default function AllComponentsListScreen({ navigation, route }) {
             backgroundColor="#F44336"
           />
           <View style={Styles.cardsContainer}>
-          {/* {components.length == 0 && <Text style={{padding:20, fontSize:17, fontWeight:'700'}}>Add components using '+' button</Text>} */}
+          {components.length == 0 && <Text style={{padding:20, fontSize:17, fontWeight:'700'}}>Add components using '+' button</Text>}
 
             {components.map(component => {
 
@@ -247,12 +248,13 @@ export default function AllComponentsListScreen({ navigation, route }) {
                   }
                 })
               }
-              return <Card options={componentOptions} active={component.state=="active"} title={component.state == "active"? component.name : (component.name + " - retired")} description={component.type.displayName} description2={"Bike: " + (component.bike ? component.bike.name : "Not assigned")} icon={images[component.type.value]} displayInfo={{
+              return <Card key={component.id} options={componentOptions} active={component.state=="active"} title={component.state == "active"? component.name : (component.name + " - retired")} description={component.type.displayName} description2={"Bike: " + (component.bike ? component.bike.name : "Not assigned")} icon={images[component.type.value]} displayInfo={{
                 "Distance": rideDistanceToString(component.initialRideDistance+component.rideDistance),
                 "Ride Time": rideSecondsToString(component.rideTime + component.initialRideTime)
               }} onPress={() => {
                 navigation.navigate('ComponentDetailTabs', {
-                  componentId: component.id
+                  componentId: component.id,
+                  componentName: component.name
                 })
               }}  ></Card>
             })}

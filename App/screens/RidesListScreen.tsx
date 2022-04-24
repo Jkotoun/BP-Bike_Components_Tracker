@@ -184,7 +184,8 @@ export default function BikesListScreen({ navigation, route }) {
 
                 return <Card title={ride.name} stravaIcon={true} description2={"Bike: " + (ride.bike ? ride.bike.name : "not assigned")} icon={images.route} displayInfo={infoObj} onPress={() => {
                   navigation.navigate('RideDetail', {
-                    rideId: ride.id
+                    rideId: ride.id,
+                    rideName: ride.name
                   })
                 }} />
               }
@@ -207,9 +208,10 @@ export default function BikesListScreen({ navigation, route }) {
                   }
 
                 ]
-                return <Card options={rideOptions} title={ride.name} description2={"Bike: " + (ride.bike ? ride.bike.name : "not assigned")} icon={images.route} displayInfo={infoObj} onPress={() => {
+                return <Card key={ride.id} options={rideOptions} title={ride.name} description2={"Bike: " + (ride.bike ? ride.bike.name : "not assigned")} icon={images.route} displayInfo={infoObj} onPress={() => {
                   navigation.navigate('RideDetail', {
-                    rideId: ride.id
+                    rideId: ride.id,
+                    rideName: ride.name
                   })
                 }} />
               }

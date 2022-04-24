@@ -16,12 +16,6 @@ import { AuthenticatedUserContext } from '../../context'
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-function stackHeaderVisible(navigationState) {
-  const routeName = activeScreenName(navigationState);
-  const tabBarHiddenPages = ["BikeComponentsList", "Components", "History", "Bike Details", "BikeDetailTabs", "BikesListScreen", "Bikes", "AddBikeScreen"]
-  return tabBarHiddenPages.includes(routeName)
-
-}
 
 
 
@@ -36,7 +30,6 @@ export default function BikesListStack({ navigation, route }) {
 
 
   const Stack = createNativeStackNavigator();
-  const navigationState = useNavigationState(state => state);
   return (
     <Stack.Navigator initialRouteName="BikeListScreen" screenOptions={({ route }) => ({
       headerStyle: {
@@ -44,7 +37,7 @@ export default function BikesListStack({ navigation, route }) {
       },
 
       headerShadowVisible: false,
-      headerShown:stackHeaderVisible(navigationState),
+     
 
       animation: 'none',
       headerTintColor: '#ffffff',
@@ -76,7 +69,6 @@ export default function BikesListStack({ navigation, route }) {
         <Stack.Screen name='AddBikeScreen'
           options={{
             title: "Add bike",
-            
             headerLeft: () => { return <Button theme={{ colors: { primary: 'black' } }} onPress={() => navigation.goBack(null)} style={{ marginLeft: -20 }}><Close name="close" size={24} color="white" /></Button> }
           }}
           component={AddBikeScreen} />

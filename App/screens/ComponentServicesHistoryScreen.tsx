@@ -80,10 +80,12 @@ export default function ComponentServicesHistoryScreen({navigation, route }) {
     return (
       <View style={styles.mainContainer}>
         <ScrollView>
-        <View style={styles.totalPriceContainer}>
-          <Text style={styles.totalPriceText}><Text style={styles.priceHighlightedText}>Total:</Text> {priceTotal} CZK</Text>
-        </View>
+       {serviceRecords.length != 0 && <View style={styles.totalPriceContainer}>
+          <Text style={styles.totalPriceText}><Text style={styles.priceHighlightedText}>Total:</Text> {priceTotal} €</Text>
+        </View>}
           <View style={styles.cardsContainer}>
+          {serviceRecords.length == 0 && <Text style={{padding:20, fontSize:17, fontWeight:'700'}}>No component service records found</Text>}
+
         {serviceRecords.map(record => {
         const serviceRecordOptions = [
           {

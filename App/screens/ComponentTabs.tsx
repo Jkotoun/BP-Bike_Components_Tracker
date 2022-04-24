@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { Text, View, Button , Alert} from 'react-native';
+import { Text, View, Button, Alert } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 import { useNavigationState } from '@react-navigation/native';
@@ -12,14 +12,27 @@ import ComponentSwapsHistory from './ComponentSwapsHistory'
 
 
 import activeScreenName from '../modules/helpers';
-function topTabBarVisible(state) {
+
+
+function stackHeaderVisible(state) {
   const routeName = activeScreenName(state);
   const tabBarHiddenPages = ["AddServiceRecord", "AddWearRecordScreen"]
   return !tabBarHiddenPages.includes(routeName)
 }
 
-export default function ComponentTabs({route}) {
-  const state = useNavigationState(state => state)
+
+export default function ComponentTabs({ route, navigation }) {
+  const navigationState = useNavigationState(state => state);
+
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: stackHeaderVisible(navigationState),
+      title: route.params.componentName
+
+    });
+  }, [navigationState]);
+
 
   const Tab = createMaterialTopTabNavigator();
 
@@ -45,22 +58,19 @@ export default function ComponentTabs({route}) {
       "component": ComponentDetails
     }
   ]
- 
+
   return (
     <Tab.Navigator
-        screenOptions={() => ({
-          tabBarActiveTintColor: 'white',
-          tabBarInactiveTintColor: '#fbb4af',
-          tabBarIndicatorContainerStyle:{backgroundColor: "#F44336"},
-          tabBarIndicatorStyle: {backgroundColor: 'white'},
-          tabBarStyle:{
-            display: topTabBarVisible(state)? "flex":"none"
-            },
-            swipeEnabled: topTabBarVisible(state)
-        })}>
-            {tabsObj.map(item => {
-                return  (<Tab.Screen name={item.name} component={item.component} initialParams={{ componentId: route.params.componentId}}/>)
-            })}
-        </Tab.Navigator>
+      screenOptions={() => ({
+        tabBarActiveTintColor: 'white',
+        tabBarInactiveTintColor: '#fbb4af',
+        tabBarIndicatorContainerStyle: { backgroundColor: "#F44336" },
+        tabBarIndicatorStyle: { backgroundColor: 'white' },
+
+      })}>
+      {tabsObj.map(item => {
+        return (<Tab.Screen name={item.name} component={item.component} initialParams={{ componentId: route.params.componentId }} />)
+      })}
+    </Tab.Navigator>
   );
 } 

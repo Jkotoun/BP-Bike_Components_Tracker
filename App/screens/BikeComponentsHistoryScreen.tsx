@@ -60,6 +60,8 @@ export default function BikeComponentsHistoryScreen({route}) {
           <View style={styles.mainContainer}>
               <ScrollView>
                   <View style={styles.cardsContainer}>
+                    {componentSwapRecords.length == 0 && <Text style={{padding:20, fontSize:17, fontWeight:'700'}}>No components installations found</Text>}
+
                       {componentSwapRecords.map((componentSwapRecord: any) => {
 
                           return <ComponentSwapCard maintext={componentSwapRecord.bikeDoc.data() ? componentSwapRecord.componentDoc.data().name : "Deleted bike"}

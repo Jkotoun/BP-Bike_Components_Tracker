@@ -129,7 +129,7 @@ export default function AddServiceRecord({ navigation, route }) {
                   onChangeText={onChange}
                   value={value}
                   keyboardType='numeric'
-                  label='Service price'
+                  label='Service price (€)'
                 />
               )}
               name="price"

@@ -20,8 +20,17 @@ async function loadRide(rideId) {
 }
 
 
-export default function RideDetail({ route }) {
+export default function RideDetail({ route, navigation }) {
   const isFocused = useIsFocused();
+
+
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      title: route.params.rideName
+
+    });
+  }, []);
 
   React.useEffect(() => {
     loadRide(route.params.rideId).then((ride) => {

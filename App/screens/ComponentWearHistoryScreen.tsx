@@ -93,6 +93,8 @@ export default function ComponentWearHistoryScreen({ route, navigation }) {
       <View style={styles.mainContainer}>
         <ScrollView>
           <View style={styles.cardsContainer}>
+          {wearRecords.length == 0 && <Text style={{padding:20, fontSize:17, fontWeight:'700'}}>No component wear records found</Text>}
+
           {wearRecords.map(wearRecord => {
             const wearRecordOptions = [
               {

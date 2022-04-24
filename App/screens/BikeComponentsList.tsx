@@ -1,11 +1,11 @@
 
 import * as React from 'react';
-import { View, Alert, StyleSheet, Text, ActivityIndicator } from 'react-native';
+import { View, Alert, StyleSheet, Text, ActivityIndicator, ScrollView } from 'react-native';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where } from 'firebase/firestore';
 import { FAB } from 'react-native-paper';
 import Card from '../components/Card';
 import firebaseApp from '../config/firebase';
-import {rideSecondsToString, rideDistanceToString} from '../modules/helpers';
+import { rideSecondsToString, rideDistanceToString } from '../modules/helpers';
 
 import { useIsFocused } from "@react-navigation/native";
 
@@ -28,17 +28,17 @@ export default function BikeComponentsList({ navigation, route }) {
 
   React.useEffect(() => {
 
-      setIsLoaded(false)
-      loadComponents(route.params.bikeId).then((componentsArray) => {
-        setComponents(componentsArray)
-        setIsLoaded(true)
-      })
+    setIsLoaded(false)
+    loadComponents(route.params.bikeId).then((componentsArray) => {
+      setComponents(componentsArray)
+      setIsLoaded(true)
+    })
 
   }, [isFocused])
   const [components, setComponents] = React.useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
 
- 
+
   const images = {
     chain: require("../assets/images/chain_icon.png"),
     fork: require("../assets/images/bicycle_fork_icon.png"),
@@ -51,7 +51,7 @@ export default function BikeComponentsList({ navigation, route }) {
     suspension: require("../assets/images/rear_suspension.png"),
     rim: require("../assets/images/rim.png"),
     tire: require("../assets/images/tire.png"),
-    other: require("../assets/images/other_component.png"),    
+    other: require("../assets/images/other_component.png"),
   };
 
 
@@ -73,25 +73,29 @@ export default function BikeComponentsList({ navigation, route }) {
 
     return (
       <View style={styles.mainContainer}>
-        <View style={styles.componentCardsContainer}>
-          {components.map(component => {
+        <ScrollView >
+          <View style={styles.componentCardsContainer}>
+          {components.length == 0 && <Text style={{padding:20, fontSize:17, fontWeight:'700'}}>No components currently installed</Text>}
+            
+            {components.map(component => {
+              
+              let componentOptions = [
+                {
+                  text: "Uninstall",
+                  onPress: () => navigation.navigate("ComponentUninstallFormScreen", {
+                    componentId: component.id,
+                    bikeId: route.params.bikeId
+                  })
+                }
+              ]
+              return <Card options={componentOptions} title={component.name} description={component.type.displayName} icon={images[component.type.value]} displayInfo={{
+                "Distance": rideDistanceToString(component.rideDistance + component.initialRideDistance),
+                "Ride Time": rideSecondsToString(component.rideTime + component.initialRideTime)
 
-            let componentOptions = [
-              {
-                text: "Uninstall",
-                onPress: () => navigation.navigate("ComponentUninstallFormScreen", {
-                  componentId: component.id,
-                  bikeId: route.params.bikeId
-                })
-              }
-            ]
-            return <Card options={componentOptions} title={component.name} description={component.type.displayName} icon={images[component.type.value]} displayInfo={{
-              "Distance": rideDistanceToString(component.rideDistance + component.initialRideDistance),
-              "Ride Time": rideSecondsToString(component.rideTime + component.initialRideTime)
-
-            }} onPress={() =>navigation.navigate("ComponentDetail", {componentId: component.id}) }></Card>
-          })}
-        </View>
+              }} onPress={() => navigation.navigate("ComponentDetail", { componentId: component.id })}></Card>
+            })}
+          </View>
+        </ScrollView>
         <View style={styles.addButtonContainer}>
           <FAB
             style={styles.addButton}

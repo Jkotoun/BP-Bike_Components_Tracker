@@ -32,7 +32,7 @@ export default function ServiceRecordCard(props: cardProps) {
                         </View>
                     </View>
                     <View style={Styles.priceView}>
-                        <Text style={Styles.priceText}>{props.price} CZK</Text>
+                        <Text style={Styles.priceText}>{props.price} €</Text>
                     </View>
                 </View>
 
