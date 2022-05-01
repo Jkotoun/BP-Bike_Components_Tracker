@@ -8,7 +8,7 @@ import firebaseApp from '../config/firebase';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc } from 'firebase/firestore';
 import * as stravaApi from '../modules/stravaApi';
 import { makeRedirectUri, useAuthRequest, exchangeCodeAsync } from 'expo-auth-session';
-import { changeBikeState, retireBike,  getLoggedUserData ,connectAccWithStrava, syncDataWithStrava  } from "../modules/firestoreActions";
+import { changeBikeState, deactivateBike,  getLoggedUserData ,connectAccWithStrava, syncDataWithStrava  } from "../modules/firestoreActions";
 import { useIsFocused } from "@react-navigation/native";
 import { rideSecondsToString, rideDistanceToString } from '../modules/helpers';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
@@ -171,7 +171,7 @@ export default function BikesListScreen({ navigation, route }) {
           text: "Yes",
           onPress: () => {
             setShowBox(false);
-            changeBikeState(bikeId, "deleted").then(() =>
+            deactivateBike(bikeId, "deleted").then(() =>
             setIsLoaded(false))
           },
         },
@@ -244,7 +244,7 @@ export default function BikesListScreen({ navigation, route }) {
                   bikeOptions.push({
                     text: "Retire",
                     onPress: () => {
-                      retireBike(bike.bikeId).then(() =>
+                      deactivateBike(bike.bikeId, "retired").then(() =>
                         setIsLoaded(false)
                       )
                     }

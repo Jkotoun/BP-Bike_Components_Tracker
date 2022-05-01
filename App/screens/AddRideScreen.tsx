@@ -114,6 +114,10 @@ export default function AddRideScreen({ navigation, route }) {
           setisSubmitting(false)
           navigation.navigate("RidesListScreen")
         })
+        .catch(error=>{
+          setisSubmitting(false)
+          Toast.show(error.message)
+        })
       }
       else
       {
@@ -121,6 +125,10 @@ export default function AddRideScreen({ navigation, route }) {
         .then(() => {
           setisSubmitting(false)
           navigation.navigate("RidesListScreen")
+        })
+        .catch(error=>{
+          setisSubmitting(false)
+          Toast.show(error.message)
         })
       }
     }

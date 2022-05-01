@@ -18,7 +18,7 @@ interface bike
     brand: string,
     model: string,
     name: string,
-    purchaseDate: Date,
+    purchaseDate: Date|Object, //can be Datetime or Object with seconds and nanoseconds
     rideDistance?: number,
     rideTime?: number,
     initialRideDistance?: number,
@@ -56,8 +56,13 @@ interface stravaRide extends ride
 
 export async function getAllStravaSyncedRides()
 {
-    let authUser = getAuth(firebaseApp)
-    return getDocs(query(collection(getFirestore(firebaseApp), "rides"), where("stravaSynced", "==", true), where("user", "==", doc(getFirestore(firebaseApp), "users", authUser.currentUser.uid))))
+    return getDocs(
+        query(
+            collection(getFirestore(firebaseApp), "rides"), 
+            where("stravaSynced", "==", true), 
+            where("user", "==", doc(getFirestore(firebaseApp), "users", getAuth(firebaseApp).currentUser.uid))
+            )
+        )
 }
 export async function getAllStravaRides(User, setUser)
 {
@@ -161,7 +166,7 @@ async function syncBikes(User, setUser)
     let bikeRetirePromises = syncedBikes.map(async syncedBike => {
         if(!(stravaBikes.some(stravaBike => stravaBike.id == syncedBike.data().stravaId)))
         {
-            retireBike(syncedBike.id)
+            deactivateBike(syncedBike.id, "retired")
         }
     })
     return Promise.all(bikeRetirePromises)
@@ -189,6 +194,17 @@ function stravaActivityToRide(activity) : stravaRide
 export async function updateRide(oldRideData: any, newRideData: ride, rideId)
 {
 
+
+
+    if(oldRideData.bike != newRideData.bike && newRideData.bike)
+    {
+        let bikeDoc : any= ((await getDoc(newRideData.bike)).data())
+        if(bikeDoc.purchaseDate.toDate() > newRideData.date)
+        {
+            throw new Error("Can not assing bike which has later purchase date than ride date")
+        }
+    }
+
     await updateDoc(doc(getFirestore(firebaseApp), "rides", rideId), {...newRideData})
     //bike ref updated
     if(oldRideData.bike != newRideData.bike)
@@ -199,6 +215,7 @@ export async function updateRide(oldRideData: any, newRideData: ride, rideId)
         }
         if(newRideData.bike)
         {
+           
             updateBikeAndComponentsStatsAtDate(newRideData.date,newRideData.distance, newRideData.rideTime, newRideData.bike)
         }
     }
@@ -319,9 +336,9 @@ export async function changeBikeState(bikeId, newState)
     })
 } 
 
-export async function retireBike(bikeId)
+export async function deactivateBike(bikeId, newState)
 {
-    let changeStatePromise = changeBikeState(bikeId, "retired")
+    let changeStatePromise = changeBikeState(bikeId, newState)
     let installedComponents =await getDocs(query(collection(getFirestore(firebaseApp), "components"), where("bike", "==", doc(getFirestore(firebaseApp), "bikes", bikeId))))
     //uninstall all components from bike
     let promises = installedComponents.docs.map( async component => {
@@ -403,10 +420,19 @@ export async function updateBikeAndComponentsStatsAtDate(date, distance, rideTim
 }
 export async function addRide(data)
 {
-    let addRidePromise = addDoc(collection(getFirestore(firebaseApp), "rides"), data)
+
     if(data.bike)
     {
+        let bikeDoc : any= ((await getDoc(data.bike)).data())
+        if(bikeDoc.purchaseDate.toDate() > data.date)
+        {
+            throw new Error("Can not assing bike which has later purchase date than ride date")
+        }
+    }
 
+    let addRidePromise = addDoc(collection(getFirestore(firebaseApp), "rides"), data)
+    if(data.bike)
+    {  
         let updateStatsPromise = updateBikeAndComponentsStatsAtDate(data.date, data.distance, data.rideTime, data.bike)
         return Promise.all([addRidePromise, updateStatsPromise])
     }
@@ -594,4 +620,4 @@ export async function connectAccWithStrava(tokens, user) {
         }
       })
   }
-  
+

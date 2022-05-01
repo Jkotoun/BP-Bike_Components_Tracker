@@ -73,8 +73,9 @@ const Styles = StyleSheet.create({
         padding: 5,
     },
     textContainer: {
-        flex: 0.8,
-        padding: 15
+        flex: 0.65,
+        paddingLeft: 10,
+        paddingTop:5
     },
     mainText: {
         fontSize: 12,
@@ -91,13 +92,13 @@ const Styles = StyleSheet.create({
         fontSize: 12
     },
     imageContainer: {
-        flex: 0.3,
-        padding: 10,
-        paddingRight: 20
+        flex: 0.35,
+        padding: 5,
+        paddingRight: 25
     },
     imageStyles: {
-        width: 80,
-        height: 80
+        width: 108,
+        height: 81
     },
     menu: {
         flex: 1,
@@ -111,7 +112,8 @@ const Styles = StyleSheet.create({
     },
     contentContainer: {
         display: 'flex',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        padding:3
 
     }
 })

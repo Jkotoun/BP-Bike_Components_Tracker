@@ -72,7 +72,7 @@ export default function AddWearRecordScreen({ navigation, route }) {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       allowsMultipleSelection:true,
-      aspect: [16, 9],
+      aspect: [4, 3],
       quality: 0.5,
     });
 
@@ -176,8 +176,8 @@ export default function AddWearRecordScreen({ navigation, route }) {
                 label='Component image (optional)'
               />
             </TouchableOpacity>
-            <View style={{padding:8, width:'100%', height:200}}>
-            {image && <Image source={{ uri: image.uri }} style={{ width: '100%', height:'100%' }} />}
+            <View style={styles.imgContainer}>
+            {image && <Image style={styles.imgStyles} source={{ uri: image.uri }}  />}
             </View>
 
           </ScrollView >
@@ -190,6 +190,16 @@ export default function AddWearRecordScreen({ navigation, route }) {
 
 
 const styles = StyleSheet.create({
+  imgContainer:
+  {
+    flexDirection:'row',
+    padding:8
+  },
+  imgStyles:{
+    resizeMode: 'contain',
+    flex: 1,
+    aspectRatio: 1 // Your aspect ratio
+  },
   mainContainer: {
     flex: 1,
     alignItems: 'center',
