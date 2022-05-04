@@ -15,7 +15,7 @@ import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Button} from 'react-native-paper'
 import Toast from 'react-native-simple-toast';
 import { formatDateTime } from '../modules/helpers';
-
+import {getUsersActiveBikes} from '../modules/firestoreActions'
 export default function AddRideScreen({ navigation, route }) {
   const isFocused = useIsFocused();
   const [rideDate, setRideDate] = useState(new Date());
@@ -46,7 +46,7 @@ export default function AddRideScreen({ navigation, route }) {
   React.useEffect(() => {
     setIsLoaded(false)
     let bikesArray = []
-      getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("user", "==", doc(getFirestore(firebaseApp), "users", User.uid)), where("state","==", "active"))).then(bikesDocRef => {
+    getUsersActiveBikes(User.uid).then(bikesDocRef => {
         bikesDocRef.forEach(bike => {
           bikesArray.push({
             label: bike.data().name,
@@ -55,7 +55,7 @@ export default function AddRideScreen({ navigation, route }) {
         })
         setBikes(bikesArray)
       }).then(()=>{
-
+        //if existing ride is being edited
         if (route.params && route.params.rideId) {
           getRide(route.params.rideId)
           .then(rideDoc=> {
@@ -106,7 +106,7 @@ export default function AddRideScreen({ navigation, route }) {
         throw new Error("Date of ride cant be in future")
       }
       data.rideTime = rideTime.getHours()*60*60 + rideTime.getMinutes()*60
-      
+      //checks if new ride is being added or existing is edited
       if(route.params && route.params.rideId)
       {
         updateRide(rideToEdit, data, route.params.rideId)

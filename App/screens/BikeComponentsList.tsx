@@ -27,7 +27,6 @@ export default function BikeComponentsList({ navigation, route }) {
   const isFocused = useIsFocused();
 
   React.useEffect(() => {
-
     setIsLoaded(false)
     loadComponents(route.params.bikeId).then((componentsArray) => {
       setComponents(componentsArray)
@@ -35,6 +34,7 @@ export default function BikeComponentsList({ navigation, route }) {
     })
 
   }, [isFocused])
+  
   const [components, setComponents] = React.useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
 

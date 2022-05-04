@@ -77,7 +77,9 @@ export default function AddBikeScreen({ navigation, route }) {
       }
       data.type = bikeTypes.find(biketype => biketype.value == data.type)
       data.purchaseDate = purchaseDate
+      //convert time to seconds
       data.initialRideTime = Number(data.initialRideTime) * 60 * 60
+      //convert ride distance to meters
       data.initialRideDistance = Number(data.initialRideDistance) * 1000
       data.user = doc(getFirestore(firebaseApp), "users", auth.currentUser.uid)
       
@@ -329,9 +331,6 @@ export default function AddBikeScreen({ navigation, route }) {
               defaultValue={bikeToEdit.initialRideTime != undefined ? (bikeToEdit.initialRideTime/3600).toString(): ""}
             />
             {errors.initialRideTime && <Text style={styles.errorMessage}>{errors.initialRideTime.message}</Text>}
-            {/* <View style={{ padding: 20, width: "100%" }}>
-              <Button color={"#F44336"} title="Submit" disabled={!isValid} onPress={handleSubmit(onSubmit)} />
-            </View> */}
           </ScrollView >
         </View>
       </View>

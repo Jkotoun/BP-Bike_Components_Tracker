@@ -15,11 +15,11 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Checkbox } from 'react-native-paper';
 import { getAuth } from 'firebase/auth';
 import Toast from 'react-native-simple-toast';
-import ComponentDetails from './ComponentDetails';
 
 
 
 const auth = getAuth(firebaseApp)
+
 async function loadComponents(loggedUser, viewRetired) {
   let componentsArray = []  
   let componentsStateQuery = ["active"]
@@ -64,6 +64,30 @@ export default function AllComponentsListScreen({ navigation, route }) {
     })
   }
 
+  //confirm dialog for delete option
+  const [showBox, setShowBox] = React.useState(true);
+  const showConfirmDialog = (componentId, componentName) => {
+    return Alert.alert(
+      "Are your sure?",
+      "Are you sure you want to delete component " + componentName + " ?",
+      [
+        {
+          text: "Yes",
+          onPress: () => {
+            setShowBox(false);
+            deleteComponent(componentId).then(() =>
+            setIsLoaded(false))
+          },
+        },
+        {
+          text: "No",
+        },
+      ]
+    );
+  };
+
+
+
 
   const [request, response, promptAsync] = stravaAuthReq()
   // connect account with strava on authorization success
@@ -88,6 +112,7 @@ export default function AllComponentsListScreen({ navigation, route }) {
 
   const [viewRetiredChecked, setviewRetiredChecked] = React.useState(false);
 
+  //set options to menu in stack header 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -115,9 +140,6 @@ export default function AllComponentsListScreen({ navigation, route }) {
             }
             style={Styles.menuOption} />
 
-            {/* {!(isStravaUser(User)) &&
-              <MenuOption onSelect={() => { promptAsync() }} text={"Connect to Strava"} style={Styles.menuOption} />
-            } */}
             {isStravaUser(User) && 
             <MenuOption onSelect={() =>
               runStravaSync()
@@ -132,7 +154,7 @@ export default function AllComponentsListScreen({ navigation, route }) {
 
 
 
-  //bikes loading
+  //components loading
   React.useEffect(() => {
       loadComponents(User, viewRetiredChecked).then((componentsArray) => {
         setComponents(componentsArray)
@@ -156,29 +178,7 @@ export default function AllComponentsListScreen({ navigation, route }) {
   };
 
 
-  const [showBox, setShowBox] = React.useState(true);
-  const showConfirmDialog = (componentId, componentName) => {
-    return Alert.alert(
-      "Are your sure?",
-      "Are you sure you want to delete component " + componentName + " ?",
-      [
-        // The "Yes" button
-        {
-          text: "Yes",
-          onPress: () => {
-            setShowBox(false);
-            deleteComponent(componentId).then(() =>
-            setIsLoaded(false))
-          },
-        },
-        // The "No" button
-        // Does nothing but dismiss the dialog when tapped
-        {
-          text: "No",
-        },
-      ]
-    );
-  };
+
   if (!isLoaded || isSyncing) {
     return (
       <View style={Styles.loadContainer}>
@@ -222,9 +222,7 @@ export default function AllComponentsListScreen({ navigation, route }) {
                   text: "Delete",
                   onPress: () => {
                     showConfirmDialog(component.id, component.name)
-                  }}
-                  
-                
+                  }} 
               ]
               if(component.state=="active")
               {

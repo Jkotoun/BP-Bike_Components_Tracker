@@ -14,17 +14,15 @@ async function loadComponent(componentId) {
 
 export default function ComponentDetails({ route }) {
 
-
   React.useEffect(() => {
-
     loadComponent(route.params.componentId).then((component) => {
       setComponent(component)
       setIsLoaded(true)
     })
   }, [])
+
   const [component, setComponent] = React.useState(Object);
   const [isLoaded, setIsLoaded] = React.useState(false);
-
 
   if (!isLoaded) {
     return (

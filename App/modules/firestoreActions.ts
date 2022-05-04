@@ -1,7 +1,7 @@
 
 
 import firebaseApp from '../config/firebase';
-import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteField, increment, addDoc, orderBy, DocumentReference, deleteDoc } from 'firebase/firestore';
+import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteField, increment, addDoc, orderBy, DocumentReference, deleteDoc, setDoc } from 'firebase/firestore';
 import { getAllBikes, getStravaGear, getAllActivities } from './stravaApi';
 import { getAuth } from 'firebase/auth';
 import { getStorage, getDownloadURL, ref, deleteObject } from 'firebase/storage';
@@ -792,5 +792,26 @@ export async function connectAccWithStrava(tokens, user) {
         }
       })
   }
+
+/**
+ * 
+ * @param userId id of user owning bikes
+ * @returns users active bikes
+ */
+export async function getUsersActiveBikes(userId)
+{
+    return getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("user", "==", doc(getFirestore(firebaseApp), "users", userId)), where("state","==", "active")))
+}
+
+
+/**
+ * sets users firestore document to userData
+ * @param userId id of user
+ * @param userData new user data
+ * @returns setdoc promise
+ */
+export async function saveUserData(userId, userData) {
+    return setDoc(doc(getFirestore(firebaseApp), "users", userId), userData);
+}
 
 

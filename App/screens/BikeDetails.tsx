@@ -14,17 +14,16 @@ async function loadBike(bikeId) {
 export default function BikeDetails({ route }) {
 
   React.useEffect(() => {
-
     loadBike(route.params.bikeId).then((bike) => {
       setBike(bike)
       setIsLoaded(true)
     })
   }, [])
+
   const [bike, setBike] = React.useState(Object);
   const [isLoaded, setIsLoaded] = React.useState(false);
 
 
-  
   if (!isLoaded) {
     return (
  

@@ -79,7 +79,9 @@ export default function AddComponentScreen({ navigation, route }) {
   const onSubmit = data => {
     setisSubmitting(true)
     data.type = componentTypes.find(biketype => biketype.value == data.type)
+    //time to seconds
     data.initialRideTime = Number(data.initialRideTime) * 60 * 60
+    //distance to meters
     data.initialRideDistance = Number(data.initialRideDistance) * 1000
     data.user = doc(getFirestore(firebaseApp), "users", auth.currentUser.uid)
 

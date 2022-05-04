@@ -1,6 +1,5 @@
 
 import * as React from 'react';
-import { Text} from 'react-native';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -8,17 +7,12 @@ import RidesListScreen from "./RidesListScreen"
 import RideDetail from "./RideDetail"
 import {Button} from 'react-native-paper'
 import AddRideScreen from './AddRideScreen';
-import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 import Close from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebaseApp from '../config/firebase'
 import { getAuth } from 'firebase/auth';
-import { useNavigationState } from '@react-navigation/native';
 
-import activeScreenName from '../modules/helpers';
+
 const auth = getAuth(firebaseApp)
-
-
-
 export default function RidesListStack({ navigation }) {
  
   const Stack = createNativeStackNavigator();

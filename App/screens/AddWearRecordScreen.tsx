@@ -16,7 +16,7 @@ async function AddWearRecord(formData, image, componentId){
   formData.date = new Date()
   formData.rideDistance = componentRef.data().rideDistance + componentRef.data().initialRideDistance 
   formData.rideTime = componentRef.data().rideTime + componentRef.data().initialRideTime
-
+  //upload image if user set any
   if(image)
   {
     let filename = image.uri.substring(image.uri.lastIndexOf('/')+1);
@@ -27,7 +27,7 @@ async function AddWearRecord(formData, image, componentId){
    return addDoc(collection(getFirestore(firebaseApp), "componentWearRecords"), formData)
 }
 
-
+//upload image to cloud storage
 async function uploadImageAsync(uri, filename) {
   const blob: any = await new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();

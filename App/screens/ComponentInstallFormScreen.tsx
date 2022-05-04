@@ -36,6 +36,7 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
   let submit = () =>{
     setisSubmitting(true)
     getDoc(doc(getFirestore(firebaseApp), "bikes", route.params.bikeId)).then((bike)=>{
+      //date is set as since purchase or custom selected
       let installationDate = checked == "default" ?  bike.data().purchaseDate.toDate() : date 
       installComponent(route.params.componentId, route.params.bikeId, installationDate)
       .then(() => {

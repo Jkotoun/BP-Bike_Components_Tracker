@@ -22,9 +22,10 @@ function stackHeaderVisible(state) {
 
 
 export default function ComponentTabs({ route, navigation }) {
+  
   const navigationState = useNavigationState(state => state);
 
-
+  //set stack header visibility
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: stackHeaderVisible(navigationState),

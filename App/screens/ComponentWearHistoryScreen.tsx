@@ -1,7 +1,7 @@
 
 import * as React from 'react';
 import { View, Alert, StyleSheet, Text, ActivityIndicator, Button, ScrollView } from 'react-native';
-import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, orderBy, deleteDoc} from 'firebase/firestore';
+import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, orderBy, deleteDoc } from 'firebase/firestore';
 import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import WearRecordCard from '../components/WearRecordCard';
@@ -9,13 +9,13 @@ import { FAB } from 'react-native-paper';
 import { formatDate, formatDateTime, rideDistanceToString, rideSecondsToString } from "../modules/helpers"
 import { NavigationContainer, useIsFocused } from "@react-navigation/native";
 import { getStorage, getDownloadURL, ref, deleteObject } from 'firebase/storage';
-import {deleteWearRecord} from '../modules/firestoreActions'
+import { deleteWearRecord } from '../modules/firestoreActions'
 
 
+//load wear reacords and its images from cloud storage
 async function loadWearRecords(componentId) {
   let wearRecordsArray = []
   let wearRecordsDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "componentWearRecords"), where("component", "==", doc(getFirestore(firebaseApp), "components", componentId)), orderBy('date', 'desc')))
-
 
   wearRecordsDocRef.forEach(wearRecord => {
     let wearRecordData = wearRecord.data()
@@ -26,7 +26,6 @@ async function loadWearRecords(componentId) {
 
   for (let i = 0; i < wearRecordsArray.length; i++) {
     if (wearRecordsArray[i].image) {
-
       wearRecordsArray[i].image = await getDownloadURL(ref(getStorage(firebaseApp), wearRecordsArray[i].image))
     }
   }
@@ -47,30 +46,28 @@ export default function ComponentWearHistoryScreen({ route, navigation }) {
   }, [isFocused, isLoaded])
   const [wearRecords, setWearRecords] = React.useState([]);
 
+  //delete confirm dialog
   const [showBox, setShowBox] = React.useState(true);
-
   const showConfirmDialog = (wearRecordId) => {
     return Alert.alert(
       "Are your sure?",
       "Are you sure you want to delete wear record ",
       [
-
         {
           text: "Yes",
           onPress: () => {
             setShowBox(false);
             deleteWearRecord(wearRecordId).then(() =>
-            setIsLoaded(false))
+              setIsLoaded(false))
           },
         },
-
         {
           text: "No",
         },
       ]
     );
   };
-  
+
 
   if (!isLoaded) {
     return (
@@ -93,24 +90,21 @@ export default function ComponentWearHistoryScreen({ route, navigation }) {
       <View style={styles.mainContainer}>
         <ScrollView>
           <View style={styles.cardsContainer}>
-          {wearRecords.length == 0 && <Text style={{padding:20, fontSize:17, fontWeight:'700'}}>No component wear records found</Text>}
+            {wearRecords.length == 0 && <Text style={{ padding: 20, fontSize: 17, fontWeight: '700' }}>No component wear records found</Text>}
 
-          {wearRecords.map(wearRecord => {
-            const wearRecordOptions = [
-              {
-                text: "Delete",
-                onPress: () => {
-                  showConfirmDialog(wearRecord.id)
+            {wearRecords.map(wearRecord => {
+              const wearRecordOptions = [
+                {
+                  text: "Delete",
+                  onPress: () => {
+                    showConfirmDialog(wearRecord.id)
+                  }
                 }
-              }
-                  
-            ]
-            
-            return <WearRecordCard maintext={rideDistanceToString(wearRecord.rideDistance) + ", " + rideSecondsToString(wearRecord.rideTime)}   options={wearRecordOptions} date={formatDate(wearRecord.date.toDate())}
-              description={wearRecord.description} image={wearRecord.image ? wearRecord.image : null} /> 
-          })}
+              ]
+              return <WearRecordCard maintext={rideDistanceToString(wearRecord.rideDistance) + ", " + rideSecondsToString(wearRecord.rideTime)} options={wearRecordOptions} date={formatDate(wearRecord.date.toDate())}
+                description={wearRecord.description} image={wearRecord.image ? wearRecord.image : null} />
+            })}
           </View>
-
 
         </ScrollView>
         <View style={styles.addButtonContainer}>
@@ -134,7 +128,7 @@ export default function ComponentWearHistoryScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    
+
   },
   addButtonContainer: {
     position: 'absolute',
@@ -152,7 +146,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  cardsContainer:{
-    alignItems:'center'
+  cardsContainer: {
+    alignItems: 'center'
   }
 })

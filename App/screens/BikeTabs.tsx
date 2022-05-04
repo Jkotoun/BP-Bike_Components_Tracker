@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { AuthenticatedUserContext} from '../../context' 
+import { AuthenticatedUserContext } from '../../context'
 import BikeComponentsStack from './BikeComponentsStack';
 import BikeComponentsHistoryScreen from './BikeComponentsHistoryScreen';
 import BikeDetails from './BikeDetails';
@@ -18,14 +18,9 @@ function stackHeaderVisible(navigationState) {
 
 }
 
+export default function BikeTabs({ route, navigation }) {
 
-
-
-export default function BikeTabs({route, navigation}) {
-
-
-
-
+  //set stack header title
   React.useLayoutEffect(() => {
     navigation.setOptions({
       title: route.params.bikeName
@@ -33,37 +28,37 @@ export default function BikeTabs({route, navigation}) {
   }, []);
   const navigationState = useNavigationState(state => state);
 
-
+  //set stack header visibility
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: stackHeaderVisible(navigationState)
-  
+
     });
   }, [navigationState]);
 
 
   return (
     <Tab.Navigator
-    screenOptions={() => ({
-      headerStyle: {
-        backgroundColor: '#F44336'
-      },
-      headerShown: true,
-      headerTitleStyle: {
-        color: 'white'
-      }, 
-      tabBarActiveTintColor: 'white',
-      tabBarInactiveTintColor: '#fbb4af',
-      tabBarIndicatorContainerStyle:{backgroundColor: "#F44336"},
-      tabBarIndicatorStyle: {backgroundColor: 'white'},
+      screenOptions={() => ({
+        headerStyle: {
+          backgroundColor: '#F44336'
+        },
+        headerShown: true,
+        headerTitleStyle: {
+          color: 'white'
+        },
+        tabBarActiveTintColor: 'white',
+        tabBarInactiveTintColor: '#fbb4af',
+        tabBarIndicatorContainerStyle: { backgroundColor: "#F44336" },
+        tabBarIndicatorStyle: { backgroundColor: 'white' },
 
-    
-    })}>
 
-      <Tab.Screen name="Components" initialParams={{bikeId: route.params.bikeId}}component={BikeComponentsStack} />
-      <Tab.Screen name="History" initialParams={{bikeId: route.params.bikeId}} component={BikeComponentsHistoryScreen} />
-      <Tab.Screen name="Bike Details"  initialParams={{bikeId: route.params.bikeId}} component={BikeDetails} />
+      })}>
+
+      <Tab.Screen name="Components" initialParams={{ bikeId: route.params.bikeId }} component={BikeComponentsStack} />
+      <Tab.Screen name="History" initialParams={{ bikeId: route.params.bikeId }} component={BikeComponentsHistoryScreen} />
+      <Tab.Screen name="Bike Details" initialParams={{ bikeId: route.params.bikeId }} component={BikeDetails} />
     </Tab.Navigator>
 
-   );
+  );
 } 

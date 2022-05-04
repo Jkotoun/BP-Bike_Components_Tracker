@@ -17,10 +17,10 @@ import { getAuth } from 'firebase/auth';
 
 const auth = getAuth(firebaseApp)
 
+//load all rides and bike reference doc
 async function loadRides(loggedUser) {
   let ridesArray = []
   let ridesDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "rides"), where("user", "==", doc(getFirestore(firebaseApp), "users", loggedUser.uid)), orderBy('date', "desc")))
-
   ridesDocRef.forEach(ride => {
     let rideData = ride.data()
     rideData.id = ride.id
@@ -35,6 +35,8 @@ async function loadRides(loggedUser) {
   const ridesWithBikeObj = await Promise.all(promises)
   return ridesWithBikeObj
 }
+
+
 
 
 export default function BikesListScreen({ navigation, route }) {
@@ -63,22 +65,21 @@ export default function BikesListScreen({ navigation, route }) {
   const [request, response, promptAsync] = stravaAuthReq()
   // connect account with strava on authorization success
   React.useEffect(() => {
-
     if (response?.type === 'success') {
       try {
+        //check scopes
         let authResponseScopes = response.params.scope.split(',')
         let requiredScopes = ["activity:read_all", "profile:read_all"]
         if (!requiredScopes.every(scope => authResponseScopes.includes(scope))) {
           throw new Error("Authorization failed, permission to activities or profile info denied")
         }
         const { code } = response.params;
+        //add strava api access tokens to database and update user react context
         getTokens(code).then(tokens => {
           return connectAccWithStrava(tokens, User)
         }).then(() => {
-
           return getLoggedUserData()
         }).then((loggedUserData) => {
-
           let currentUser = getAuth().currentUser
           setIsLoggedIn(false)
           setUser({ ...loggedUserData, ...currentUser })
@@ -92,17 +93,14 @@ export default function BikesListScreen({ navigation, route }) {
     }
   }, [response]);
 
+
+  //set stack header menu options
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <Menu>
           <MenuTrigger text={<Icon name="dots-vertical" size={25} color="#ffffff" />} />
           <MenuOptions>
-
-            {/* {!(isStravaUser(User)) &&
-              <MenuOption onSelect={() => { promptAsync() }} text={"Connect to Strava"} style={styles.menuOption} />
-            } */}
-
             {(isStravaUser(User) && <MenuOption onSelect={() =>
               runStravaSync()
             } text={"Resync strava"} style={styles.menuOption} />)}
@@ -122,15 +120,17 @@ export default function BikesListScreen({ navigation, route }) {
     })
 
   }, [isFocused, isLoaded])
+
   const [rides, setRides] = React.useState([]);
 
+
+  //ride delete confirm dialog
   const [showBox, setShowBox] = React.useState(true);
   const showConfirmDialog = (rideId, rideName) => {
     return Alert.alert(
       "Are your sure?",
       "Are you sure you want to delete ride " + rideName + " ?",
       [
-        // The "Yes" button
         {
           text: "Yes",
           onPress: () => {
@@ -139,8 +139,6 @@ export default function BikesListScreen({ navigation, route }) {
               setIsLoaded(false))
           },
         },
-        // The "No" button
-        // Does nothing but dismiss the dialog when tapped
         {
           text: "No",
         },
@@ -172,7 +170,6 @@ export default function BikesListScreen({ navigation, route }) {
 
             {rides.map(ride => {
 
-
               let infoObj = {
                 "Distance": rideDistanceToString(ride.distance),
                 "Total time": rideSecondsToString(ride.rideTime),
@@ -180,7 +177,6 @@ export default function BikesListScreen({ navigation, route }) {
               }
 
               if (ride.stravaSynced) {
-
                 return <Card title={ride.name} stravaIcon={true} description2={"Bike: " + (ride.bike ? ride.bike.name : "not assigned")} icon={images.route} displayInfo={infoObj} onPress={() => {
                   navigation.navigate('RideDetail', {
                     rideId: ride.id,
@@ -189,7 +185,6 @@ export default function BikesListScreen({ navigation, route }) {
                 }} />
               }
               else {
-
                 const rideOptions = [
                   {
                     text: "Edit",
@@ -205,8 +200,8 @@ export default function BikesListScreen({ navigation, route }) {
                       showConfirmDialog(ride.id, ride.name)
                     }
                   }
-
                 ]
+                
                 return <Card key={ride.id} options={rideOptions} title={ride.name} description2={"Bike: " + (ride.bike ? ride.bike.name : "not assigned")} icon={images.route} displayInfo={infoObj} onPress={() => {
                   navigation.navigate('RideDetail', {
                     rideId: ride.id,

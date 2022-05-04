@@ -6,17 +6,9 @@ import { Headline } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 import { getFirestore, setDoc, doc } from 'firebase/firestore';
-
-
+import {saveUserData} from '../modules/firestoreActions'
 
 const auth = getAuth(firebaseApp)
-function saveUserData(userId, userData) {
-  setDoc(doc(getFirestore(firebaseApp), "users", userId), {
-    username: userData.username,
-    stravaAuth: false,
-    stravaConnected: false
-  });
-}
 
 
 export default function RegisterScreen({ navigation }) {
@@ -26,8 +18,13 @@ export default function RegisterScreen({ navigation }) {
   const onSubmit = async (data) => {
 
     setisRegistering(true)
+    //create fire auth account and save user data to firestore
     if (data.password == data.password_repeat) {
-      createUserWithEmailAndPassword(auth, data.email, data.password).then(userObj => saveUserData(userObj.user.uid, data))
+      createUserWithEmailAndPassword(auth, data.email, data.password).then(userObj => saveUserData(userObj.user.uid, {
+        username: data.username,
+        stravaAuth: false,
+        stravaConnected: false
+      }))
       .then(()=>setisRegistering(false))
       .catch((error)=>{
         if(error.code == "auth/weak-password")
@@ -147,7 +144,6 @@ export default function RegisterScreen({ navigation }) {
         />
         {errors.password_repeat?.type == 'required' && <Text style={{ color: "white" }}>Password again is required</Text>}
         {errors.password_repeat?.type == 'submit_error'  && <Text style={{ color: "white" }}>{errors.password_repeat.message}</Text>}
-
 
         <TouchableOpacity style={styles.submit} onPress={handleSubmit(onSubmit)}>
          

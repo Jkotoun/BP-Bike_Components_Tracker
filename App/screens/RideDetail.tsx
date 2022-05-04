@@ -14,7 +14,6 @@ async function loadRide(rideId) {
   let rideObj = rideDocRef.data()
   if (rideObj.bike) {
     rideObj.bike = (await getDoc(rideObj.bike)).data()
-
   }
   return rideObj
 }
@@ -22,13 +21,13 @@ async function loadRide(rideId) {
 
 export default function RideDetail({ route, navigation }) {
   const isFocused = useIsFocused();
+  const [ride, setRide] = React.useState(Object);
+  const [isLoaded, setIsLoaded] = React.useState(false);
 
-
-
+  //set stack header title to ride name
   React.useLayoutEffect(() => {
     navigation.setOptions({
       title: route.params.rideName
-
     });
   }, []);
 
@@ -38,8 +37,8 @@ export default function RideDetail({ route, navigation }) {
       setIsLoaded(true)
     })
   }, [isFocused])
-  const [ride, setRide] = React.useState(Object);
-  const [isLoaded, setIsLoaded] = React.useState(false);
+
+
   if (!isLoaded) {
     return (<View style={styles.loadContainer}>
 

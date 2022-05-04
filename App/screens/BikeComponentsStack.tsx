@@ -28,13 +28,9 @@ export default function BikesListStack({ navigation, route }) {
 
 
   const Stack = createNativeStackNavigator();
-
-
-
   const navigationState = useNavigationState(state => state);
 
-
-
+  //set tab bar visibility
   React.useLayoutEffect(() => {
     navigation.setOptions({
       tabBarStyle: {

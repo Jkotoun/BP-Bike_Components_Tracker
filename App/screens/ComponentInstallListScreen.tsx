@@ -7,6 +7,8 @@ import { AuthenticatedUserContext } from '../../context'
 import { useIsFocused } from "@react-navigation/native";
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where } from 'firebase/firestore';
 import {rideSecondsToString, rideDistanceToString} from '../modules/helpers'
+
+//load components, which are not installed on any bike
 async function loadComponents(loggedUser) {
   let componentsArray = []
   let componentsDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "components"), where("user", "==", doc(getFirestore(firebaseApp), "users", loggedUser.uid)), where("state", "==", "active")))
@@ -26,9 +28,8 @@ async function loadComponents(loggedUser) {
 export default function ComponentInstallListScreen({ navigation }) {
   const isFocused = useIsFocused();
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
-  //bikes loading
+  
   React.useEffect(() => {
-
     loadComponents(User).then((componentsArray) => {
       setComponents(componentsArray)
       setIsLoaded(true)

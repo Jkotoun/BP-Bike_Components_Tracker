@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { Alert, Text, View} from 'react-native';
+import { Alert, Text, View } from 'react-native';
 import { Button, Colors } from "react-native-paper"
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BikeTabs from "./BikeTabs"
@@ -22,30 +22,25 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const auth = getAuth(firebaseApp)
 
 export default function BikesListStack({ navigation, route }) {
-
-
+  
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
-
-
-
-
   const Stack = createNativeStackNavigator();
+
+
   return (
+
     <Stack.Navigator initialRouteName="BikeListScreen" screenOptions={({ route }) => ({
       headerStyle: {
         backgroundColor: '#F44336',
       },
-
       headerShadowVisible: false,
-     
-
       animation: 'none',
       headerTintColor: '#ffffff',
 
     })}>
 
       <Stack.Group>
-        <Stack.Screen name="BikesListScreen" initialParams={{ viewRetired: true}} options={{
+        <Stack.Screen name="BikesListScreen" initialParams={{ viewRetired: true }} options={{
           title: "Bikes",
         }} component={BikesListScreen} />
       </Stack.Group>
@@ -62,10 +57,8 @@ export default function BikesListStack({ navigation, route }) {
 
             </Menu>
           ),
-
-
-
         }} component={BikeTabs} />
+
         <Stack.Screen name='AddBikeScreen'
           options={{
             title: "Add bike",

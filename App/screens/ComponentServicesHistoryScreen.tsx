@@ -9,12 +9,8 @@ import { useIsFocused } from "@react-navigation/native";
 import {formatDate, rideDistanceToString, rideSecondsToString} from "../modules/helpers"
 
 
-
 async function loadServiceRecords(componentId) {
-  let serviceRecordsArray = []
   let serviceRecordsDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "componentServiceRecords"), where("component", "==", doc(getFirestore(firebaseApp), "components", componentId))))
-
-
   return serviceRecordsDocRef.docs
 }
 
@@ -23,10 +19,11 @@ export default function ComponentServicesHistoryScreen({navigation, route }) {
   const [priceTotal, setPriceTotal] = React.useState(Number);
   const [isLoaded, setIsLoaded] = React.useState(false);
   const isFocused = useIsFocused();
+  
   React.useEffect(() => {
-
     loadServiceRecords(route.params.componentId).then((wearRecordsArray) => {
       setServiceRecords(wearRecordsArray)
+      //calculate sum of service prices
       let priceTotal = wearRecordsArray.reduce((a, b) => a + (b.data()['price'] || 0), 0)
       setPriceTotal(priceTotal)
       setIsLoaded(true)
@@ -34,8 +31,8 @@ export default function ComponentServicesHistoryScreen({navigation, route }) {
   }, [isFocused, isLoaded])
 
 
+  //confirm dialog for delete
   const [showBox, setShowBox] = React.useState(true);
-
   const showConfirmDialog = (serviceRecordRef) => {
     return Alert.alert(
       "Are your sure?",

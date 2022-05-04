@@ -32,32 +32,31 @@ export default function ComponentUninstallFormScreen({ navigation, route }) {
     const submit = () => {
         setisSubmitting(true)
         uninstallComponent(route.params.bikeId, route.params.componentId, date)
-            .then(() => { 
+            .then(() => {
                 setisSubmitting(false)
                 navigation.navigate("BikeComponentsList")
-             })
-            .catch((error) => 
-            {
+            })
+            .catch((error) => {
                 setisSubmitting(false)
                 Toast.show(error.message)
             })
     }
 
+    //set submit action on check icon click and loading animation when submitting
     React.useLayoutEffect(() => {
         navigation.setOptions({
             headerRight: () => {
-                if(isSubmitting)
-                {
-                  return <ActivityIndicator color="white" style={{paddingRight:20}} />
+                if (isSubmitting) {
+                    return <ActivityIndicator color="white" style={{ paddingRight: 20 }} />
                 }
-                else
-                {                    
+                else {
                     return <Button theme={{ colors: { primary: 'black' } }} onPress={() => submit()}><Check name="check" size={24} color="white" /></Button>
                 }
             }
 
         });
     }, [navigation, date, isSubmitting]);
+    
     return (
         <View>
             <View style={styles.contentContainer}>
@@ -91,8 +90,8 @@ const styles = StyleSheet.create({
     },
     formTitle: {
         color: "#000000",
-        fontSize:17,
-        fontWeight:'700'
+        fontSize: 17,
+        fontWeight: '700'
     },
     selectedDateContainer: {
         borderWidth: 1,

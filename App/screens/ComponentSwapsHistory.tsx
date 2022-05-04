@@ -10,7 +10,7 @@ import { deleteComponentSwapRecord } from '../modules/firestoreActions'
 import { formatDateTime } from '../modules/helpers';
 
 
-
+//load component installation records and its references
 async function loadComponentSwaps(componentId) {
     let component = await getDocs(query(collection(getFirestore(firebaseApp), "bikesComponents"), where("component", "==", doc(getFirestore(firebaseApp), "components", componentId)), orderBy("installTime", "desc")))
     let componentsArray = []
@@ -20,14 +20,10 @@ async function loadComponentSwaps(componentId) {
         compData.id = comp.id
         compData.ref = comp.ref
         compData.installTime = compData.installTime
-
-
         componentsArray.push(compData)
-
     })
 
     const promises = componentsArray.map(async comp => {
-
         comp.bikeDoc = (await getDoc(comp.bike))
         comp.componentDoc = (await getDoc(comp.component))
         return comp
@@ -39,7 +35,6 @@ async function loadComponentSwaps(componentId) {
 export default function ComponentSwapsHistory({ route }) {
 
     const isFocused = useIsFocused();
-
     const [componentSwapRecords, setComponentSwapRecords] = React.useState(Array);
     const [isLoaded, setIsLoaded] = React.useState(true);
     React.useEffect(() => {
@@ -51,34 +46,31 @@ export default function ComponentSwapsHistory({ route }) {
 
     const [showBox, setShowBox] = React.useState(true);
 
+    //delete confirm dialog
     const showConfirmDialog = (wearRecordId) => {
-      return Alert.alert(
-        "Are your sure?",
-        "Are you sure you want to delete wear record ",
-        [
-  
-          {
-            text: "Yes",
-            onPress: () => {
-              setShowBox(false);
-              deleteComponentSwapRecord(wearRecordId).then(() =>
-              setIsLoaded(false))
-            },
-          },
-  
-          {
-            text: "No",
-          },
-        ]
-      );
+        return Alert.alert(
+            "Are your sure?",
+            "Are you sure you want to delete wear record ",
+            [
+                {
+                    text: "Yes",
+                    onPress: () => {
+                        setShowBox(false);
+                        deleteComponentSwapRecord(wearRecordId).then(() =>
+                            setIsLoaded(false))
+                    },
+                },
+                {
+                    text: "No",
+                },
+            ]
+        );
     };
 
     if (!isLoaded) {
         return (
             <View style={styles.loadContainer}>
-
                 <ActivityIndicator size="large" color="#F44336" />
-
             </View>
         )
     }
@@ -87,8 +79,7 @@ export default function ComponentSwapsHistory({ route }) {
             <View style={styles.mainContainer}>
                 <ScrollView>
                     <View style={styles.cardsContainer}>
-                        {componentSwapRecords.length == 0 && <Text style={{padding:20, fontSize:17, fontWeight:'700'}}>No component installations found</Text>}
-                        
+                        {componentSwapRecords.length == 0 && <Text style={{ padding: 20, fontSize: 17, fontWeight: '700' }}>No component installations found</Text>}
                         {componentSwapRecords.map((componentSwapRecord: any) => {
                             const swapRecordOptions = [
                                 {
@@ -99,8 +90,6 @@ export default function ComponentSwapsHistory({ route }) {
                                 }
 
                             ]
-                            
-
                             return <ComponentSwapCard options={swapRecordOptions} maintext={componentSwapRecord.bikeDoc.data() ? componentSwapRecord.bikeDoc.data().name : "Deleted bike"}
                                 installationDateString={componentSwapRecord.installTime.toDate().getTime() == 0 ? "Since purchase" : formatDateTime(componentSwapRecord.installTime.toDate())}
                                 uninstallationDateString={componentSwapRecord.uninstallTime ? formatDateTime(componentSwapRecord.uninstallTime.toDate()) : "Currently installed"} />
@@ -141,7 +130,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
-    cardsContainer:{
+    cardsContainer: {
         alignItems: 'center',
     }
 

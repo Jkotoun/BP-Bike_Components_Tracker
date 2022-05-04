@@ -8,7 +8,7 @@ import firebaseApp from '../config/firebase';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc } from 'firebase/firestore';
 import * as stravaApi from '../modules/stravaApi';
 import { makeRedirectUri, useAuthRequest, exchangeCodeAsync } from 'expo-auth-session';
-import { changeBikeState, deactivateBike,  getLoggedUserData ,connectAccWithStrava, syncDataWithStrava  } from "../modules/firestoreActions";
+import { changeBikeState, deactivateBike, getLoggedUserData, connectAccWithStrava, syncDataWithStrava } from "../modules/firestoreActions";
 import { useIsFocused } from "@react-navigation/native";
 import { rideSecondsToString, rideDistanceToString } from '../modules/helpers';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
@@ -17,67 +17,60 @@ import { Checkbox } from 'react-native-paper';
 import { getAuth } from 'firebase/auth';
 import Toast from 'react-native-simple-toast';
 
-import {isStravaUser, stravaAuthReq, getTokens} from '../modules/stravaApi';
+import { isStravaUser, stravaAuthReq, getTokens } from '../modules/stravaApi';
 const auth = getAuth(firebaseApp)
 
 
 export default function BikesListScreen({ navigation, route }) {
-
-    
   const [isSyncing, setIsSyncing] = React.useState(false)
 
-  function runStravaSync()
-  {
+  function runStravaSync() {
     setIsSyncing(true)
     syncDataWithStrava(User, setUser).then(() => {
       setIsSyncing(false)
       setIsLoaded(false)
     })
-    .catch((error)=>{
-      console.log(error)
-      Toast.show("Strava synchronization failed")
-      setIsSyncing(false)
-
-    })
+      .catch((error) => {
+        console.log(error)
+        Toast.show("Strava synchronization failed")
+        setIsSyncing(false)
+      })
   }
 
 
   const [request, response, promptAsync] = stravaAuthReq()
+  
   // connect account with strava on authorization success
   React.useEffect(() => {
     if (response?.type === 'success') {
-      console.log(response)
-      try
-      {
-      let authResponseScopes = response.params.scope.split(',')
-      let requiredScopes = ["activity:read_all", "profile:read_all"]
-      if(!requiredScopes.every(scope => authResponseScopes.includes(scope)))
-      {
-         throw new Error("Authorization failed, permission to activities or profile info denied")          
-      }
-      const { code } = response.params;
-      getTokens(code).then(tokens => {
-        return connectAccWithStrava(tokens, User)
-      }).then(() => {
-       
-        return getLoggedUserData()
-      }).then((loggedUserData) => {
+      try {
+        let authResponseScopes = response.params.scope.split(',')
+        let requiredScopes = ["activity:read_all", "profile:read_all"]
+        if (!requiredScopes.every(scope => authResponseScopes.includes(scope))) {
+          throw new Error("Authorization failed, permission to activities or profile info denied")
+        }
+        const { code } = response.params;
+        getTokens(code).then(tokens => {
+          return connectAccWithStrava(tokens, User)
+        }).then(() => {
+
+          return getLoggedUserData()
+        }).then((loggedUserData) => {
 
           let currentUser = getAuth().currentUser
           setIsLoggedIn(false)
-          setUser({...loggedUserData, ...currentUser })
+          setUser({ ...loggedUserData, ...currentUser })
           setIsLoggedIn(true)
         })
       }
-      catch(error)
-      {
+      catch (error) {
         Toast.show(error.message, Toast.LONG);
       }
-      }
+    }
   }, [response]);
 
   const [viewRetiredChecked, setviewRetiredChecked] = React.useState(false);
-
+  //set stack header menu options
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -86,28 +79,24 @@ export default function BikesListScreen({ navigation, route }) {
           <MenuOptions>
             <MenuOption onSelect={() => {
               setviewRetiredChecked(!viewRetiredChecked);
-            }} 
-            text={
-              <>
-                <View style={{ flexDirection: 'column' }}>
-                  <View style={{ flexDirection: 'row' }}>
-                    <Checkbox
-                      color={'#F44336'}
-                      status={viewRetiredChecked ? 'checked' : 'unchecked'}
-                      onPress={() => {
-                        setviewRetiredChecked(!viewRetiredChecked);
-                      }}
-                    />
-                    <Text style={{ marginTop: 7.5 }}> View retired</Text>
+            }}
+              text={
+                <>
+                  <View style={{ flexDirection: 'column' }}>
+                    <View style={{ flexDirection: 'row' }}>
+                      <Checkbox
+                        color={'#F44336'}
+                        status={viewRetiredChecked ? 'checked' : 'unchecked'}
+                        onPress={() => {
+                          setviewRetiredChecked(!viewRetiredChecked);
+                        }}
+                      />
+                      <Text style={{ marginTop: 7.5 }}> View retired</Text>
+                    </View>
                   </View>
-                </View>
-              </>
-            }
-            style={styles.menuOption} />
-{/* 
-            {!(isStravaUser(User)) &&
-              <MenuOption onSelect={()=>promptAsync()} text={"Connect to Strava"} style={styles.menuOption} />
-            } */}
+                </>
+              }
+              style={styles.menuOption} />
 
             {(isStravaUser(User) && <MenuOption onSelect={() =>
               runStravaSync()
@@ -123,18 +112,10 @@ export default function BikesListScreen({ navigation, route }) {
 
 
 
-
-
-
-
   navigation.navigationOptions = {}
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
   const [isLoaded, setIsLoaded] = React.useState(false);
-  //strava auth request
-
   const isFocused = useIsFocused();
-
-
 
   //bikes loading
   React.useEffect(() => {
@@ -154,9 +135,9 @@ export default function BikesListScreen({ navigation, route }) {
     })
   }, [isFocused, isLoaded, viewRetiredChecked])
   const [bikes, setBikes] = React.useState([]);
-  
-  
-  
+
+
+
   const images = {
     mtb: require("../assets/images/mtbht.png"),
     road: require("../assets/images/road_icon.png"),
@@ -164,23 +145,21 @@ export default function BikesListScreen({ navigation, route }) {
     other: require("../assets/images/other_bike.png")
   };
 
+  //confirm dialog for bike delete
   const [showBox, setShowBox] = React.useState(true);
   const showConfirmDialog = (bikeId, bikeName) => {
     return Alert.alert(
       "Are your sure?",
       "Are you sure you want to delete bike " + bikeName + " ?",
       [
-        // The "Yes" button
         {
           text: "Yes",
           onPress: () => {
             setShowBox(false);
             deactivateBike(bikeId, "deleted").then(() =>
-            setIsLoaded(false))
+              setIsLoaded(false))
           },
         },
-        // The "No" button
-        // Does nothing but dismiss the dialog when tapped
         {
           text: "No",
         },
@@ -191,10 +170,10 @@ export default function BikesListScreen({ navigation, route }) {
   if (!isLoaded || isSyncing) {
     return (
       <View style={styles.loadContainer}>
-          <StatusBar backgroundColor="#F44336" />
+        <StatusBar backgroundColor="#F44336" />
 
         <ActivityIndicator size="large" color="#F44336" />
-        {isSyncing && <Text style={{color:'#F44336', fontSize:16, fontWeight:'700'}}>Syncing strava data</Text>}
+        {isSyncing && <Text style={{ color: '#F44336', fontSize: 16, fontWeight: '700' }}>Syncing strava data</Text>}
         <View style={styles.addButtonContainer}>
           <FAB
             style={styles.addButton}
@@ -265,7 +244,7 @@ export default function BikesListScreen({ navigation, route }) {
                   })
                 }
 
-                return <Card  key={bike.bikeId} options={bikeOptions} active={bike.state == "active"} title={bike.state == "active" ? bike.name : (bike.name + " - retired")} description={bike.type.label} icon={images[bike.type.value]} displayInfo={{
+                return <Card key={bike.bikeId} options={bikeOptions} active={bike.state == "active"} title={bike.state == "active" ? bike.name : (bike.name + " - retired")} description={bike.type.label} icon={images[bike.type.value]} displayInfo={{
                   "Distance": rideDistanceToString(bike.initialRideDistance + bike.rideDistance),
                   "Ride Time": rideSecondsToString(bike.rideTime + bike.initialRideTime)
                 }} onPress={() => {
@@ -282,16 +261,16 @@ export default function BikesListScreen({ navigation, route }) {
 
           </View>
         </ScrollView>
-          
-          {!isStravaUser(User) &&
+
+        {!isStravaUser(User) &&
           <View style={styles.stravaConnectContainer}>
-          <TouchableOpacity onPress={() => {
-            promptAsync({useProxy:true});
-          }}>
-            <Image source={require('../assets/images/btn_strava_connectwith_light.png')} />
-          </TouchableOpacity>
+            <TouchableOpacity onPress={() => {
+              promptAsync({ useProxy: true });
+            }}>
+              <Image source={require('../assets/images/btn_strava_connectwith_light.png')} />
+            </TouchableOpacity>
           </View>}
-        
+
         <View style={styles.addButtonContainer}>
           <FAB
             style={styles.addButton}
@@ -307,10 +286,10 @@ export default function BikesListScreen({ navigation, route }) {
 }
 
 const styles = {
-  stravaConnectContainer:{
-    margin:10, 
-    justifyContent:'center', 
-    alignItems:'center'
+  stravaConnectContainer: {
+    margin: 10,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   mainContainer: {
     flex: 1
