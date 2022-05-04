@@ -6,8 +6,6 @@ import { useState } from "react";
 import { getFirestore, addDoc,getDoc, collection, doc } from 'firebase/firestore';
 import * as firestorage from 'firebase/storage';
 import firebaseApp from '../config/firebase';
-import { getAuth } from 'firebase/auth';
-import { useIsFocused } from "@react-navigation/native";
 import * as ImagePicker from 'expo-image-picker';
 import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Button} from 'react-native-paper'
@@ -27,9 +25,6 @@ async function AddWearRecord(formData, image, componentId){
   }
 
    return addDoc(collection(getFirestore(firebaseApp), "componentWearRecords"), formData)
-
-  
-//  return 
 }
 
 
@@ -58,12 +53,8 @@ async function uploadImageAsync(uri, filename) {
 
 
 export default function AddWearRecordScreen({ navigation, route }) {
-  
-  const isFocused = useIsFocused();
-  const auth = getAuth(firebaseApp)
   const [isLoaded, setisLoaded] = useState(true)
   const [isSubmitting, setisSubmitting] = useState(false);
-
   const [image, setImage] = useState(null);
 
   const pickImage = async () => {
@@ -101,9 +92,6 @@ export default function AddWearRecordScreen({ navigation, route }) {
     });
   }, [navigation, image, isSubmitting]);
 
-
-
-
   const { control, register, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'all' });
 
   const onSubmit = data => {
@@ -123,8 +111,6 @@ export default function AddWearRecordScreen({ navigation, route }) {
     )
   }
   else {
-
-
     return (
       <View style={styles.mainContainer}>
         <View style={styles.formContainer}>
@@ -160,10 +146,6 @@ export default function AddWearRecordScreen({ navigation, route }) {
               defaultValue={""}
             />
             {errors.description && <Text style={styles.errorMessage}>{errors.description.message}</Text>}
-
-
-          
-
             <TouchableOpacity onPress={pickImage}>
               <TextInput
                 theme={{ colors: { primary: '#F44336' } }}
@@ -198,7 +180,7 @@ const styles = StyleSheet.create({
   imgStyles:{
     resizeMode: 'contain',
     flex: 1,
-    aspectRatio: 1 // Your aspect ratio
+    aspectRatio: 1
   },
   mainContainer: {
     flex: 1,

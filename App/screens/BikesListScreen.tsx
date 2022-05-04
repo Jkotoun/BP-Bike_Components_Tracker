@@ -33,7 +33,8 @@ export default function BikesListScreen({ navigation, route }) {
       setIsSyncing(false)
       setIsLoaded(false)
     })
-    .catch(()=>{
+    .catch((error)=>{
+      console.log(error)
       Toast.show("Strava synchronization failed")
       setIsSyncing(false)
 
@@ -45,11 +46,14 @@ export default function BikesListScreen({ navigation, route }) {
   // connect account with strava on authorization success
   React.useEffect(() => {
     if (response?.type === 'success') {
+      console.log(response)
       try
       {
-      if(response.params.scope != "activity:read_all,profile:read_all,read")
+      let authResponseScopes = response.params.scope.split(',')
+      let requiredScopes = ["activity:read_all", "profile:read_all"]
+      if(!requiredScopes.every(scope => authResponseScopes.includes(scope)))
       {
-        throw new Error("Authorization failed, permission to activities or profile informations denied")
+         throw new Error("Authorization failed, permission to activities or profile info denied")          
       }
       const { code } = response.params;
       getTokens(code).then(tokens => {
@@ -282,7 +286,7 @@ export default function BikesListScreen({ navigation, route }) {
           {!isStravaUser(User) &&
           <View style={styles.stravaConnectContainer}>
           <TouchableOpacity onPress={() => {
-            promptAsync();
+            promptAsync({useProxy:true});
           }}>
             <Image source={require('../assets/images/btn_strava_connectwith_light.png')} />
           </TouchableOpacity>

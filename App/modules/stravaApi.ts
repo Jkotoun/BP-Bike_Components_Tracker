@@ -1,17 +1,24 @@
 import axios from 'axios';
-import * as React from 'react';
 import { makeRedirectUri, useAuthRequest, exchangeCodeAsync, refreshAsync, RefreshTokenRequestConfig } from 'expo-auth-session';
 import Constants from 'expo-constants';
-import { AuthenticatedUserContext } from '../../context'
 import {updateUserStravaTokens, getLoggedUserData} from "./firestoreActions"
 import { getAuth } from 'firebase/auth';
 
+/**
+ * checks if user has account connected to strava
+ * @param User user data from db
+ * @returns boolean saying if user has account connected to strava
+ */
 export function isStravaUser(User)
 {
   return User.stravaAuth || User.stravaConnected
 }
 
-
+/**
+ * Checks if users strava api access token has expired
+ * @param User User data from db
+ * @returns boolean saying if token has expired
+ */
 function tokenExpired(User)
 {
   if(isStravaUser(User))
@@ -24,6 +31,12 @@ function tokenExpired(User)
   }
 }
 
+/**
+ * refresh users access token and stores it to db
+ * @param User React context user state object
+ * @param setUser react context user state setter function
+ * @returns new refresh and access tokens
+ */
 export async function refreshAccessToken(User,setUser: Function )
 {
   const tokens = await refreshAsync(
@@ -51,17 +64,19 @@ export async function refreshAccessToken(User,setUser: Function )
   return updatedStravaInfo
 }
 
-
+/**
+ * 
+ * @returns authentication request instance
+ */
 export function stravaAuthReq()
 {
-  
     return useAuthRequest(
     {
       clientId: Constants.manifest.extra.stravaClientId,
       scopes: ['profile:read_all,activity:read_all'],
        redirectUri: makeRedirectUri({
         native: "bikecomponentsmanager://redirect",
-        useProxy:false
+        useProxy:true
       })
     },
     {
@@ -74,13 +89,18 @@ export function stravaAuthReq()
 
 
 
-
+/**
+ * 
+ * @param authCode autorization token
+ * @returns access token, its expiration and refresh token
+ */
 export async function getTokens(authCode) {
     const tokens = await exchangeCodeAsync(
       {
         clientId: Constants.manifest.extra.stravaClientId,
         redirectUri: makeRedirectUri({
-            native: "bikecomponentsmanager://redirect"
+            native: "bikecomponentsmanager://redirect",
+            useProxy:true
           }),
         code: authCode,
         extraParams: {
@@ -96,6 +116,9 @@ export async function getTokens(authCode) {
   
   }
 
+  /**
+   * get logged athlete data from strava api
+   */
 export function getCurrentlyAuthorizedAthlete(accessToken)
 {
   return axios.get('https://www.strava.com/api/v3/athlete', {
@@ -114,7 +137,13 @@ export function getCurrentlyAuthorizedAthlete(accessToken)
 })
 }
 
-
+/**
+ * Generic strava api request
+ * @param User React context user state object
+ * @param setUser react context user state setter function
+ * @param path strava api endpoint relative path
+ * @returns request response
+ */
 async function stravaApiRequest(User, setUser, path)
 {
   if(isStravaUser)
@@ -146,18 +175,34 @@ async function stravaApiRequest(User, setUser, path)
     throw new Error("Strava api request failed, logged user has not connected account to strava")
   }
 }
-
+/**
+ * 
+ * @param User React context user state object
+ * @param setUser react context user state setter function
+ * @returns all logged users strava activites
+ */
 export async function getAllActivities(User, setUser)
 {
   return stravaApiRequest(User, setUser, "athlete/activities")
   
 }
-
+/**
+ * 
+ * @param User React context user state object
+ * @param setUser react context user state setter function
+ * @returns get logged user strava info
+ */
 export async function getAthlete(User, setUser: Function)
 {
   return stravaApiRequest(User, setUser, "athlete")
 }
 
+/**
+ * 
+ * @param User React context user state object
+ * @param setUser react context user state setter function
+ * @returns logged user strava bikes
+ */
 export async function getAllBikes(User, setUser)
 {
   let athlete = await getAthlete(User, setUser)
@@ -165,7 +210,13 @@ export async function getAllBikes(User, setUser)
 }
 
 
-
+/**
+ * 
+ * @param bikeStravaId bike strava id
+ * @param User React context user state object
+ * @param setUser react context user state setter function
+ * @returns strava bike detail info
+ */
 export async function getStravaGear(bikeStravaId, User, setUser)
 {
   return stravaApiRequest(User, setUser, ("gear/" +bikeStravaId))

@@ -54,6 +54,16 @@ interface stravaRide extends ride
 }
 
 
+interface stravaInfo
+{
+    accessToken: string,
+    accessTokenExpiration: Date,
+    refreshToken: string
+}
+
+/**
+ * @returns Promise object with users rides, which were imported from Strava api
+ */
 export async function getAllStravaSyncedRides()
 {
     return getDocs(
@@ -64,39 +74,68 @@ export async function getAllStravaSyncedRides()
             )
         )
 }
+
+/**
+ * 
+ * @param User React context user state object
+ * @param setUser react context user state setter function
+ * @returns rides from strava api
+ */
 export async function getAllStravaRides(User, setUser)
 {
     let activities = (await getAllActivities(User, setUser))
     return activities.filter(activity => activity.type == "Ride")
 }
 
-export async function updateUserStravaTokens(stravaInfo)
+
+/**
+ * Update user strava api access object
+ * @param stravaInfo strava api access data object (access token, refresh token, access token expiration) 
+ * @returns firestore doc update promise
+ */
+export async function updateUserStravaTokens(stravaInfo: stravaInfo)
 {
     return updateDoc(doc(getFirestore(firebaseApp), "users", getAuth().currentUser.uid), 
     {
         "stravaInfo": stravaInfo
     })
 }
-
+/**
+ * 
+ * @returns Authenticated user data
+ */
 export async function getLoggedUserData()
 {
     return (await getDoc(doc(getFirestore(firebaseApp), "users", getAuth().currentUser.uid))).data()
 }
 
-
+/**
+ * 
+ * @returns users bikes which were immported from strava api
+ */
 export async function getAllStravaSyncedBikes()
 {
     let authUser = getAuth(firebaseApp)
     return getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("stravaSynced", "==", true), where("user", "==", doc(getFirestore(firebaseApp), "users", authUser.currentUser.uid))))
 }
 
-
+/**
+ * Updates bike document with new data
+ * @param bikeRef bike firestore document reference
+ * @param data object with new bike data 
+ * @returns firestore document update promise
+ */
 export async function updateBike(bikeRef, data: bike)
 {
     return updateDoc(bikeRef, data)
 }
 
 
+/**
+ * Parses strava api gear to strava bike object
+ * @param gearData gear object retrieved from Strava api
+ * @returns strava bike object
+ */
 function gearDataToBikeDoc(gearData):stravaBike
 {
     let stravaBikeTypesMapping  ={
@@ -132,7 +171,12 @@ function gearDataToBikeDoc(gearData):stravaBike
     return bike
 }
 
-
+/**
+ * Synchronizes bikes in database with bikes retrieved from Strava api
+ * @param User React context user state object
+ * @param setUser react context user state setter function
+ * @returns synchronization Promise
+ */
 async function syncBikes(User, setUser)
 {
     let syncedBikes = (await getAllStravaSyncedBikes()).docs
@@ -140,15 +184,13 @@ async function syncBikes(User, setUser)
     
     let promises = stravaBikes.map(async stravaBike => {
         let gearData = await getStravaGear(stravaBike["id"], User, setUser)
-        //exists in both, update data except rideTime and distance
         let syncedBike = syncedBikes.find(bike => bike.data().stravaId && bike.data().stravaId == gearData.id);
+        //check if bike from strava is in db
         if(syncedBike)
         {
             updateBike(syncedBike.ref, gearDataToBikeDoc(gearData))
-            //remove bike from list
-            // syncedBikes = syncedBikes.filter(bike => bike.data().stravaId != gearData.id)
         }
-        else //bike exists in strava, does not exist in db
+        else
         {
             let bikeDocData: stravaBike = {
                 ...gearDataToBikeDoc(gearData),
@@ -171,7 +213,11 @@ async function syncBikes(User, setUser)
     })
     return Promise.all(bikeRetirePromises)
 }
-
+/**
+ * Parse ride from strava api to stravaRide object
+ * @param activity activity retrieved from strava API
+ * @returns stravaRide object
+ */
 function stravaActivityToRide(activity) : stravaRide
 {
     let ride : stravaRide = {
@@ -191,11 +237,14 @@ function stravaActivityToRide(activity) : stravaRide
     return ride    
 }
 
-export async function updateRide(oldRideData: any, newRideData: ride, rideId)
+/**
+ * Updates ride and recalculates mileage and ride time of components and bikes related with ride
+ * @param oldRideData An object with old ride data
+ * @param newRideData An object with new ride data
+ * @param rideId ID of ride to update
+ */
+export async function updateRide(oldRideData: ride, newRideData: ride, rideId)
 {
-
-
-
     if(oldRideData.bike != newRideData.bike && newRideData.bike)
     {
         let bikeDoc : any= ((await getDoc(newRideData.bike)).data())
@@ -229,7 +278,12 @@ export async function updateRide(oldRideData: any, newRideData: ride, rideId)
 }
 
 
-
+/**
+ * Synchronizes rides in database with rides retrieved from Strava api
+ * @param User React context user state object
+ * @param setUser react context user state setter function
+ * @returns Rides synchronization promise
+ */
 async function syncRides(User, setUser)
 {
 
@@ -238,11 +292,13 @@ async function syncRides(User, setUser)
 
     
     let promises = stravaRides.map(async stravaRide => {
+        
         let syncedRide = syncedRides.find(ride => ride.data().stravaId && ride.data().stravaId == stravaRide.id);
+        //check if ride from strava is in DB
         if(syncedRide)
         {
             let newRide: stravaRide = await stravaActivityToRide(stravaRide)
-            let oldRide = syncedRide.data()
+            let oldRide = syncedRide.data() as stravaRide
             if(!oldRide.bike)
             {
                 oldRide.bike = null
@@ -253,9 +309,7 @@ async function syncRides(User, setUser)
                     where("stravaId", "==", stravaRide.gear_id), 
                     where("user", "==", doc(getFirestore(firebaseApp), "users", getAuth().currentUser.uid))))).docs[0].ref
             }
-            
-
-            //gear id
+            //update ride if some property has changed
             if(oldRide.distance != newRide.distance || 
                 oldRide.name != newRide.name || 
                 (oldRide.bike == null && newRide.bike !=null || oldRide.bike != null && newRide.bike == null || oldRide.bike != null && newRide.bike != null && oldRide.bike.id != newRide.bike.id))
@@ -273,11 +327,10 @@ async function syncRides(User, setUser)
                     where("user", "==", doc(getFirestore(firebaseApp), "users", getAuth().currentUser.uid))))).docs[0].ref
             }
             await addRide(ride)
-        //     //not in DB, add to db and add kms to components
         }
     } )
     await Promise.all(promises)
-
+    //delete rides, which are in db but not in Strava anymore
     let rideDeletePromises = syncedRides.map(async syncedRide => {
         if(!(stravaRides.some(stravaRide => stravaRide.id == syncedRide.data().stravaId)))
         {
@@ -287,6 +340,11 @@ async function syncRides(User, setUser)
     return Promise.all(rideDeletePromises)
 }
 
+/**
+ * calls bikes and rides synchronization
+ * @param User React context user state object
+ * @param setUser react context user state setter function
+ */
 export async function syncDataWithStrava(User, setUser: Function)
 {
     await syncBikes(User, setUser)
@@ -295,12 +353,22 @@ export async function syncDataWithStrava(User, setUser: Function)
 
 
 
-
+/**
+ * 
+ * @param data Object with new bike data
+ * @returns bike add doc promise
+ */
 export async function addBike(data: bike)
 {
     return addDoc(collection(getFirestore(firebaseApp), "bikes"), data)
 }
 
+
+/**
+ * Delete component and component swap records
+ * @param componentId id of component to delete
+ * @returns promise
+ */
 export async function deleteComponent(componentId)
 {
     let componentSwapRecords = await getDocs(query(collection(getFirestore(firebaseApp), "bikesComponents"), where("component", "==", doc(getFirestore(firebaseApp), "components", componentId))))
@@ -309,7 +377,12 @@ export async function deleteComponent(componentId)
     return Promise.all([deleteSwapsPromises, deleteCompPromise])
     
 } 
-
+/**
+ * Changes component state
+ * @param componentId id of component to change state
+ * @param newState new state of component
+ * @returns update doc promise
+ */
 export async function changeComponentState(componentId, newState)
 {
     return updateDoc(doc(getFirestore(firebaseApp), "components", componentId), {
@@ -317,7 +390,10 @@ export async function changeComponentState(componentId, newState)
     })
 } 
 
-//change component state and uninstall from bike if installed on any
+/**
+ * change component state to retired and uninstall from bike if installed on any 
+ * @param componentId id of component to set as retired
+ */
 export async function retireComponent(componentId)
 {
     let componentToDelete = await getDoc(doc(getFirestore(firebaseApp), "components", componentId))
@@ -328,14 +404,24 @@ export async function retireComponent(componentId)
     }
 }
 
-
+/**
+ * change bike state 
+ * @param bikeId id of bike to change state
+ * @param newState new state of bike
+ * @returns update doc promise
+ */
 export async function changeBikeState(bikeId, newState)
 {
     return updateDoc(doc(getFirestore(firebaseApp), "bikes", bikeId), {
         state: newState
     })
 } 
-
+/**
+ * sets bike to new state and uninstalls all components from it
+ * @param bikeId id of bike to deactivate
+ * @param newState new state of bike
+ * @returns promise
+ */
 export async function deactivateBike(bikeId, newState)
 {
     let changeStatePromise = changeBikeState(bikeId, newState)
@@ -347,11 +433,16 @@ export async function deactivateBike(bikeId, newState)
     return Promise.all([changeStatePromise , promises])
 }
 
+
+/**
+ * 
+ * @param date date to find installed components for
+ * @param bikeDocRef firestore document reference to bike 
+ * @returns array of ids of components, which were installed on bike at specific date
+ */
 async function getInstalledComponentsAtDate(date, bikeDocRef)
 {    
     let swapsBeforeRideQuery = await getDocs(query(collection(getFirestore(firebaseApp), "bikesComponents"),where("bike", "==", bikeDocRef), where("installTime", "<", date)))
-    
-    
     let swapsBeforeRide = []
 
     //copy data to array
@@ -364,7 +455,6 @@ async function getInstalledComponentsAtDate(date, bikeDocRef)
         swapRecord.component = (await getDoc(swapRecord.component))
     })
     await Promise.all(promises)
-
 
     let installedComponents = {}
     //filter components, which were installed at rideDate date and time
@@ -387,7 +477,12 @@ async function getInstalledComponentsAtDate(date, bikeDocRef)
     })
     return Object.keys(installedComponents)
 }
-
+/**
+ * Increments mileage and ride time of components by given values (can be negative number too)
+ * @param distance distance in meters to add
+ * @param rideTime ride time in seconds to add
+ * @param componentRef component doc reference to add stats to
+ */
 export async function incrementComponentDistanceAndTime(distance, rideTime, componentRef)
 {
     updateDoc(componentRef, {
@@ -396,7 +491,13 @@ export async function incrementComponentDistanceAndTime(distance, rideTime, comp
     })
 }
 
-
+/**
+ * Increments mileage and ride time of bike by given values (can be negative number too)
+ * @param distance  distance in meters to add
+ * @param rideTime  ride time in seconds to add
+ * @param bikeRef bike doc reference to add stats to
+ * @returns 
+ */
 async function incrementBikeStats(distance, rideTime, bikeRef)
 {
     return updateDoc(bikeRef, {
@@ -405,7 +506,14 @@ async function incrementBikeStats(distance, rideTime, bikeRef)
     })
 }
 
-//filters components, which were installed at given date and updates their stats by incrementing rideTime and distance
+/**
+ * filters components, which were installed on bike at given date and updates their stats by incrementing rideTime and distance 
+ * @param date date to check installed components for
+ * @param distance distance in meters to add
+ * @param rideTime ride time in seconds to add
+ * @param bikeRef reference to bike doc
+ * @returns promise
+ */
 export async function updateBikeAndComponentsStatsAtDate(date, distance, rideTime, bikeRef)
 {
     incrementBikeStats(distance, rideTime,bikeRef)
@@ -418,7 +526,13 @@ export async function updateBikeAndComponentsStatsAtDate(date, distance, rideTim
 
     return Promise.all([componentsEditPromises])    
 }
-export async function addRide(data)
+
+/**
+ * add new ride and update components and bikes stats
+ * @param data ride data
+ * @returns promise
+ */
+export async function addRide(data: ride)
 {
 
     if(data.bike)
@@ -441,7 +555,11 @@ export async function addRide(data)
         return addRidePromise
     }
 }
-
+/**
+ * Delete ride and update components and bikes stats
+ * @param rideId id of ride to delete
+ * @returns promise
+ */
 export async function deleteRide(rideId)
 {
     let rideToDelete = await getDoc(doc(getFirestore(firebaseApp), "rides", rideId))
@@ -462,7 +580,13 @@ export async function deleteRide(rideId)
 }
 
 
-
+/**
+ * Uninstall component from bike and update bike and components state based on time of uninstallation
+ * @param bikeId id of bike to uninstall component from
+ * @param componentId id of component to uninstall
+ * @param uninstallTime time to uninstall component at. default value is current time
+ * @returns promise
+ */
 export async function uninstallComponent(bikeId, componentId, uninstallTime: Date = new Date()) {
   
     let bikeRef = doc(getFirestore(firebaseApp), "bikes", bikeId)
@@ -492,7 +616,16 @@ export async function uninstallComponent(bikeId, componentId, uninstallTime: Dat
         return Promise.all([addUninstallTime, removeBikeRef, decrementKmAndHours])
 }
 
-//increments stats (km and ride time) of component, computed from ridden km and hours on bike between 2 dates
+
+/**
+ * increments stats (km and ride time) of component, computed from ridden km and hours on certain bike between 2 dates 
+ * @param startDate start date of interval
+ * @param endDate end date of interval
+ * @param bikeRef reference to bike to count ridden km of
+ * @param componentRef component reference to update stats of
+ * @param multiplyConstant number to multiply mileage and ride time with (can be used to decrement stats instead of incrementing)
+ * @returns update doc promise
+ */
 export async function UpdateComponentsStats(startDate:Date, endDate:Date, bikeRef, componentRef, multiplyConstant = 1) {
     let rides = await getDocs(query(collection(getFirestore(firebaseApp), "rides"),
         where("bike", "==", bikeRef),
@@ -512,7 +645,13 @@ export async function UpdateComponentsStats(startDate:Date, endDate:Date, bikeRe
 }
 
 
-
+/**
+ * Install component to bike and update its stats
+ * @param componentId id of component to install
+ * @param bikeId id of bike to install component to
+ * @param installTime installation time, default is current time
+ * @returns promise
+ */
 export async function installComponent(componentId, bikeId, installTime: Date) {
 
     let componentSwaps = await getDocs(
@@ -551,33 +690,58 @@ export async function installComponent(componentId, bikeId, installTime: Date) {
       throw new Error("Component installations can't overlap")
     }
   }
-
+/**
+ * @param bikeId id of bike
+ * @returns promise
+ */
 export async function getBike(bikeId)
 {
     return getDoc(doc(getFirestore(firebaseApp), "bikes", bikeId))
 }
 
+/**
+ * 
+ * @param componentId  id of component
+ * @returns componentDoc
+ */
 export async function getComponent(componentId)
 {
     return getDoc(doc(getFirestore(firebaseApp), "components", componentId))
 }
 
-//interface component
+/**
+ * add new component
+ * @param data component data
+ * @returns promise
+ */
 export async function addComponent(data)
 {
     return addDoc(collection(getFirestore(firebaseApp), "components"), data)
 }
-
+/**
+ * Updates component
+ * @param componentRef component doc ref
+ * @param data new component data
+ * @returns promise
+ */
 export async function updateComponent(componentRef, data)
 {
     return updateDoc(componentRef, data)
 }
-
+/**
+ * 
+ * @param rideId id of ride
+ * @returns ride doc promise
+ */
 export async function getRide(rideId)
 {
     return getDoc(doc(getFirestore(firebaseApp), "rides", rideId))
 }
-
+/**
+ * Deletes wear record and image from cloud, if its linked to record
+ * @param wearRecordId id of wear record
+ * @returns delete promise
+ */
 export async function deleteWearRecord(wearRecordId)
 {
     let wearRecord = await getDoc(doc(getFirestore(firebaseApp), "componentWearRecords", wearRecordId))
@@ -592,7 +756,11 @@ export async function deleteWearRecord(wearRecordId)
       return deleteDoc(wearRecord.ref)
     }
 }
-
+/**
+ * Delete component installation record and update bike and components stats
+ * @param componentSwapRecordId id of installation record to delete
+ * @returns promise
+ */
 export async function deleteComponentSwapRecord(componentSwapRecordId)
 {
     let componentSwapRecord = await getDoc(doc(getFirestore(firebaseApp), "bikesComponents", componentSwapRecordId))
@@ -608,7 +776,11 @@ export async function deleteComponentSwapRecord(componentSwapRecordId)
         doc(getFirestore(firebaseApp), "bikes", componentSwapRecord.data().bike.id), doc(getFirestore(firebaseApp), "components", componentSwapRecord.data().component.id), -1)
     return Promise.all([deleteRecord, removeKmAndHours])
 }
-//add strava account info to firestore doc in users collection
+/**
+ * add strava account info to firestore doc in users collection 
+ * @param tokens object with strava api tokens
+ * @param user user to add data to
+ */
 export async function connectAccWithStrava(tokens, user) {
     updateDoc(doc(getFirestore(firebaseApp), "users", user.uid),
       {
@@ -620,4 +792,5 @@ export async function connectAccWithStrava(tokens, user) {
         }
       })
   }
+
 
