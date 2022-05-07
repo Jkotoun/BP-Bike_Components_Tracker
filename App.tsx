@@ -1,11 +1,11 @@
 import * as React from 'react';
-
+import { LogBox } from 'react-native';
 
 import { AuthenticatedUserProvider } from './context';
 import Root from './Root'
-
 export default function App() {
-  // if (initializing) return null;
+  //dont show warnings in app
+  LogBox.ignoreAllLogs();
 
   return (
     <AuthenticatedUserProvider>
