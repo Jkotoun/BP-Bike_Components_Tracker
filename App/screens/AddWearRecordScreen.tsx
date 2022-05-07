@@ -146,7 +146,7 @@ export default function AddWearRecordScreen({ navigation, route }) {
               defaultValue={""}
             />
             {errors.description && <Text style={styles.errorMessage}>{errors.description.message}</Text>}
-            <TouchableOpacity onPress={pickImage}>
+            <TouchableOpacity style={styles.imgInputTouchable} onPress={pickImage}>
               <TextInput
                 theme={{ colors: { primary: '#F44336' } }}
                 underlineColor="transparent"
@@ -182,19 +182,24 @@ const styles = StyleSheet.create({
     flex: 1,
     aspectRatio: 1
   },
+  imgInputTouchable:{
+    width:"100%",
+    alignItems:'center'
+  },
   mainContainer: {
     flex: 1,
     alignItems: 'center',
   },
   formContainer: {
-    paddingVertical: 15
+    paddingVertical: 15,
+    width:"90%"
   },
   input: {
     elevation: 5,
     borderRadius: 2,
     color: "black",
     backgroundColor: "#ffffff",
-    width: 335,
+    width: "98%",
     margin: 7,
   },
   submit_text: {
@@ -229,29 +234,3 @@ const styles = StyleSheet.create({
   }
 });
 
-const pickerStyles = {
-  inputIOS: {
-    elevation: 5,
-    borderRadius: 2,
-    color: "black",
-    backgroundColor: "#ffffff",
-    width: 335,
-    margin: 7,
-    padding: 30,
-  },
-  inputAndroid: {
-    elevation: 5,
-    borderRadius: 2,
-    color: "black",
-    backgroundColor: "#ffffff",
-    width: 335,
-    margin: 7,
-    padding: 30,
-
-  },
-  placeholder: {
-    color: "grey"
-  },
-
-
-}

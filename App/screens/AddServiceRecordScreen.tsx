@@ -152,14 +152,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   formContainer: {
-    paddingVertical: 15
+    paddingVertical: 15,
+    width:"90%"
   },
   input: {
     elevation: 5,
     borderRadius: 2,
     color: "black",
     backgroundColor: "#ffffff",
-    width: 335,
+    width: "98%",
     margin: 7,
   },
   submit_text: {
@@ -167,13 +168,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: "bold",
 
-  },
-  submit: {
-    backgroundColor: "#ffffff",
-    margin: 15,
-    width: 300,
-    padding: 10,
-    textAlign: 'center'
   },
   formHeader: {
     color: 'white',
@@ -184,7 +178,7 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     alignSelf: 'flex-start',
-    paddingLeft: 10,
+    paddingLeft: "1%",
     color: 'red'
   },
   loadContainer:{
@@ -194,29 +188,6 @@ const styles = StyleSheet.create({
   }
 });
 
-const pickerStyles = {
-  inputIOS: {
-    elevation: 5,
-    borderRadius: 2,
-    color: "black",
-    backgroundColor: "#ffffff",
-    width: 335,
-    margin: 7,
-    padding: 30,
-  },
-  inputAndroid: {
-    elevation: 5,
-    borderRadius: 2,
-    color: "black",
-    backgroundColor: "#ffffff",
-    width: 335,
-    margin: 7,
-    padding: 30,
-
-  },
-  placeholder: {
-    color: "grey"
-  },
 
 
-}
+

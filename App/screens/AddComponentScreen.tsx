@@ -116,11 +116,8 @@ export default function AddComponentScreen({ navigation, route }) {
   }
   else {
     return (
-      <View style={{
-        flex: 1,
-        alignItems: 'center',
-      }}>
-        <View style={{ paddingVertical: 15 }}>
+      <View style={styles.mainContainer}>
+        <View style={styles.formContainer}>
           <ScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={{
             alignItems: 'center',
           }}>
@@ -298,37 +295,32 @@ export default function AddComponentScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
+  mainContainer:{
+    flex: 1,
+    alignItems: 'center',
+  },
+  formContainer:{
+    paddingVertical: 15 ,
+    width:"90%"
+  },
   input: {
     elevation: 5,
     borderRadius: 2,
     color: "black",
     backgroundColor: "#ffffff",
-    width: 335,
+    width: "98%",
     margin: 7,
-  },
-  submit_text: {
-    color: "#F44336",
-    textAlign: 'center',
-    fontWeight: "bold",
-
-  },
-  submit: {
-    backgroundColor: "#ffffff",
-    margin: 15,
-    width: 300,
-    padding: 10,
-    textAlign: 'center'
   },
   formHeader: {
     color: 'white',
     fontWeight: 'bold',
     paddingVertical: 50,
     fontSize: 24,
-    textAlign: 'left'
+    textAlign: 'left',
   },
   errorMessage: {
     alignSelf: 'flex-start',
-    paddingLeft: 10,
+    paddingLeft: "1%",
     color: 'red'
   },
   loadContainer:{
@@ -343,8 +335,9 @@ const pickerStyle = {
     borderRadius: 2,
     color: "black",
     backgroundColor: "#ffffff",
-    width: 335,
-    margin: 7,
+    width:"98%",
+    marginVertical:7,
+    marginLeft:"1%",
     padding: 30,
   },
   inputAndroid: {
@@ -352,10 +345,10 @@ const pickerStyle = {
     borderRadius: 2,
     color: "black",
     backgroundColor: "#ffffff",
-    width: 335,
-    margin: 7,
+    width:"98%",
+    marginVertical:7,
+    marginLeft:"1%",
     padding: 30,
-
   },
   placeholder: {
     color: "grey"

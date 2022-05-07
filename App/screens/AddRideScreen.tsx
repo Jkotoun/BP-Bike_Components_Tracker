@@ -150,7 +150,7 @@ export default function AddRideScreen({ navigation, route }) {
   else {
     return (
       <View style={styles.mainContainer}>
-        <View style={{ paddingVertical: 15 }}>
+        <View style={styles.formContainer}>
           <ScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={{
             alignItems: 'center',
           }}>
@@ -250,7 +250,7 @@ export default function AddRideScreen({ navigation, route }) {
                 }}
               />
             )}
-            <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+            <TouchableOpacity style={styles.dateInputTouchable} onPress={() => setShowDatePicker(true)}>
               <TextInput
                 theme={{ colors: { primary: '#F44336' } }}
                 underlineColor="transparent"
@@ -281,7 +281,7 @@ export default function AddRideScreen({ navigation, route }) {
                 }}
               />
             )}
-            <TouchableOpacity onPress={() => setShowRideTimePicker(true)}>
+            <TouchableOpacity style={styles.dateInputTouchable} onPress={() => setShowRideTimePicker(true)}>
               <TextInput
                 theme={{ colors: { primary: '#F44336' } }}
                 underlineColor="transparent"
@@ -307,25 +307,20 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     color: "black",
     backgroundColor: "#ffffff",
-    width: 335,
+    width: "98%",
     margin: 7,
+  },
+  dateInputTouchable:{
+    width:"100%",
+    alignItems:'center'
+  },
+  formContainer:{
+    paddingVertical: 15,
+    width:"90%"
   },
   mainContainer: {
     flex: 1,
     alignItems: 'center',
-  },
-  submit_text: {
-    color: "#F44336",
-    textAlign: 'center',
-    fontWeight: "bold",
-
-  },
-  submit: {
-    backgroundColor: "#ffffff",
-    margin: 15,
-    width: 300,
-    padding: 10,
-    textAlign: 'center'
   },
   formHeader: {
     color: 'white',
@@ -336,7 +331,7 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     alignSelf: 'flex-start',
-    paddingLeft: 10,
+    paddingLeft: "1%",
     color: 'red'
   },
   loadContainer:{
@@ -351,8 +346,9 @@ const pickerStyle = {
     borderRadius: 2,
     color: "black",
     backgroundColor: "#ffffff",
-    width: 335,
-    margin: 7,
+    width:"98%",
+    marginVertical:7,
+    marginLeft:"1%",
     padding: 30,
   },
   inputAndroid: {
@@ -360,10 +356,10 @@ const pickerStyle = {
     borderRadius: 2,
     color: "black",
     backgroundColor: "#ffffff",
-    width: 335,
-    margin: 7,
+    width:"98%",
+    marginVertical:7,
+    marginLeft:"1%",
     padding: 30,
-
   },
   placeholder: {
     color: "grey"

@@ -252,7 +252,7 @@ export default function AddBikeScreen({ navigation, route }) {
 
 
 
-            <TouchableOpacity onPress={() => setShow(true)}>
+            <TouchableOpacity style={styles.dateInputTouchable} onPress={() => setShow(true)}>
               <TextInput
                 theme={{ colors: { primary: '#F44336' } }}
                 underlineColor="transparent"
@@ -346,29 +346,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   formContainer: {
-    paddingVertical: 15
+    paddingVertical: 15,
+    width:"90%"
   },
   input: {
     elevation: 5,
     borderRadius: 2,
     color: "black",
     backgroundColor: "#ffffff",
-    width: 335,
+    width: "98%",
     margin: 7,
   },
-  submit_text: {
-    color: "#F44336",
-    textAlign: 'center',
-    fontWeight: "bold",
+  dateInputTouchable:{
+    width:"100%",
+    alignItems:'center'
+  },
 
-  },
-  submit: {
-    backgroundColor: "#ffffff",
-    margin: 15,
-    width: 300,
-    padding: 10,
-    textAlign: 'center'
-  },
   formHeader: {
     color: 'white',
     fontWeight: 'bold',
@@ -378,7 +371,7 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     alignSelf: 'flex-start',
-    paddingLeft: 10,
+    paddingLeft: "1%",
     color: 'red'
   },
   loadContainer:{
@@ -394,8 +387,9 @@ const pickerStyles = {
     borderRadius: 2,
     color: "black",
     backgroundColor: "#ffffff",
-    width: 335,
-    margin: 7,
+    width:"98%",
+    marginVertical:7,
+    marginLeft:"1%",
     padding: 30,
   },
   inputAndroid: {
@@ -403,10 +397,10 @@ const pickerStyles = {
     borderRadius: 2,
     color: "black",
     backgroundColor: "#ffffff",
-    width: 335,
-    margin: 7,
+    width:"98%",
+    marginVertical:7,
+    marginLeft:"1%",
     padding: 30,
-
   },
   placeholder: {
     color: "grey"
