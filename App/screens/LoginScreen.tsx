@@ -108,6 +108,7 @@ export default function LoginScreen({ navigation }) {
     if (data.email !== '' && data.password !== '') {
       signInWithEmailAndPassword(auth, data.email, data.password).then(() => setisLoggingIn(false)).catch(() => {
         setError('password', { type: "authentication", message: "Wrong email or password" });
+        setisLoggingIn(false)
       });
     }
   }
@@ -185,7 +186,7 @@ export default function LoginScreen({ navigation }) {
 
           :
           <TouchableOpacity onPress={() => {
-            promptAsync({ useProxy: true });
+            promptAsync({ useProxy: true});
           }}>
             <Image source={require('../assets/images/btn_strava_connectwith_light.png')} />
           </TouchableOpacity>
