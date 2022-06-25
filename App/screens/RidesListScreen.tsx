@@ -215,7 +215,7 @@ export default function BikesListScreen({ navigation, route }) {
         {!isStravaUser(User) &&
           <View style={styles.stravaConnectContainer}>
             <TouchableOpacity onPress={() => {
-              promptAsync({ useProxy: true });
+              promptAsync();
             }}>
               <Image source={require('../assets/images/btn_strava_connectwith_light.png')} />
             </TouchableOpacity>

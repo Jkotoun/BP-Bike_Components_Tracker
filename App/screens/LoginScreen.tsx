@@ -186,7 +186,7 @@ export default function LoginScreen({ navigation }) {
 
           :
           <TouchableOpacity onPress={() => {
-            promptAsync({ useProxy: true});
+            promptAsync();
           }}>
             <Image source={require('../assets/images/btn_strava_connectwith_light.png')} />
           </TouchableOpacity>
