@@ -52,6 +52,7 @@ export default function ComponentInstallListScreen({ navigation }) {
     suspension: require("../assets/images/rear_suspension.png"),
     rim: require("../assets/images/rim.png"),
     tire: require("../assets/images/tire.png"),
+    seatpost: require("../assets/images/seatpost.png"),
     other: require("../assets/images/other_component.png"),    
   };
 

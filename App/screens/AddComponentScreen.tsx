@@ -25,7 +25,9 @@ export default function AddComponentScreen({ navigation, route }) {
     { label: 'Fork', value: 'fork' },
     { label: 'Rear suspension', value: 'suspension' },
     { label: 'Rim', value: 'rim' },
+    { label: 'Seatpost', value: 'seatpost' },
     { label: 'Tire', value: 'tire' },
+    
     { label: 'Other', value: 'other' }
   ]
   const [selectedLanguage, setSelectedLanguage] = useState();
