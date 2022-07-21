@@ -37,10 +37,16 @@ export default function ComponentDetails({ route }) {
     const componentInfo = {
       'Component Name': component.name,
       'Component type': component.type.label,
-      'Brand': component.brand,
-      'Model': component.model,
       'Distance': ((component.rideDistance+component.initialRideDistance)/1000).toFixed(2) + " km",
       'Ride Time':rideSecondsToString(component.rideTime + component.initialRideTime)
+    }
+    if(component.brand)
+    {
+      componentInfo['Brand'] = component.brand
+    }
+    if(component.model)
+    {
+      componentInfo['Model'] = component.model
     }
     return (
       <View style={styles.mainContainer}>

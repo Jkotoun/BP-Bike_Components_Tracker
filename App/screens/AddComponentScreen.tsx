@@ -175,12 +175,6 @@ export default function AddComponentScreen({ navigation, route }) {
             <Controller
 
               control={control}
-              rules={{
-                required: {
-                  value: true,
-                  message: "Brand is required"
-                }
-              }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
                   theme={{ colors: { primary: '#F44336' } }}
@@ -200,12 +194,6 @@ export default function AddComponentScreen({ navigation, route }) {
 
             <Controller
               control={control}
-              rules={{
-                required: {
-                  value: true,
-                  message: "Model is required"
-                }
-              }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
                   theme={{ colors: { primary: '#F44336' } }}
