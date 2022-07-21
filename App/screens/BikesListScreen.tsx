@@ -6,8 +6,6 @@ import { FAB } from 'react-native-paper';
 import { AuthenticatedUserContext } from '../../context'
 import firebaseApp from '../config/firebase';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc } from 'firebase/firestore';
-import * as stravaApi from '../modules/stravaApi';
-import { makeRedirectUri, useAuthRequest, exchangeCodeAsync } from 'expo-auth-session';
 import { changeBikeState, deactivateBike, getLoggedUserData, connectAccWithStrava, syncDataWithStrava } from "../modules/firestoreActions";
 import { useIsFocused } from "@react-navigation/native";
 import { rideSecondsToString, rideDistanceToString } from '../modules/helpers';
@@ -16,6 +14,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Checkbox } from 'react-native-paper';
 import { getAuth } from 'firebase/auth';
 import Toast from 'react-native-simple-toast';
+import Constants from 'expo-constants';
 
 import { isStravaUser, stravaAuthReq, getTokens } from '../modules/stravaApi';
 const auth = getAuth(firebaseApp)
@@ -265,7 +264,7 @@ export default function BikesListScreen({ navigation, route }) {
         {!isStravaUser(User) &&
           <View style={styles.stravaConnectContainer}>
             <TouchableOpacity onPress={() => {
-              promptAsync();
+              promptAsync({useProxy: Constants.manifest.extra.useProxyAuthServer});
             }}>
               <Image source={require('../assets/images/btn_strava_connectwith_light.png')} />
             </TouchableOpacity>

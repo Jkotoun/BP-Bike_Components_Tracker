@@ -30,7 +30,8 @@ export default{
         measurementId: process.env.MEASUREMENT_ID,
         stravaClientId: process.env.STRAVA_APP_CLIEND_ID,
         stravaSecret: process.env.STRAVA_APP_SEC,
-        stravaAccPwdSec: process.env.STRAVA_ACC_PWD_SEC
+        stravaAccPwdSec: process.env.STRAVA_ACC_PWD_SEC,
+        useProxyAuthServer: true
       },
     }
   }

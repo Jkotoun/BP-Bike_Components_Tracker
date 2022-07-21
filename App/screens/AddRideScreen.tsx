@@ -265,12 +265,6 @@ export default function AddRideScreen({ navigation, route }) {
               />
             </TouchableOpacity>
 
-
-
-
-
-            
-
             {showRideTimePicker && (
               <DateTimePicker
                 testID="dateTimePicker"
