@@ -76,7 +76,7 @@ export function stravaAuthReq()
       scopes: ['profile:read_all,activity:read_all'],
        redirectUri: makeRedirectUri({
         native: "bikecomponentsmanager://redirect",
-        useProxy:false
+        useProxy:true
       })
     },
     {
@@ -100,7 +100,7 @@ export async function getTokens(authCode) {
         clientId: Constants.manifest.extra.stravaClientId,
         redirectUri: makeRedirectUri({
             native: "bikecomponentsmanager://redirect",
-            useProxy:false
+            useProxy:true
           }),
         code: authCode,
         extraParams: {
@@ -183,7 +183,19 @@ async function stravaApiRequest(User, setUser, path)
  */
 export async function getAllActivities(User, setUser)
 {
-  return stravaApiRequest(User, setUser, "athlete/activities")
+
+  let current_page = 1
+   
+  let all_activities = [], page_activities
+  while((page_activities = await stravaApiRequest(User, setUser, `athlete/activities?per_page=100&page=${current_page}`)).length!=0)
+  {
+    all_activities = all_activities.concat(page_activities)
+    current_page+=1
+  }
+  
+  console.log("AKTIVITY:")
+  console.log(all_activities.length)
+  return all_activities
   
 }
 /**

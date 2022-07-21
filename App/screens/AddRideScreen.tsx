@@ -59,7 +59,9 @@ export default function AddRideScreen({ navigation, route }) {
         if (route.params && route.params.rideId) {
           getRide(route.params.rideId)
           .then(rideDoc=> {
-            setrideToEdit(rideDoc.data())
+            let rideDocData = rideDoc.data()
+            rideDocData.date = rideDocData.date.toDate()
+            setrideToEdit(rideDocData)
             setRideDate(rideDoc.data().date.toDate())
             setRideTime(new Date((rideDoc.data().rideTime*1000)-(3600*1000)))
           })

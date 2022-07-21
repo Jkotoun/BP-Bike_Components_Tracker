@@ -5,7 +5,7 @@ import { AuthenticatedUserProvider } from './context';
 import Root from './Root'
 export default function App() {
   //dont show warnings in app
-  LogBox.ignoreAllLogs();
+  LogBox.ignoreLogs(['Setting a timer for a long period of time'])
 
   return (
     <AuthenticatedUserProvider>

@@ -256,7 +256,8 @@ export async function updateRide(oldRideData: ride, newRideData: ride, rideId)
 
     await updateDoc(doc(getFirestore(firebaseApp), "rides", rideId), {...newRideData})
     //bike ref updated
-    if(oldRideData.bike != newRideData.bike)
+    
+    if(oldRideData.bike.id != newRideData.bike.id)
     {   
         if(oldRideData.bike)
         {
@@ -272,7 +273,9 @@ export async function updateRide(oldRideData: ride, newRideData: ride, rideId)
     {   
         if(newRideData.bike)
         {
-            updateBikeAndComponentsStatsAtDate(newRideData.date,newRideData.distance-oldRideData.distance, newRideData.rideTime-oldRideData.rideTime, newRideData.bike)
+            await updateBikeAndComponentsStatsAtDate(oldRideData.date,-1*oldRideData.distance, -1*oldRideData.rideTime, oldRideData.bike)
+            await updateBikeAndComponentsStatsAtDate(newRideData.date,newRideData.distance, newRideData.rideTime, newRideData.bike)
+
         }
     }
 }
@@ -468,8 +471,8 @@ async function getInstalledComponentsAtDate(date, bikeDocRef)
             }
         }
         else
-        {
-            if(!record.uninstallTime || record.component.data().uninstallTime > date)
+        {   
+            if(!record.uninstallTime || record.uninstallTime.toDate() > date)
             {
                 installedComponents[componentId] = record
             }
@@ -506,6 +509,24 @@ async function incrementBikeStats(distance, rideTime, bikeRef)
     })
 }
 
+
+
+async function incrementServiceStats(distance, rideTime, serviceRecordRef)
+{
+    return updateDoc(serviceRecordRef, {
+        "rideDistance": increment(distance),
+        "rideTime": increment(rideTime)
+    })
+}
+
+async function incrementWearRecordStats(distance, rideTime, serviceRecordRef)
+{
+    return updateDoc(serviceRecordRef, {
+        "rideDistance": increment(distance),
+        "rideTime": increment(rideTime)
+    })
+}
+
 /**
  * filters components, which were installed on bike at given date and updates their stats by incrementing rideTime and distance 
  * @param date date to check installed components for
@@ -517,11 +538,22 @@ async function incrementBikeStats(distance, rideTime, bikeRef)
 export async function updateBikeAndComponentsStatsAtDate(date, distance, rideTime, bikeRef)
 {
     incrementBikeStats(distance, rideTime,bikeRef)
-    let installedComponents =await  getInstalledComponentsAtDate(date, bikeRef)
-    
+    let installedComponents =await getInstalledComponentsAtDate(date, bikeRef)
     const componentsEditPromises = installedComponents.map(async installedComponent => {
-        let componentRef = doc(getFirestore(firebaseApp), "components", installedComponent)
-        return incrementComponentDistanceAndTime(distance, rideTime, componentRef)
+        let componentRef = await doc(getFirestore(firebaseApp), "components", installedComponent)
+        
+
+        await  incrementComponentDistanceAndTime(distance, rideTime, componentRef)
+
+        //update wear records and services stats, which were added after date of component stats update => need to recalculate ridetime and mileage of records
+        let servicesToUpdate = await getDocs(query(collection(getFirestore(firebaseApp), "componentServiceRecords"),where("component", "==", componentRef), where("date", ">=", date)))
+        let wearRecordsToUpdate = await getDocs(query(collection(getFirestore(firebaseApp), "componentWearRecords"),where("component", "==", componentRef), where("date", ">=", date)))
+        
+        servicesToUpdate.forEach(service => incrementServiceStats(distance, rideTime, service.ref))
+        wearRecordsToUpdate.forEach(wearRecord => incrementServiceStats(distance, rideTime, wearRecord.ref))
+
+
+        
     })
 
     return Promise.all([componentsEditPromises])    
@@ -543,7 +575,6 @@ export async function addRide(data: ride)
             throw new Error("Can not assing bike which has later purchase date than ride date")
         }
     }
-
     let addRidePromise = addDoc(collection(getFirestore(firebaseApp), "rides"), data)
     if(data.bike)
     {  
