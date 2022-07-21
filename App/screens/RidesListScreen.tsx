@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { isStravaUser, stravaAuthReq, getTokens } from '../modules/stravaApi';
 import Toast from 'react-native-simple-toast';
 import { getAuth } from 'firebase/auth';
+import Constants from 'expo-constants';
 
 const auth = getAuth(firebaseApp)
 
@@ -215,7 +216,8 @@ export default function BikesListScreen({ navigation, route }) {
         {!isStravaUser(User) &&
           <View style={styles.stravaConnectContainer}>
             <TouchableOpacity onPress={() => {
-              promptAsync();
+              promptAsync({useProxy: Constants.manifest.extra.useProxyAuthServer});
+
             }}>
               <Image source={require('../assets/images/btn_strava_connectwith_light.png')} />
             </TouchableOpacity>
