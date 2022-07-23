@@ -15,7 +15,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Checkbox } from 'react-native-paper';
 import { getAuth } from 'firebase/auth';
 import Toast from 'react-native-simple-toast';
-
+import ComponentIcons from "../modules/componentIcons";
 
 
 const auth = getAuth(firebaseApp)
@@ -162,20 +162,7 @@ export default function AllComponentsListScreen({ navigation, route }) {
       })
   }, [isFocused, isLoaded, viewRetiredChecked])
   const [components, setComponents] = React.useState([]);
-  const images = {
-    chain: require("../assets/images/chain_icon.png"),
-    fork: require("../assets/images/bicycle_fork_icon.png"),
-    brake: require("../assets/images/disc-brake.png"),
-    brake_pads: require("../assets/images/brake_pads.png"),
-    brake_disc: require("../assets/images/brake_disc.png"),
-    chainrings: require("../assets/images/chainrings.png"),
-    cassette: require("../assets/images/cassette.png"),
-    derailleur: require("../assets/images/derailleur.png"),
-    suspension: require("../assets/images/rear_suspension.png"),
-    rim: require("../assets/images/rim.png"),
-    tire: require("../assets/images/tire.png"),
-    other: require("../assets/images/other_component.png"),    
-  };
+ 
 
 
 
@@ -246,7 +233,7 @@ export default function AllComponentsListScreen({ navigation, route }) {
                   }
                 })
               }
-              return <Card key={component.id} options={componentOptions} active={component.state=="active"} title={component.state == "active"? component.name : (component.name + " - retired")} description={component.type.displayName} description2={"Bike: " + (component.bike ? component.bike.name : "Not assigned")} icon={images[component.type.value]} displayInfo={{
+              return <Card key={component.id} options={componentOptions} active={component.state=="active"} title={component.state == "active"? component.name : (component.name + " - retired")} description={component.type.displayName} description2={"Bike: " + (component.bike ? component.bike.name : "Not assigned")} icon={ComponentIcons[component.type.value]} displayInfo={{
                 "Distance": rideDistanceToString(component.initialRideDistance+component.rideDistance),
                 "Ride Time": rideSecondsToString(component.rideTime + component.initialRideTime)
               }} onPress={() => {

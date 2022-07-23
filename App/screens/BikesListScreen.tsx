@@ -15,6 +15,7 @@ import { Checkbox } from 'react-native-paper';
 import { getAuth } from 'firebase/auth';
 import Toast from 'react-native-simple-toast';
 import Constants from 'expo-constants';
+import BikeImages from "../modules/bikeIcons";
 
 import { isStravaUser, stravaAuthReq, getTokens } from '../modules/stravaApi';
 const auth = getAuth(firebaseApp)
@@ -137,13 +138,7 @@ export default function BikesListScreen({ navigation, route }) {
 
 
 
-  const images = {
-    mtb: require("../assets/images/mtbht.png"),
-    road: require("../assets/images/road_icon.png"),
-    gravel: require("../assets/images/road_icon.png"),
-    other: require("../assets/images/other_bike.png")
-  };
-
+  
   //confirm dialog for bike delete
   const [showBox, setShowBox] = React.useState(true);
   const showConfirmDialog = (bikeId, bikeName) => {
@@ -195,7 +190,7 @@ export default function BikesListScreen({ navigation, route }) {
             {bikes.map(bike => {
 
               if (bike.stravaSynced) {
-                return <Card key={bike.bikeId} stravaIcon={true} title={bike.name} description={bike.type.label} icon={images[bike.type.value]} displayInfo={{
+                return <Card key={bike.bikeId} stravaIcon={true} title={bike.name} description={bike.type.label} icon={BikeImages[bike.type.value]} displayInfo={{
                   "Distance": rideDistanceToString(bike.initialRideDistance + bike.rideDistance),
                   "Ride Time": rideSecondsToString(bike.rideTime + bike.initialRideTime)
                 }} onPress={() => {
@@ -243,7 +238,7 @@ export default function BikesListScreen({ navigation, route }) {
                   })
                 }
 
-                return <Card key={bike.bikeId} options={bikeOptions} active={bike.state == "active"} title={bike.state == "active" ? bike.name : (bike.name + " - retired")} description={bike.type.label} icon={images[bike.type.value]} displayInfo={{
+                return <Card key={bike.bikeId} options={bikeOptions} active={bike.state == "active"} title={bike.state == "active" ? bike.name : (bike.name + " - retired")} description={bike.type.label} icon={BikeImages[bike.type.value]} displayInfo={{
                   "Distance": rideDistanceToString(bike.initialRideDistance + bike.rideDistance),
                   "Ride Time": rideSecondsToString(bike.rideTime + bike.initialRideTime)
                 }} onPress={() => {

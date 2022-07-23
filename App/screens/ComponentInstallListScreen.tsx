@@ -7,6 +7,7 @@ import { AuthenticatedUserContext } from '../../context'
 import { useIsFocused } from "@react-navigation/native";
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where } from 'firebase/firestore';
 import {rideSecondsToString, rideDistanceToString} from '../modules/helpers'
+import ComponentIcons from "../modules/componentIcons";
 
 //load components, which are not installed on any bike
 async function loadComponents(loggedUser) {
@@ -40,22 +41,7 @@ export default function ComponentInstallListScreen({ navigation }) {
 
 
  
-  const images = {
-    chain: require("../assets/images/chain_icon.png"),
-    fork: require("../assets/images/bicycle_fork_icon.png"),
-    brake: require("../assets/images/disc-brake.png"),
-    brake_pads: require("../assets/images/brake_pads.png"),
-    brake_disc: require("../assets/images/brake_disc.png"),
-    chainrings: require("../assets/images/chainrings.png"),
-    cassette: require("../assets/images/cassette.png"),
-    derailleur: require("../assets/images/derailleur.png"),
-    suspension: require("../assets/images/rear_suspension.png"),
-    rim: require("../assets/images/rim.png"),
-    tire: require("../assets/images/tire.png"),
-    seatpost: require("../assets/images/seatpost.png"),
-    other: require("../assets/images/other_component.png"),    
-  };
-
+  
   if (!isLoaded) {
     return (
       <View style={styles.loadContainer}>
@@ -71,7 +57,7 @@ export default function ComponentInstallListScreen({ navigation }) {
       <View style={styles.mainContainer}>
         <View style={styles.componentCards}>
           {components.map(component => {
-            return <Card title={component.name} description={component.type.displayName} icon={images[component.type.value]} displayInfo={{
+            return <Card title={component.name} description={component.type.displayName} icon={ComponentIcons[component.type.value]} displayInfo={{
               "Distance":  rideDistanceToString(component.rideDistance + component.initialRideDistance),
               "Ride Time": rideSecondsToString(component.rideTime + component.initialRideTime)              
             }} onPress={() => {

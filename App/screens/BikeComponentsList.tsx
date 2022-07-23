@@ -6,6 +6,7 @@ import { FAB } from 'react-native-paper';
 import Card from '../components/Card';
 import firebaseApp from '../config/firebase';
 import { rideSecondsToString, rideDistanceToString } from '../modules/helpers';
+import ComponentIcons from "../modules/componentIcons";
 
 import { useIsFocused } from "@react-navigation/native";
 
@@ -39,20 +40,7 @@ export default function BikeComponentsList({ navigation, route }) {
   const [isLoaded, setIsLoaded] = React.useState(false);
 
 
-  const images = {
-    chain: require("../assets/images/chain_icon.png"),
-    fork: require("../assets/images/bicycle_fork_icon.png"),
-    brake: require("../assets/images/disc-brake.png"),
-    brake_pads: require("../assets/images/brake_pads.png"),
-    brake_disc: require("../assets/images/brake_disc.png"),
-    chainrings: require("../assets/images/chainrings.png"),
-    cassette: require("../assets/images/cassette.png"),
-    derailleur: require("../assets/images/derailleur.png"),
-    suspension: require("../assets/images/rear_suspension.png"),
-    rim: require("../assets/images/rim.png"),
-    tire: require("../assets/images/tire.png"),
-    other: require("../assets/images/other_component.png"),
-  };
+
 
 
   if (!isLoaded) {
@@ -88,7 +76,7 @@ export default function BikeComponentsList({ navigation, route }) {
                   })
                 }
               ]
-              return <Card options={componentOptions} title={component.name} description={component.type.displayName} icon={images[component.type.value]} displayInfo={{
+              return <Card options={componentOptions} title={component.name} description={component.type.displayName} icon={ComponentIcons[component.type.value]} displayInfo={{
                 "Distance": rideDistanceToString(component.rideDistance + component.initialRideDistance),
                 "Ride Time": rideSecondsToString(component.rideTime + component.initialRideTime)
 
