@@ -5,7 +5,7 @@ import Card from '../components/Card';
 import { FAB } from 'react-native-paper';
 import { AuthenticatedUserContext } from '../../context'
 import firebaseApp from '../config/firebase';
-import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc } from 'firebase/firestore';
+import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc, orderBy } from 'firebase/firestore';
 import { changeBikeState, deactivateBike, getLoggedUserData, connectAccWithStrava, syncDataWithStrava } from "../modules/firestoreActions";
 import { useIsFocused } from "@react-navigation/native";
 import { rideSecondsToString, rideDistanceToString } from '../modules/helpers';
@@ -123,7 +123,7 @@ export default function BikesListScreen({ navigation, route }) {
     if (viewRetiredChecked) {
       bikeStatesQuery.push("retired")
     }
-    getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("user", "==", doc(getFirestore(firebaseApp), "users", User.uid)), where("state", 'in', bikeStatesQuery))).then(bikesDocRef => {
+    getDocs(query(collection(getFirestore(firebaseApp), "bikes"), where("user", "==", doc(getFirestore(firebaseApp), "users", User.uid)), where("state", 'in', bikeStatesQuery), orderBy("name", "asc"))).then(bikesDocRef => {
       const bikesArray = []
       bikesDocRef.forEach(bike => {
         let bikeData = bike.data()

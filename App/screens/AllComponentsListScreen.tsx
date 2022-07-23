@@ -1,7 +1,7 @@
 
 import * as React from 'react';
 import { View, StyleSheet, Text, ScrollView, StatusBar, ActivityIndicator, Alert } from 'react-native';
-import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc } from 'firebase/firestore';
+import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc, orderBy } from 'firebase/firestore';
 import Card from '../components/Card';
 import { FAB } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
@@ -27,7 +27,7 @@ async function loadComponents(loggedUser, viewRetired) {
   {
     componentsStateQuery.push("retired")
   } 
-  let componentsDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "components"), where("user", "==", doc(getFirestore(firebaseApp), "users", loggedUser.uid)), where("state", "in", componentsStateQuery)))
+  let componentsDocRef = await getDocs(query(collection(getFirestore(firebaseApp), "components"), where("user", "==", doc(getFirestore(firebaseApp), "users", loggedUser.uid)), where("state", "in", componentsStateQuery), orderBy("name", "asc")))
   componentsDocRef.forEach(component => {
     let componentData = component.data()
     componentData.id = component.id
