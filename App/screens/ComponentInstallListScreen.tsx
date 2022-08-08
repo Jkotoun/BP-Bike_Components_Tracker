@@ -1,12 +1,12 @@
 
 import * as React from 'react';
-import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Text, ActivityIndicator, ScrollView } from 'react-native';
 import Card from '../components/Card';
 import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import { useIsFocused } from "@react-navigation/native";
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where } from 'firebase/firestore';
-import {rideSecondsToString, rideDistanceToString} from '../modules/helpers'
+import { rideSecondsToString, rideDistanceToString } from '../modules/helpers'
 import ComponentIcons from "../modules/componentIcons";
 
 //load components, which are not installed on any bike
@@ -29,7 +29,7 @@ async function loadComponents(loggedUser) {
 export default function ComponentInstallListScreen({ navigation }) {
   const isFocused = useIsFocused();
   const { IsLoggedIn, setIsLoggedIn, User, setUser } = React.useContext(AuthenticatedUserContext);
-  
+
   React.useEffect(() => {
     loadComponents(User).then((componentsArray) => {
       setComponents(componentsArray)
@@ -40,8 +40,8 @@ export default function ComponentInstallListScreen({ navigation }) {
   const [isLoaded, setIsLoaded] = React.useState(false);
 
 
- 
-  
+
+
   if (!isLoaded) {
     return (
       <View style={styles.loadContainer}>
@@ -55,18 +55,20 @@ export default function ComponentInstallListScreen({ navigation }) {
     return (
 
       <View style={styles.mainContainer}>
-        <View style={styles.componentCards}>
-          {components.map(component => {
-            return <Card title={component.name} description={component.type.displayName} icon={ComponentIcons[component.type.value]} displayInfo={{
-              "Distance":  rideDistanceToString(component.rideDistance + component.initialRideDistance),
-              "Ride Time": rideSecondsToString(component.rideTime + component.initialRideTime)              
-            }} onPress={() => {
-              navigation.navigate('ComponentInstallFormScreen', {
-                componentId: component.id
-              })
-            }}  ></Card>
-          })}
-        </View>
+        <ScrollView >
+          <View style={styles.componentCards}>
+            {components.map(component => {
+              return <Card title={component.name} description={component.type.displayName} icon={ComponentIcons[component.type.value]} displayInfo={{
+                "Distance": rideDistanceToString(component.rideDistance + component.initialRideDistance),
+                "Ride Time": rideSecondsToString(component.rideTime + component.initialRideTime)
+              }} onPress={() => {
+                navigation.navigate('ComponentInstallFormScreen', {
+                  componentId: component.id
+                })
+              }}  ></Card>
+            })}
+          </View>
+        </ScrollView>
       </View>
     );
   }
