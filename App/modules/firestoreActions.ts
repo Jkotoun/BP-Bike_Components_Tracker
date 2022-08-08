@@ -260,7 +260,6 @@ export async function updateRide(oldRideData: ride, newRideData: ride, rideId)
     //same bike
     if((!oldRideData.bike && !newRideData.bike) || (oldRideData.bike && newRideData.bike && oldRideData.bike.id == newRideData.bike.id))
     {
-        console.log("stejne")
         if(newRideData.bike)
         {
             await updateBikeAndComponentsStatsAtDate(oldRideData.date,-1*oldRideData.distance, -1*oldRideData.rideTime, oldRideData.bike)
@@ -270,8 +269,6 @@ export async function updateRide(oldRideData: ride, newRideData: ride, rideId)
     }
     else //different bike
     {
-        console.log("jine")
-
         if(oldRideData.bike)
         {
             updateBikeAndComponentsStatsAtDate(oldRideData.date,-1* oldRideData.distance,-1* oldRideData.rideTime, oldRideData.bike)

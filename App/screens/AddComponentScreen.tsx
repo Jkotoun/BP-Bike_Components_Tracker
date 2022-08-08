@@ -217,10 +217,6 @@ export default function AddComponentScreen({ navigation, route }) {
             <Controller
               control={control}
               rules={{
-                required: {
-                  value: true,
-                  message: "Km to date is required"
-                },
                 pattern: {
                   value: /^[0-9]*[\.]?[0-9]+$/,
                   message: "Ride distance must be positive number"
@@ -241,7 +237,7 @@ export default function AddComponentScreen({ navigation, route }) {
                 />
               )}
               name="initialRideDistance"
-              defaultValue={componentToEdit.initialRideDistance !== undefined ? (componentToEdit.initialRideDistance / 1000).toString() : ""}
+              defaultValue={componentToEdit.initialRideDistance !== undefined ? (componentToEdit.initialRideDistance / 1000).toString() : "0"}
             />
             {errors.initialRideDistance && <Text style={styles.errorMessage}>{errors.initialRideDistance.message}</Text>}
 
@@ -249,10 +245,6 @@ export default function AddComponentScreen({ navigation, route }) {
             <Controller
               control={control}
               rules={{
-                required: {
-                  value: true,
-                  message: "Ride hours to date is required"
-                },
                 pattern: {
                   value: /^[0-9]*[\.]?[0-9]+$/,
                   message: "Ride hours must be positive number"
@@ -272,7 +264,7 @@ export default function AddComponentScreen({ navigation, route }) {
                 />
               )}
               name="initialRideTime"
-              defaultValue={componentToEdit.initialRideTime !== undefined ? (componentToEdit.initialRideTime / 3600).toString() : ""}
+              defaultValue={componentToEdit.initialRideTime !== undefined ? (componentToEdit.initialRideTime / 3600).toString() : "0"}
             />
             {errors.initialRideTime && <Text style={styles.errorMessage}>{errors.initialRideTime.message}</Text>}
 
