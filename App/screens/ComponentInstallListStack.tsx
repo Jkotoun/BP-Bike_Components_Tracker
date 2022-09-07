@@ -6,6 +6,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ComponentInstallListScreen from './ComponentInstallListScreen';
 import ComponentInstallFormScreen from './ComponentInstallFormScreen';
 import Check from 'react-native-vector-icons/MaterialCommunityIcons';
+import AddComponentScreen from './AddComponentScreen';
+
 import Close from 'react-native-vector-icons/MaterialCommunityIcons';
 export default function ComponentInstallListStack({ navigation, route }) {
 
@@ -37,6 +39,11 @@ export default function ComponentInstallListStack({ navigation, route }) {
           }}
           component={ComponentInstallFormScreen} />
 
+
+        <Stack.Screen name='AddComponentScreen' component={AddComponentScreen} options={{
+          title: "Add component",
+          headerLeft: () => { return <Button theme={{ colors: { primary: 'black' } }} style={{ marginLeft: -20 }} onPress={() => navigation.navigate("ComponentsListScreen")}><Close name="close" size={24} color="white" /></Button> }
+        }} />
       </Stack.Group>
     </Stack.Navigator>
 

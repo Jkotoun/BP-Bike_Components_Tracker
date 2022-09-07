@@ -9,6 +9,8 @@ import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where
 import { rideSecondsToString, rideDistanceToString } from '../modules/helpers'
 import ComponentIcons from "../modules/componentIcons";
 
+import { FAB } from 'react-native-paper';
+
 //load components, which are not installed on any bike
 async function loadComponents(loggedUser) {
   let componentsArray = []
@@ -69,6 +71,15 @@ export default function ComponentInstallListScreen({ navigation }) {
             })}
           </View>
         </ScrollView>
+        <View style={styles.addButtonContainer}>
+          <FAB
+            style={{
+              backgroundColor: "#F44336"
+            }}
+            icon="plus"
+            onPress={() => navigation.navigate("AddComponentScreen")}
+          />
+        </View>
       </View>
     );
   }
@@ -83,6 +94,14 @@ const styles = StyleSheet.create({
     flex: 9,
     paddingHorizontal: 10
 
+  },
+  addButtonContainer: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    paddingBottom: 30,
+    paddingRight: 20,
+    zIndex: 99
   },
   loadContainer: {
     flex: 1,
