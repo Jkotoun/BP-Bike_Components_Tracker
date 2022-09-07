@@ -80,7 +80,7 @@ export default function BikeComponentsList({ navigation, route }) {
                 "Distance": rideDistanceToString(component.rideDistance + component.initialRideDistance),
                 "Ride Time": rideSecondsToString(component.rideTime + component.initialRideTime)
 
-              }} onPress={() => navigation.navigate("ComponentDetail", { componentId: component.id })}></Card>
+              }} onPress={() => navigation.navigate("ComponentDetail", { componentId: component.id, componentName: component.name})}></Card>
             })}
           </View>
         </ScrollView>
@@ -103,7 +103,9 @@ const styles = StyleSheet.create({
   componentCardsContainer: {
     marginTop: 5,
     alignItems: 'center',
-    flex: 9
+    flex: 9,
+    paddingHorizontal: 10
+
   },
   addButtonContainer: {
     position: 'absolute',
