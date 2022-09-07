@@ -684,7 +684,7 @@ export async function UpdateComponentsStats(startDate:Date, endDate:Date, bikeRe
  * @param installTime installation time, default is current time
  * @returns promise
  */
-export async function installComponent(componentId, bikeId, installTime: Date) {
+export async function installComponent(componentId, bikeId, installTime: Date, installationNote?: string) {
 
     let componentSwaps = await getDocs(
       query(collection(getFirestore(firebaseApp), "bikesComponents"),
@@ -709,7 +709,8 @@ export async function installComponent(componentId, bikeId, installTime: Date) {
         await  addDoc(collection(getFirestore(firebaseApp), "bikesComponents"), {
           bike: bikeDoc.ref,
           component: componentRef,
-          installTime: installTime
+          installTime: installTime,
+          installationNote: installationNote
         })
         //update component bike ref
         await updateDoc(doc(getFirestore(firebaseApp), "components", componentId), {

@@ -147,6 +147,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   cardsContainer: {
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingHorizontal: 10
+
   }
 })

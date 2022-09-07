@@ -3,16 +3,15 @@ import * as React from 'react';
 import { View, StyleSheet, Text, ScrollView, StatusBar, ActivityIndicator, Alert } from 'react-native';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc, orderBy } from 'firebase/firestore';
 import Card from '../components/Card';
-import { FAB } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import { useIsFocused } from "@react-navigation/native";
 import { deleteComponent, changeComponentState, retireComponent, syncDataWithStrava,   getLoggedUserData ,connectAccWithStrava,  } from "../modules/firestoreActions";
-import {rideSecondsToString ,rideDistanceToString} from '../modules/helpers';
+import {rideSecondsToString ,rideDistanceToString, strToSearchFormat} from '../modules/helpers';
 import {isStravaUser, stravaAuthReq, getTokens} from '../modules/stravaApi';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Checkbox } from 'react-native-paper';
+import { Checkbox, Searchbar, FAB } from 'react-native-paper';
 import { getAuth } from 'firebase/auth';
 import Toast from 'react-native-simple-toast';
 import ComponentIcons from "../modules/componentIcons";
@@ -158,14 +157,27 @@ export default function AllComponentsListScreen({ navigation, route }) {
   React.useEffect(() => {
       loadComponents(User, viewRetiredChecked).then((componentsArray) => {
         setComponents(componentsArray)
+        setfilteredComponents(componentsArray)
         setIsLoaded(true)
       })
   }, [isFocused, isLoaded, viewRetiredChecked])
   const [components, setComponents] = React.useState([]);
- 
+  const [filteredComponents, setfilteredComponents] = React.useState([])
+
+  const [searchQuery, setsearchQuery] = React.useState('')
 
 
+  const filterComponents = (query) => {
+    setsearchQuery(query);
+    if(searchQuery === ''){
+      setfilteredComponents(components)
+    }
+    else{
+      let filtered = components.filter((component) => strToSearchFormat(component.name).includes(strToSearchFormat(query)))
+      setfilteredComponents(filtered)
+    }
 
+  }
   if (!isLoaded || isSyncing) {
     return (
       <View style={Styles.loadContainer}>
@@ -192,9 +204,10 @@ export default function AllComponentsListScreen({ navigation, route }) {
             backgroundColor="#F44336"
           />
           <View style={Styles.cardsContainer}>
+            <Searchbar style={Styles.searchBar} placeholder='Vyhledat...' value={searchQuery} onChangeText={(query)=>filterComponents(query)} ></Searchbar>
           {components.length == 0 && <Text style={{padding:20, fontSize:17, fontWeight:'700'}}>Add components using '+' button</Text>}
 
-            {components.map(component => {
+            {filteredComponents.map(component => {
 
               const componentOptions = [
                 {
@@ -262,12 +275,18 @@ export default function AllComponentsListScreen({ navigation, route }) {
 
 const Styles = StyleSheet.create({
   mainContainer: {
-    flex: 1
-  },
+    flex: 1,
+    },
   cardsContainer: {
     marginTop: 5,
     alignItems: 'center',
-    flex: 9
+    flex: 9,
+    paddingHorizontal: 10,
+    
+
+  },
+  searchBar:{
+    marginVertical:5
   },
   addButtonContainer: {
     position: 'absolute',

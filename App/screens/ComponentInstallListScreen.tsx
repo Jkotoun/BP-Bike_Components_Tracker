@@ -80,7 +80,9 @@ const styles = StyleSheet.create({
   componentCards: {
     marginTop: 5,
     alignItems: 'center',
-    flex: 9
+    flex: 9,
+    paddingHorizontal: 10
+
   },
   loadContainer: {
     flex: 1,

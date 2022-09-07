@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { View, Platform, TouchableOpacity, Text, StyleSheet,  Alert , ActivityIndicator} from 'react-native';
+import { View, Platform, TouchableOpacity, Text, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { RadioButton } from 'react-native-paper';
 import firebaseApp from '../config/firebase';
 import { getFirestore, addDoc, collection, doc, updateDoc, query, where, getDocs, getDoc, FieldValue, increment } from 'firebase/firestore';
 import { installComponent } from '../modules/firestoreActions'
 import Toast from 'react-native-simple-toast';
-import {Button} from 'react-native-paper'
+import { Button } from 'react-native-paper'
 import Check from 'react-native-vector-icons/MaterialCommunityIcons';
 import { formatDateTime } from '../modules/helpers';
+import { TextInput } from "react-native-paper"
 
 export default function ComponentInstallFormScreen({ navigation, route }) {
 
@@ -18,7 +19,7 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
   const [show, setShow] = useState(false);
   const [isSubmitting, setisSubmitting] = useState(false);
   const [checked, setChecked] = React.useState('selected');
-
+  const [installationNote, setinstallationNote] = React.useState('')
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === 'ios');
@@ -33,43 +34,40 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
     setMode(currentMode);
   };
 
-  let submit = () =>{
+  let submit = () => {
     setisSubmitting(true)
-    getDoc(doc(getFirestore(firebaseApp), "bikes", route.params.bikeId)).then((bike)=>{
+    getDoc(doc(getFirestore(firebaseApp), "bikes", route.params.bikeId)).then((bike) => {
       //date is set as since purchase or custom selected
-      let installationDate = checked == "default" ?  bike.data().purchaseDate.toDate() : date 
-      installComponent(route.params.componentId, route.params.bikeId, installationDate)
-      .then(() => {
-        navigation.navigate("BikeComponentsList")
-        setisSubmitting(false)
+      let installationDate = checked == "default" ? bike.data().purchaseDate.toDate() : date
+      installComponent(route.params.componentId, route.params.bikeId, installationDate, installationNote)
+        .then(() => {
+          navigation.navigate("BikeComponentsList")
+          setisSubmitting(false)
 
-      })
-      .catch((error) => {
-        Toast.show(error.message)
-        setisSubmitting(false)
-      })
+        })
+        .catch((error) => {
+          Toast.show(error.message)
+          setisSubmitting(false)
+        })
     })
   }
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-        headerRight:()=> 
-        { 
-          if(isSubmitting)
-          {
-            return <ActivityIndicator color="white" style={{paddingRight:20}} />
-          }
-          else
-          {
-            return <Button  theme={{colors: {primary: 'black'}}}  onPress={()=>submit()}><Check name="check" size={24} color="white"/></Button>
-          }
+      headerRight: () => {
+        if (isSubmitting) {
+          return <ActivityIndicator color="white" style={{ paddingRight: 20 }} />
+        }
+        else {
+          return <Button theme={{ colors: { primary: 'black' } }} onPress={() => submit()}><Check name="check" size={24} color="white" /></Button>
+        }
       }
 
     });
-  }, [navigation, date, checked, isSubmitting]);
+  }, [navigation, date, checked, isSubmitting, installationNote]);
   return (
-    <View>
-      <View style={styles.formTitleContainer}>
+    <View style={styles.contentContainer}>
+      <View style={styles.alignContentContainer}>
         <Text style={styles.formTitle}>Installation date and time</Text>
       </View>
       {show && (
@@ -103,25 +101,42 @@ export default function ComponentInstallFormScreen({ navigation, route }) {
             </TouchableOpacity>} value="selected" />
         <RadioButton.Item label="Since purchase" value="default" color="#F44336" style={styles.radioItem} />
       </RadioButton.Group>
-
-      <View style={{ paddingTop: 10, paddingHorizontal: 20 }}>
+      <View style={styles.alignContentContainer}>
+        <TextInput
+          theme={{ colors: { primary: '#F44336' } }}
+          mode='outlined'
+          style={styles.input}
+          onChangeText={value => {setinstallationNote(value);}}
+          value={installationNote}
+          label='Installation note (optional)'
+          numberOfLines={4}
+          multiline
+        />
       </View>
+
+
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  formTitleContainer: {
-    
+  contentContainer: {
     paddingTop:20,
-    paddingLeft:25,
     paddingBottom:10
+  },
+  alignContentContainer: {
+    paddingLeft: 25,
+  },
+  input: {
+    color: "black",
+    backgroundColor: "#ffffff",
+    width: "95%",
 
   },
   formTitle: {
     color: "#000000",
-    fontSize:17,
-    fontWeight:'700'
+    fontSize: 17,
+    fontWeight: '700'
   },
   radioItem: {
     flexDirection: 'row-reverse',

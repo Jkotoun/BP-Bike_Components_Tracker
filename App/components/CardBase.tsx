@@ -16,7 +16,7 @@ export default function CardBase(props) {
 
 const styles = StyleSheet.create({
     cardBackground:{
-        width: '96%', 
+        width: '100%', 
         backgroundColor: "#FDFDFD", 
         margin: 4, 
         elevation: 2, 

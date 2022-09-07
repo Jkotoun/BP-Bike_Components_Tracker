@@ -8,13 +8,15 @@ import firebaseApp from '../config/firebase';
 import { AuthenticatedUserContext } from '../../context'
 import { useIsFocused } from "@react-navigation/native";
 import { deleteRide, syncDataWithStrava, getLoggedUserData, connectAccWithStrava } from "../modules/firestoreActions";
-import { rideSecondsToString, rideDistanceToString, formatDate } from '../modules/helpers'
+import { rideSecondsToString, rideDistanceToString, formatDate, strToSearchFormat } from '../modules/helpers'
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { isStravaUser, stravaAuthReq, getTokens } from '../modules/stravaApi';
 import Toast from 'react-native-simple-toast';
 import { getAuth } from 'firebase/auth';
 import Constants from 'expo-constants';
+import { Searchbar } from 'react-native-paper';
+
 
 const auth = getAuth(firebaseApp)
 
@@ -117,12 +119,14 @@ export default function BikesListScreen({ navigation, route }) {
   React.useEffect(() => {
     loadRides(User).then((ridesArray) => {
       setRides(ridesArray)
+      setfilteredRides(ridesArray)
       setIsLoaded(true)
     })
 
   }, [isFocused, isLoaded])
 
   const [rides, setRides] = React.useState([]);
+  const [filteredRides, setfilteredRides] = React.useState([])
 
 
   //ride delete confirm dialog
@@ -147,7 +151,21 @@ export default function BikesListScreen({ navigation, route }) {
     );
   };
 
+  const [searchQuery, setsearchQuery] = React.useState('')
 
+
+  const filterRides = (query) => {
+    setsearchQuery(query);
+    if(searchQuery === ''){
+      setfilteredRides(rides)
+    }
+    else{
+      
+      let filtered = rides.filter(ride => strToSearchFormat(ride.name).includes(strToSearchFormat(query)))
+      setfilteredRides(filtered)
+    }
+
+  }
 
   if (!isLoaded || isSyncing) {
     return (<View style={styles.loadContainer}>
@@ -167,9 +185,10 @@ export default function BikesListScreen({ navigation, route }) {
         <StatusBar backgroundColor="#F44336" />
         <ScrollView>
           <View style={styles.rideCardsContainer}>
+            <Searchbar style={styles.searchBar} placeholder='Vyhledat...' value={searchQuery} onChangeText={(query)=>filterRides(query)} ></Searchbar>
             {rides.length == 0 && <Text style={{ padding: 20, fontSize: 17, fontWeight: '700' }}>Sync rides from strava or add ride using '+' button</Text>}
 
-            {rides.map(ride => {
+            {filteredRides.map(ride => {
 
               let infoObj = {
                 "Distance": rideDistanceToString(ride.distance),
@@ -239,10 +258,15 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1
   },
+  searchBar:{
+    marginVertical:5
+  },
   rideCardsContainer: {
     marginTop: 5,
     alignItems: 'center',
-    flex: 9
+    flex: 9,
+    paddingHorizontal: 10
+
   },
   addButtonContainer: {
     position: 'absolute',

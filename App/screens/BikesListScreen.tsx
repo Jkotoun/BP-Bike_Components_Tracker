@@ -8,7 +8,7 @@ import firebaseApp from '../config/firebase';
 import { getFirestore, doc, updateDoc, getDocs, getDoc, query, collection, where, deleteDoc, orderBy } from 'firebase/firestore';
 import { changeBikeState, deactivateBike, getLoggedUserData, connectAccWithStrava, syncDataWithStrava } from "../modules/firestoreActions";
 import { useIsFocused } from "@react-navigation/native";
-import { rideSecondsToString, rideDistanceToString } from '../modules/helpers';
+import { rideSecondsToString, rideDistanceToString} from '../modules/helpers';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Checkbox } from 'react-native-paper';
@@ -292,7 +292,9 @@ const styles = {
     alignItems: 'center',
     marginTop: 5,
     flex: 9,
-    zIndex: 0
+    zIndex: 0,
+    paddingHorizontal: 10
+
   },
   addButtonContainer: {
     right: 0,

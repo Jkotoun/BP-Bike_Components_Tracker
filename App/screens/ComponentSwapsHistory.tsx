@@ -92,7 +92,9 @@ export default function ComponentSwapsHistory({ route }) {
                             ]
                             return <ComponentSwapCard options={swapRecordOptions} maintext={componentSwapRecord.bikeDoc.data() ? componentSwapRecord.bikeDoc.data().name : "Deleted bike"}
                                 installationDateString={componentSwapRecord.installTime.toDate().getTime() == 0 ? "Since purchase" : formatDateTime(componentSwapRecord.installTime.toDate())}
-                                uninstallationDateString={componentSwapRecord.uninstallTime ? formatDateTime(componentSwapRecord.uninstallTime.toDate()) : "Currently installed"} />
+                                uninstallationDateString={componentSwapRecord.uninstallTime ? formatDateTime(componentSwapRecord.uninstallTime.toDate()) : "Currently installed"}
+                                installationNote={componentSwapRecord.installationNote? componentSwapRecord.installationNote : "" }
+                                />
                         })}
                     </View>
                 </ScrollView>
@@ -108,7 +110,8 @@ const styles = StyleSheet.create({
     contentContainer: {
         display: 'flex',
         flexDirection: 'column',
-        padding: 25
+        padding: 25,
+        
     },
     itemContainer: {
         display: 'flex',
@@ -132,6 +135,8 @@ const styles = StyleSheet.create({
     },
     cardsContainer: {
         alignItems: 'center',
+    paddingHorizontal: 10
+
     }
 
 

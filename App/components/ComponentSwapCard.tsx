@@ -7,6 +7,7 @@ interface cardProps{
     maintext: string,
     installationDateString: string,
     uninstallationDateString: string,
+    installationNote: string,
     options?: Array<Option>
 }
 interface Option{
@@ -23,6 +24,7 @@ export default function ComponentSwapCard(props: cardProps) {
                     <View style={Styles.secondaryTextContainer}>
                         <Text style={Styles.secondaryText}><Text style={{fontWeight:'bold'}}>Installed: </Text>{props.installationDateString}</Text>
                         <Text style={Styles.secondaryText}><Text style={{fontWeight:'bold'}}>Uninstalled: </Text>{props.uninstallationDateString}</Text>
+                        {props.installationNote !== "" && <Text style={Styles.description}><Text style={{fontWeight:'bold'}}>Note: </Text>{props.installationNote} </Text>}
                     </View>
                 </View>
                 { props.options && <Menu style={Styles.menu}>
@@ -55,6 +57,10 @@ const Styles = StyleSheet.create({
     },
     secondaryTextContainer:{
         paddingTop:3
+    },
+    description:{
+        fontSize: 12 ,
+        paddingVertical:5
     },
     secondaryText:{
         fontSize: 12 

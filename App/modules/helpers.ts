@@ -58,4 +58,9 @@ export function formatDate(date:Date){
   return day + ". " + month + ". " + year
 }
 
+
+export function strToSearchFormat(string: string){
+  return string.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+}
+
 export default activeScreenName;
