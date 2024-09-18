@@ -76,7 +76,6 @@ export function stravaAuthReq()
       scopes: ['profile:read_all,activity:read_all'],
        redirectUri: makeRedirectUri({
         native: "bikecomponentsmanager://redirect",
-        //useProxy:Constants.expoConfig.extra.useProxyAuthServer
       })
     },
     {
@@ -100,8 +99,6 @@ export async function getTokens(authCode) {
         clientId: Constants.expoConfig.extra.stravaClientId,
         redirectUri: makeRedirectUri({
             native: "bikecomponentsmanager://redirect",
-          //  useProxy:Constants.expoConfig.extra.useProxyAuthServer
-            
           }),
         code: authCode,
         extraParams: {

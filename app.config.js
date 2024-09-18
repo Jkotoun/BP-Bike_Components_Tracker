@@ -27,11 +27,9 @@ export default{
         storageBucket: process.env.STORAGE_BUCKET,
         messagingSenderId: process.env.MESSAGING_SENDER_ID,
         appId: process.env.APP_ID,
-        // measurementId: process.env.MEASUREMENT_ID,
         stravaClientId: process.env.STRAVA_APP_CLIEND_ID,
         stravaSecret: process.env.STRAVA_APP_SEC,
         stravaAccPwdSec: process.env.STRAVA_ACC_PWD_SEC,
-        useProxyAuthServer: true,
         eas: {
           projectId: "71924f02-c39e-4fc7-af6b-ddb691a6fc4b"
         }
