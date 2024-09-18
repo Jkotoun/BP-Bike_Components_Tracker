@@ -21,7 +21,9 @@ import { saveUserData } from '../modules/firestoreActions'
 async function createStravaAuthAccount(authTokens, athlete) {
   const hash = await Crypto.digestStringAsync(
     Crypto.CryptoDigestAlgorithm.SHA256,
-    String(athlete.id + Constants.manifest.stravaAccPwdSec)
+    String(
+      // athlete.id + 
+      Constants.expoConfig.extra.stravaAccPwdSec)
   );
 
   return createUserWithEmailAndPassword(auth, athlete.id + "@stravauser.com", hash).then(userObj => saveUserData(userObj.user.uid, {
@@ -39,11 +41,14 @@ async function createStravaAuthAccount(authTokens, athlete) {
 
 //login to Strava athlete account in firebase auth
 async function loginWithStravaAcc(athlete) {
+  console.log(athlete.id)
   const hash = await Crypto.digestStringAsync(
     Crypto.CryptoDigestAlgorithm.SHA256,
-    String(athlete.id + Constants.manifest.stravaAccPwdSec)
+    String(
+      athlete.id + 
+      Constants.expoConfig.extra.stravaAccPwdSec)
   );
-  return signInWithEmailAndPassword(auth, athlete.id + "@stravauser.com", hash)
+  return signInWithEmailAndPassword(auth, athlete.id + "@stravauser.com",  hash)
 }
 
 const auth = getAuth(firebaseApp)
@@ -186,7 +191,7 @@ export default function LoginScreen({ navigation }) {
 
           :
           <TouchableOpacity onPress={() => {
-            promptAsync({useProxy: Constants.manifest.extra.useProxyAuthServer});
+            promptAsync({useProxy: Constants.expoConfig.extra.useProxyAuthServer});
           }}>
             <Image source={require('../assets/images/btn_strava_connectwith_light.png')} />
           </TouchableOpacity>

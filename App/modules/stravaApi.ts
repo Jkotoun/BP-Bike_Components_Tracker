@@ -41,10 +41,10 @@ export async function refreshAccessToken(User,setUser: Function )
 {
   const tokens = await refreshAsync(
     {
-      clientId: Constants.manifest.extra.stravaClientId,
+      clientId: Constants.expoConfig.extra.stravaClientId,
       refreshToken: User.stravaInfo.refreshToken,
       extraParams: {
-        client_secret: Constants.manifest.extra.stravaSecret
+        client_secret: Constants.expoConfig.extra.stravaSecret
       },
     },
     { tokenEndpoint: 'https://www.strava.com/oauth/token' }
@@ -72,11 +72,11 @@ export function stravaAuthReq()
 {
     return useAuthRequest(
     {
-      clientId: Constants.manifest.extra.stravaClientId,
+      clientId: Constants.expoConfig.extra.stravaClientId,
       scopes: ['profile:read_all,activity:read_all'],
        redirectUri: makeRedirectUri({
         native: "bikecomponentsmanager://redirect",
-        useProxy:Constants.manifest.extra.useProxyAuthServer
+        //useProxy:Constants.expoConfig.extra.useProxyAuthServer
       })
     },
     {
@@ -97,10 +97,10 @@ export function stravaAuthReq()
 export async function getTokens(authCode) {
     const tokens = await exchangeCodeAsync(
       {
-        clientId: Constants.manifest.extra.stravaClientId,
+        clientId: Constants.expoConfig.extra.stravaClientId,
         redirectUri: makeRedirectUri({
             native: "bikecomponentsmanager://redirect",
-            useProxy:Constants.manifest.extra.useProxyAuthServer
+          //  useProxy:Constants.expoConfig.extra.useProxyAuthServer
             
           }),
         code: authCode,
@@ -108,7 +108,7 @@ export async function getTokens(authCode) {
 
           // You must use the extraParams variation of clientSecret.
           // Never store your client secret on the client.
-          client_secret: Constants.manifest.extra.stravaSecret
+          client_secret: Constants.expoConfig.extra.stravaSecret
         },
       },
       { tokenEndpoint: 'https://www.strava.com/oauth/token' }

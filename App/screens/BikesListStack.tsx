@@ -50,6 +50,7 @@ export default function BikesListStack({ navigation, route }) {
           title: "Bike",
           headerRight: () => (
             <Menu>
+              {/* @ts-ignore */}
               <MenuTrigger text={<Icon name="dots-vertical" size={25} color="#ffffff" />} />
               <MenuOptions>
                 <MenuOption onSelect={async () => { await auth.signOut() }} text={"Log out"} style={styles.menuOption} />

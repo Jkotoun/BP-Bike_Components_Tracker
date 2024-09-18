@@ -38,7 +38,7 @@ export default function Root() {
   const [isUpdatingAuth, setIsUpdatingAuth] = React.useState(false);
   const [isSyncing, setIsSyncing] = React.useState(false);
   const [isLoaded, setIsLoaded] = React.useState(true);
-  const { User, setUser, IsLoggedIn, setIsLoggedIn } = React.useContext(AuthenticatedUserContext);
+  const { User, setUser, IsLoggedIn, setIsLoggedIn }: any = React.useContext(AuthenticatedUserContext);
 
 
 
@@ -123,9 +123,8 @@ export default function Root() {
             <ActivityIndicator size="large" color="#F44336" />
           </View>
         </>
-      )
-    }
-    else {
+      )} else {
+      
 
 
       if (IsLoggedIn) {
