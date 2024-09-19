@@ -22,8 +22,8 @@ async function createStravaAuthAccount(authTokens, athlete) {
   const hash = await Crypto.digestStringAsync(
     Crypto.CryptoDigestAlgorithm.SHA256,
     String(
-      // athlete.id + 
-      Constants.expoConfig.extra.stravaAccPwdSec)
+      athlete.id + 
+      Constants.expoConfig.extra.stravaSecret)
   );
 
   return createUserWithEmailAndPassword(auth, athlete.id + "@stravauser.com", hash).then(userObj => saveUserData(userObj.user.uid, {
@@ -46,8 +46,9 @@ async function loginWithStravaAcc(athlete) {
     Crypto.CryptoDigestAlgorithm.SHA256,
     String(
       athlete.id + 
-      Constants.expoConfig.extra.stravaAccPwdSec)
+      Constants.expoConfig.extra.stravaSecret)
   );
+  console.log(hash)
   return signInWithEmailAndPassword(auth, athlete.id + "@stravauser.com",  hash)
 }
 
@@ -82,12 +83,14 @@ export default function LoginScreen({ navigation }) {
         }).then(authMethods => {
           //user doesnt have account - create one 
           if (authMethods.length == 0) {
+            console.log("doesnt have acc")
             createStravaAuthAccount(authStravaTokens, authAthlete).catch(() => {
               setError('password', { type: "authentication", message: "Strava authentication failed" });
             })
           }
           else {
             //login to acc
+            console.log("does have")
             loginWithStravaAcc(authAthlete).catch(() => {
               setError('password', { type: "authentication", message: "Strava authentication failed" });
               setauthorizingStrava(false)
