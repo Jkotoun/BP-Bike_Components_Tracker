@@ -31,7 +31,6 @@ export default function BikesListScreen({ navigation, route }) {
       setIsLoaded(false)
     })
       .catch((error) => {
-        console.log(error)
         Toast.show("Strava synchronization failed")
         setIsSyncing(false)
       })

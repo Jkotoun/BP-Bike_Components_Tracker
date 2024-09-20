@@ -41,10 +41,10 @@ export async function refreshAccessToken(User,setUser: Function )
 {
   const tokens = await refreshAsync(
     {
-      clientId: Constants.expoConfig.extra.stravaClientId,
+      clientId: process.env.EXPO_PUBLIC_STRAVA_APP_CLIEND_ID,
       refreshToken: User.stravaInfo.refreshToken,
       extraParams: {
-        client_secret: Constants.expoConfig.extra.stravaSecret
+        client_secret: process.env.EXPO_PUBLIC_STRAVA_APP_SEC
       },
     },
     { tokenEndpoint: 'https://www.strava.com/oauth/token' }
@@ -72,7 +72,7 @@ export function stravaAuthReq()
 {
     return useAuthRequest(
     {
-      clientId: Constants.expoConfig.extra.stravaClientId,
+      clientId: process.env.EXPO_PUBLIC_STRAVA_APP_CLIEND_ID,
       scopes: ['profile:read_all,activity:read_all'],
        redirectUri: makeRedirectUri({
         native: "bikecomponentsmanager://redirect",
@@ -96,7 +96,7 @@ export function stravaAuthReq()
 export async function getTokens(authCode) {
     const tokens = await exchangeCodeAsync(
       {
-        clientId: Constants.expoConfig.extra.stravaClientId,
+        clientId: process.env.EXPO_PUBLIC_STRAVA_APP_CLIEND_ID,
         redirectUri: makeRedirectUri({
             native: "bikecomponentsmanager://redirect",
           }),
@@ -105,7 +105,7 @@ export async function getTokens(authCode) {
 
           // You must use the extraParams variation of clientSecret.
           // Never store your client secret on the client.
-          client_secret: Constants.expoConfig.extra.stravaSecret
+          client_secret: process.env.EXPO_PUBLIC_STRAVA_APP_SEC
         },
       },
       { tokenEndpoint: 'https://www.strava.com/oauth/token' }
@@ -191,8 +191,6 @@ export async function getAllActivities(User, setUser)
     current_page+=1
   }
   
-  console.log("AKTIVITY:")
-  console.log(all_activities.length)
   return all_activities
   
 }

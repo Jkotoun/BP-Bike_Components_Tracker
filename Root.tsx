@@ -34,7 +34,6 @@ const Stack = createNativeStackNavigator();
 
 
 export default function Root() {
-
   const [isUpdatingAuth, setIsUpdatingAuth] = React.useState(false);
   const [isSyncing, setIsSyncing] = React.useState(false);
   const [isLoaded, setIsLoaded] = React.useState(true);

@@ -36,7 +36,8 @@
     "react-native-simple-toast": "^1.1.4",
     "react-native-tab-view": "^3.1.1",
     "react-native-vector-icons": "^9.2.0",
-    "react-native-web": "~0.19.10"
+    "react-native-web": "~0.19.10",
+    "@sentry/react-native": "~5.22.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
@@ -44,7 +45,11 @@
     "typescript": "~5.3.3"
   },
   "scripts": {
-    "android_prebuild": "eas build --profile development --platform android"
+    "android_prebuild": "eas build --profile development --platform android",
+    "android_prodbuild": "eas build --platform android",
+    "android_apkbuild": "eas build --platform android --profile preview",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
   },
   "private": true,
   "version": "1.0.0"
