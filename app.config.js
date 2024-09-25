@@ -3,7 +3,7 @@ export default{
     expo: {
       name: "Bike Components Manager",
       description: "Bike components manager helps you to track everything about your bike's components",
-      version: "1.0.14", 
+      version: "1.0.15", 
       ios: {
         supportsTablet: true
       },

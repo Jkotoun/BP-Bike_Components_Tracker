@@ -72,7 +72,7 @@ export default function Root() {
       else {
         setIsLoggedIn(false)
         setUser(null)
-        setIsUpdatingAuth(false);
+        setIsUpdatingAuth(false); 
 
       }
     });

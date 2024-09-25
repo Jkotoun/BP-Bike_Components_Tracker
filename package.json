@@ -10,6 +10,7 @@
     "@react-navigation/native": "^6.0.11",
     "@react-navigation/native-stack": "^6.7.0",
     "@react-navigation/stack": "^6.2.2",
+    "@sentry/react-native": "~5.22.0",
     "axios": "^0.26.1",
     "dotenv": "^16.0.1",
     "expo": "^51.0.0",
@@ -36,8 +37,7 @@
     "react-native-simple-toast": "^1.1.4",
     "react-native-tab-view": "^3.1.1",
     "react-native-vector-icons": "^9.2.0",
-    "react-native-web": "~0.19.10",
-    "@sentry/react-native": "~5.22.0"
+    "react-native-web": "~0.19.10"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
@@ -48,8 +48,7 @@
     "android_prebuild": "eas build --profile development --platform android",
     "android_prodbuild": "eas build --platform android",
     "android_apkbuild": "eas build --platform android --profile preview",
-    "android": "expo run:android",
-    "ios": "expo run:ios"
+    "dev": "npx expo start"
   },
   "private": true,
   "version": "1.0.0"

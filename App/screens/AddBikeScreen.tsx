@@ -176,6 +176,7 @@ export default function AddBikeScreen({ navigation, route }) {
                   value={value}
                   items={bikeTypes}
                   style={pickerStyles}
+                  placeholder={{ label: 'Select bike type'}}
                 />
               )}
               name="type"

@@ -3,7 +3,7 @@ import { Text, View, StatusBar, StyleSheet, TouchableOpacity, Image, ScrollView,
 import { ActivityIndicator, TextInput } from "react-native-paper"
 import { useForm, Controller } from 'react-hook-form'
 import { AuthenticatedUserContext } from '../../context'
-import { getAuth, signInWithEmailAndPassword, fetchSignInMethodsForEmail, createUserWithEmailAndPassword } from "firebase/auth"
+import { getAuth, signInWithEmailAndPassword, fetchSignInMethodsForEmail, createUserWithEmailAndPassword, setPersistence } from "firebase/auth"
 import firebaseApp from '../config/firebase';
 import Constants from 'expo-constants';
 import * as stravaApi from '../modules/stravaApi';
@@ -51,7 +51,7 @@ async function loginWithStravaAcc(athlete) {
 }
 
 const auth = getAuth(firebaseApp)
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen({ navigation }) { 
 
   const [request, response, promptAsync] = stravaApi.stravaAuthReq()
   const [isLoggingIn, setisLoggingIn] = React.useState(false)
