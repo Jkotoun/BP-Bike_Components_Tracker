@@ -1,6 +1,6 @@
 # Bike Components Tracker
 
-Android app for tracking wear and service history of bicycle components.
+Cross-platform mobile app for tracking wear and service history of bicycle components.
 
 Every ride adds mileage and ride time to the bike **and** to each component installed on it at that moment — so you always know how far a chain, a cassette or a fork has actually gone, across bike swaps, reinstalls and retirements. Rides are entered manually or synced automatically from **Strava**.
 
@@ -180,6 +180,5 @@ App/assets/          app icon and component/bike artwork
 
 ## Limitations
 
-- Android is the only maintained target; iOS has nothing beyond Expo defaults.
 - Firestore security rules are not part of this repository — a deployment needs its own.
 - The Strava client secret is bundled into the app. Fine for a personal build; a public release should move the token exchange behind a proxy.
